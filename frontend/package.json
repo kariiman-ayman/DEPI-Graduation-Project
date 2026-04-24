@@ -1,0 +1,40 @@
+{
+  "name": "frontend",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types"
+  },
+  "dependencies": {
+    "_core": "workspace:_core",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "prettier": "^3.7.4",
+    "turbo": "^2.9.6",
+    "typescript": "5.9.2",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.12.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^10.2.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.5.0",
+    "typescript-eslint": "^8.58.2",
+    "vite": "^8.0.10"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "bun@1.3.13",
+  "workspaces": [
+    "apps/*",
+    "_core"
+  ]
+}
