@@ -1,27 +1,25 @@
-import { Outlet, Link, useLocation, useNavigate } from "react-router";
+import { Outlet, Link, useLocation } from "react-router";
 import {
   LayoutDashboard,
   Users,
   BookOpen,
   BarChart3,
   Bell,
-  LogOut,
   GraduationCap,
   UserCheck,
 } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
+import { Button } from "_core/components/ui/button";
+import { Badge } from "_core/components/ui/badge";
 
 export default function Layout() {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const menuItems = [
     { path: "/", icon: LayoutDashboard, label: "Dashboard" },
-    { path: "/admin/students", icon: Users, label: "Students" },
-    { path: "/admin/instructors", icon: UserCheck, label: "Instructors" },
-    { path: "/admin/courses", icon: BookOpen, label: "Courses" },
-    { path: "/admin/reports", icon: BarChart3, label: "Reports" },
+    { path: "/students", icon: Users, label: "Students" },
+    { path: "/instructors", icon: UserCheck, label: "Instructors" },
+    { path: "/courses", icon: BookOpen, label: "Courses" },
+    { path: "/reports", icon: BarChart3, label: "Reports" },
   ];
 
   const isActive = (path: string) => {
@@ -63,17 +61,6 @@ export default function Layout() {
             </Link>
           ))}
         </nav>
-
-        <div className="p-4 border-t border-gray-200">
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-3"
-            onClick={() => navigate("/")}
-          >
-            <LogOut className="w-5 h-5" />
-            <span>Switch Role</span>
-          </Button>
-        </div>
       </aside>
 
       {/* Main Content */}

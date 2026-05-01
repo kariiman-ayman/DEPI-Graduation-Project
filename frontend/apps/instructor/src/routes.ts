@@ -1,11 +1,11 @@
 import { createBrowserRouter } from "react-router";
 import Layout from "./Layout";
-import InstructorAttendance from "./pages/instructor/Attendance";
-import InstructorCourseDetail from "./pages/instructor/CourseDetail";
-import InstructorCourses from "./pages/instructor/Courses";
-import InstructorDashboard from "./pages/instructor/Dashboard";
-import InstructorGrades from "./pages/instructor/Grades";
-import InstructorLectures from "./pages/instructor/Lectures";
+import InstructorAttendance from "./pages/Attendance";
+import InstructorCourseDetail from "./pages/CourseDetail";
+import InstructorCourses from "./pages/Courses";
+import InstructorDashboard from "./pages/Dashboard";
+import InstructorGrades from "./pages/Grades";
+import InstructorLectures from "./pages/Lectures";
 
 export const router = createBrowserRouter([
   {

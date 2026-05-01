@@ -1,11 +1,11 @@
 import { createBrowserRouter } from "react-router";
 import Layout from "./Layout";
-import AdminCourseDetail from "./pages/admin/CourseDetail";
-import AdminCourses from "./pages/admin/Courses";
-import AdminDashboard from "./pages/admin/Dashboard";
-import AdminInstructors from "./pages/admin/Instructors";
-import AdminReports from "./pages/admin/Reports";
-import AdminStudents from "./pages/admin/Students";
+import AdminCourseDetail from "./pages/CourseDetail";
+import AdminCourses from "./pages/Courses";
+import AdminDashboard from "./pages/Dashboard";
+import AdminInstructors from "./pages/Instructors";
+import AdminReports from "./pages/Reports";
+import AdminStudents from "./pages/Students";
 
 export const router = createBrowserRouter([
   {
