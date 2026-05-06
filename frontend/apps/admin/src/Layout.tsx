@@ -7,9 +7,11 @@ import {
   Bell,
   GraduationCap,
   UserCheck,
+  LogOut,
 } from "lucide-react";
 import { Button } from "_core/components/ui/button";
 import { Badge } from "_core/components/ui/badge";
+import { clearSession } from "_core/auth/session";
 
 export default function Layout() {
   const location = useLocation();
@@ -61,6 +63,20 @@ export default function Layout() {
             </Link>
           ))}
         </nav>
+
+        <div className="p-4 border-t border-gray-200">
+          <Button
+            variant="ghost"
+            className="w-full justify-start gap-3 text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              clearSession();
+              window.location.assign("/login");
+            }}
+          >
+            <LogOut className="w-5 h-5" />
+            <span>Logout</span>
+          </Button>
+        </div>
       </aside>
 
       {/* Main Content */}
@@ -78,11 +94,15 @@ export default function Layout() {
                 3
               </Badge>
             </Button>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
+            <Link
+              to="/profile"
+              aria-label="Open profile"
+              className="flex items-center gap-3"
+            >
+              <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center hover:opacity-90 transition-opacity">
                 <span className="text-white">A</span>
               </div>
-            </div>
+            </Link>
           </div>
         </header>
 
