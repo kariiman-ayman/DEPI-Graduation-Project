@@ -14,9 +14,14 @@ import {
   TabsTrigger,
 } from "_core/components/ui/tabs";
 import { Users, Clock, Calendar, FileText, Video, Plus } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 
 export default function StudentCourses() {
-  const enrolledCourses = [
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const initialEnrolledCourses = [
     {
       code: "CS401",
       name: "Advanced Data Structures",
@@ -55,7 +60,7 @@ export default function StudentCourses() {
     },
   ];
 
-  const availableCourses = [
+  const initialAvailableCourses = [
     {
       code: "CS501",
       name: "Machine Learning",
@@ -78,6 +83,68 @@ export default function StudentCourses() {
     },
   ];
 
+  const [enrolledCourses, setEnrolledCourses] = useState(initialEnrolledCourses);
+  const [availableCourses, setAvailableCourses] = useState(
+    initialAvailableCourses,
+  );
+
+  const tabFromUrl = searchParams.get("tab");
+  const defaultTab = tabFromUrl === "available" ? "available" : "enrolled";
+  const [activeTab, setActiveTab] = useState<"enrolled" | "available">(
+    defaultTab,
+  );
+
+  const enrolledCodes = useMemo(
+    () => new Set(enrolledCourses.map((c) => c.code)),
+    [enrolledCourses],
+  );
+
+  function goToAvailableCourses() {
+    setActiveTab("available");
+    setSearchParams({ tab: "available" }, { replace: true });
+  }
+
+  function onTabChange(next: string) {
+    const value = next === "available" ? "available" : "enrolled";
+    setActiveTab(value);
+    if (value === "available") {
+      setSearchParams({ tab: "available" }, { replace: true });
+    } else {
+      setSearchParams({}, { replace: true });
+    }
+  }
+
+  function enroll(courseCode: string) {
+    const course = availableCourses.find((c) => c.code === courseCode);
+    if (!course) return;
+    if (enrolledCodes.has(course.code)) return;
+    if (course.enrolled >= course.capacity) return;
+
+    setAvailableCourses((prev) =>
+      prev.map((c) =>
+        c.code === course.code ? { ...c, enrolled: c.enrolled + 1 } : c,
+      ),
+    );
+    setEnrolledCourses((prev) => [
+      ...prev,
+      {
+        code: course.code,
+        name: course.name,
+        instructor: course.instructor,
+        credits: course.credits,
+        enrolled: course.enrolled + 1,
+        capacity: course.capacity,
+        schedule: course.schedule,
+        room: "TBA",
+        progress: 0,
+        grade: "Enrolled",
+      },
+    ]);
+
+    setActiveTab("enrolled");
+    setSearchParams({}, { replace: true });
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -87,13 +154,16 @@ export default function StudentCourses() {
             View enrolled courses and register for new ones
           </p>
         </div>
-        <Button className="gap-2 bg-indigo-600 hover:bg-indigo-700">
+        <Button
+          className="gap-2 bg-indigo-600 hover:bg-indigo-700"
+          onClick={goToAvailableCourses}
+        >
           <Plus className="w-4 h-4" />
           Register for Courses
         </Button>
       </div>
 
-      <Tabs defaultValue="enrolled" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={onTabChange} className="space-y-6">
         <TabsList>
           <TabsTrigger value="enrolled">Enrolled Courses</TabsTrigger>
           <TabsTrigger value="available">Available Courses</TabsTrigger>
@@ -120,7 +190,7 @@ export default function StudentCourses() {
                       </p>
                     </div>
                     <Badge className="bg-green-100 text-green-700">
-                      {course.grade}
+                      {course.grade || "Enrolled"}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -159,11 +229,21 @@ export default function StudentCourses() {
                   </div>
 
                   <div className="flex gap-2 pt-2 border-t">
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => navigate("/courses")}
+                    >
                       <FileText className="w-4 h-4 mr-2" />
                       Materials
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => navigate("/lectures")}
+                    >
                       <Video className="w-4 h-4 mr-2" />
                       Lectures
                     </Button>
@@ -233,8 +313,19 @@ export default function StudentCourses() {
                       </div>
                     </div>
 
-                    <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
-                      Enroll Now
+                    <Button
+                      className="w-full bg-indigo-600 hover:bg-indigo-700"
+                      disabled={
+                        enrolledCodes.has(course.code) ||
+                        course.enrolled >= course.capacity
+                      }
+                      onClick={() => enroll(course.code)}
+                    >
+                      {enrolledCodes.has(course.code)
+                        ? "Already Enrolled"
+                        : course.enrolled >= course.capacity
+                          ? "Full"
+                          : "Enroll Now"}
                     </Button>
                   </CardContent>
                 </Card>
