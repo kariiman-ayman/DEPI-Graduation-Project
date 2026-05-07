@@ -23,6 +23,7 @@ export const router = createBrowserRouter([
       // Dev default: bypass auth until backend ready.
       // To re-enable auth in dev, set VITE_DISABLE_AUTH=false
       const disableAuth = env.DEV && env.VITE_DISABLE_AUTH !== "false";
+      
       if (disableAuth) return null;
       const session = getSession();
       if (!session) throw redirect("/login");
