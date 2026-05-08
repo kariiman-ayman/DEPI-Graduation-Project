@@ -13,7 +13,7 @@ import {
 
 import { Button } from "_core/components/ui/button";
 import { Badge } from "_core/components/ui/badge";
-import { clearSession } from "_core/auth/session";
+// import { clearSession } from "_core/auth/session";
 
 export default function Layout() {
   const location = useLocation();
@@ -72,7 +72,7 @@ export default function Layout() {
             variant="ghost"
             className="w-full justify-start gap-3 text-gray-700 hover:bg-gray-100"
             onClick={() => {
-              clearSession();
+              // clearSession();
               window.location.assign("/login");
             }}
           >

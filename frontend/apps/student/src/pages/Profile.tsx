@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { clearSession, getSession } from "_core/auth/session";
-import { Card, CardContent, CardHeader, CardTitle } from "_core/components/ui/card";
+// import { clearSession, getSession } from "_core/auth/session";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "_core/components/ui/card";
 import { Button } from "_core/components/ui/button";
 import { Avatar, AvatarFallback } from "_core/components/ui/avatar";
 import { Badge } from "_core/components/ui/badge";
@@ -9,7 +14,14 @@ import { Separator } from "_core/components/ui/separator";
 
 export default function StudentProfile() {
   const navigate = useNavigate();
-  const [session] = useState(() => getSession());
+  const [session] = useState({
+    token: "dev-token",
+    user: {
+      email: "dev@local",
+      role: "student" as const,
+      name: "Dev Student",
+    },
+  });
   const env = (import.meta as any).env ?? {};
   const devBypass = env.DEV && env.VITE_DISABLE_AUTH !== "false";
   const effectiveSession =
@@ -74,7 +86,7 @@ export default function StudentProfile() {
               <Button
                 variant="destructive"
                 onClick={() => {
-                  clearSession();
+                  // clearSession();
                   navigate("/login", { replace: true });
                 }}
               >
@@ -117,4 +129,3 @@ export default function StudentProfile() {
     </div>
   );
 }
-
