@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { clearSession, getSession } from "_core/auth/session";
-import { Card, CardContent, CardHeader, CardTitle } from "_core/components/ui/card";
+// import { clearSession, getSession } from "_core/auth/session";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "_core/components/ui/card";
 import { Button } from "_core/components/ui/button";
 import { Avatar, AvatarFallback } from "_core/components/ui/avatar";
 import { Badge } from "_core/components/ui/badge";
@@ -15,7 +20,14 @@ export default function AdminProfile() {
   const effectiveSession =
     session ??
     (devBypass
-      ? { token: "dev-token", user: { email: "dev@local", role: "admin" as const, name: "Dev Admin" } }
+      ? {
+          token: "dev-token",
+          user: {
+            email: "dev@local",
+            role: "admin" as const,
+            name: "Dev Admin",
+          },
+        }
       : null);
 
   useEffect(() => {
@@ -67,7 +79,7 @@ export default function AdminProfile() {
               <Button
                 variant="destructive"
                 onClick={() => {
-                  clearSession();
+                  // clearSession();
                   navigate("/login", { replace: true });
                 }}
               >
@@ -110,4 +122,3 @@ export default function AdminProfile() {
     </div>
   );
 }
-
