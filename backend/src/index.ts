@@ -11,5 +11,11 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/health", (req, res) => {
+  res.json({
+    message: "Backend working ya nogomya 🚀",
+  });
+});
+
 export default app;
 export const handler = serverless(app);
