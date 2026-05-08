@@ -17,9 +17,13 @@ app.get("/health", (req, res) => {
   });
 });
 
-app.listen(5000, () => {
-  console.log("Server started on port 3000");
-});
+if (process.env.ENV === "dev") {
+  const PORT = 5000;
+
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
 
 export default app;
 export const handler = serverless(app);
