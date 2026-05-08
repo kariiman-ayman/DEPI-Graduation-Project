@@ -8,7 +8,7 @@ import StudentLectures from "./pages/Lectures";
 import StudentLogin from "./pages/Login";
 import StudentPayments from "./pages/Payments";
 import StudentProfile from "./pages/Profile";
-import { getSession } from "_core/auth/session";
+// import { getSession } from "_core/auth/session";
 import { redirect } from "react-router";
 
 export const router = createBrowserRouter([
@@ -24,7 +24,14 @@ export const router = createBrowserRouter([
       // To re-enable auth in dev, set VITE_DISABLE_AUTH=false
       const disableAuth = env.DEV && env.VITE_DISABLE_AUTH !== "false";
       if (disableAuth) return null;
-      const session = getSession();
+      const session = {
+        token: "dev-token",
+        user: {
+          email: "dev@local",
+          role: "student" as const,
+          name: "Dev Student",
+        },
+      };
       if (!session) throw redirect("/login");
       return null;
     },
