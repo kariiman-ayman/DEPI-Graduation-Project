@@ -21,4 +21,5 @@ app.get("/bala7", (req: Request, res: Response) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log("Routes: /, /bala7"); // 👈 add this
 });
