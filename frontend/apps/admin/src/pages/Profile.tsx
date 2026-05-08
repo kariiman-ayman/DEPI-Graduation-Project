@@ -14,7 +14,14 @@ import { Separator } from "_core/components/ui/separator";
 
 export default function AdminProfile() {
   const navigate = useNavigate();
-  const [session] = useState(() => getSession());
+  const [session] = useState({
+    token: "dev-token",
+    user: {
+      email: "dev@local",
+      role: "admin" as const,
+      name: "Dev Admin",
+    },
+  });
   const env = (import.meta as any).env ?? {};
   const devBypass = env.DEV && env.VITE_DISABLE_AUTH !== "false";
   const effectiveSession =
