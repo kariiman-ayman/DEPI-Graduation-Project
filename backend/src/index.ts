@@ -17,13 +17,15 @@ app.get("/health", (req, res) => {
   });
 });
 
-if (process.env.ENV === "dev") {
-  const PORT = 5000;
+// if (process.env.ENV === "dev") {
+//   console.log(process.env.ENV);
 
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
-}
+//   const PORT = 5000;
+
+//   app.listen(PORT, () => {
+//     console.log(`Server running on http://localhost:${PORT}`);
+//   });
+// }
 
 export default app;
 export const handler = serverless(app);
