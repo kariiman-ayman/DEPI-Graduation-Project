@@ -23,3 +23,5 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log("Routes: /, /bala7"); // 👈 add this
 });
+
+export default app;
