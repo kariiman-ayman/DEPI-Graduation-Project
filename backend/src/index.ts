@@ -13,6 +13,12 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
+app.get("/bala7", (req: Request, res: Response) => {
+  res.json({
+    message: "Hello from our bala7 مع تحيات كاري و ضوضو",
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
