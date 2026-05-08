@@ -17,8 +17,28 @@ import {
 import { Progress } from "_core/components/ui/progress";
 import { Badge } from "_core/components/ui/badge";
 import { Button } from "_core/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "_core/components/ui/dialog";
+import { useState } from "react";
 
 export default function StudentDashboard() {
+  const [selectedCourse, setSelectedCourse] = useState<
+    | {
+        code: string;
+        name: string;
+        instructor: string;
+        progress: number;
+        nextClass: string;
+        attendance: number;
+      }
+    | null
+  >(null);
+
   const stats = [
     {
       title: "Enrolled Courses",
@@ -167,7 +187,9 @@ export default function StudentDashboard() {
                         {course.instructor}
                       </p>
                     </div>
-                    <Button size="sm">View</Button>
+                    <Button size="sm" onClick={() => setSelectedCourse(course)}>
+                      View
+                    </Button>
                   </div>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
@@ -311,6 +333,46 @@ export default function StudentDashboard() {
           </Card>
         </div>
       </div>
+
+      <Dialog
+        open={!!selectedCourse}
+        onOpenChange={(open) => {
+          if (!open) setSelectedCourse(null);
+        }}
+      >
+        <DialogContent>
+          {selectedCourse ? (
+            <DialogHeader>
+              <DialogTitle>
+                {selectedCourse.code} — {selectedCourse.name}
+              </DialogTitle>
+              <DialogDescription>{selectedCourse.instructor}</DialogDescription>
+            </DialogHeader>
+          ) : null}
+
+          {selectedCourse ? (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="rounded-lg border p-3">
+                <div className="text-xs text-gray-500">Next class</div>
+                <div className="mt-1">{selectedCourse.nextClass}</div>
+              </div>
+              <div className="rounded-lg border p-3">
+                <div className="text-xs text-gray-500">Attendance</div>
+                <div className="mt-1">{selectedCourse.attendance}%</div>
+              </div>
+              <div className="rounded-lg border p-3 sm:col-span-2">
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>Progress</span>
+                  <span>{selectedCourse.progress}%</span>
+                </div>
+                <div className="mt-2">
+                  <Progress value={selectedCourse.progress} className="h-2" />
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
