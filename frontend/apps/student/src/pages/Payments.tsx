@@ -1,3 +1,6 @@
+import { useState } from "react";
+import CheckoutModal from "../components/CheckoutModal";
+
 import {
   Card,
   CardContent,
@@ -24,7 +27,10 @@ import {
   TableRow,
 } from "_core/components/ui/table";
 
+
 export default function StudentPayments() {
+  const [showModal, setShowModal] = useState(false);
+  
   const paymentSummary = {
     totalFee: 5000,
     paid: 3800,
@@ -120,7 +126,10 @@ export default function StudentPayments() {
             Track tuition fees and payment history
           </p>
         </div>
-        <Button className="gap-2 bg-indigo-600 hover:bg-indigo-700">
+        <Button
+          className="gap-2 bg-indigo-600 hover:bg-indigo-700"
+          onClick={() => setShowModal(true)}
+        >
           <CreditCard className="w-4 h-4" />
           Make Payment
         </Button>
@@ -377,6 +386,14 @@ export default function StudentPayments() {
           </Table>
         </CardContent>
       </Card>
+
+      {showModal && (
+        <CheckoutModal
+          amount={paymentSummary.nextAmount}
+          onClose={() => setShowModal(false)}
+        />
+      )}
+
     </div>
   );
 }
