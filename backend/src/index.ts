@@ -1,5 +1,6 @@
 import express from "express";
 import type { Request, Response } from "express";
+import serverless from "serverless-http";
 
 const app = express();
 
@@ -24,4 +25,4 @@ app.listen(PORT, () => {
   console.log("Routes: /, /bala7"); // 👈 add this
 });
 
-export default app;
+export default serverless(app);
