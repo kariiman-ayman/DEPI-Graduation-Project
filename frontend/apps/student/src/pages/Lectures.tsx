@@ -20,10 +20,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "_core/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "_core/components/ui/dialog";
 import { useState } from "react";
 
 export default function StudentLectures() {
   const [selectedCourse, setSelectedCourse] = useState("all");
+  const [selectedLecture, setSelectedLecture] = useState<any>(null);
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   const lectures = [
     {
@@ -116,6 +124,11 @@ export default function StudentLectures() {
     selectedCourse === "all"
       ? lectures
       : lectures.filter((lecture) => lecture.course === selectedCourse);
+
+  const handleWatchLecture = (lecture) => {
+    setSelectedLecture(lecture);
+    setIsVideoOpen(true);
+  };
 
   const courses = [
     { id: "all", name: "All Courses" },
@@ -273,7 +286,10 @@ export default function StudentLectures() {
                     </span>
                   </div>
                   <div className="flex gap-2">
-                    <Button className="flex-1 bg-indigo-600 hover:bg-indigo-700">
+                    <Button
+                      className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                      onClick={() => handleWatchLecture(lecture)}
+                    >
                       <Play className="w-4 h-4 mr-2" />
                       {lecture.watchProgress > 0 && lecture.watchProgress < 100
                         ? "Continue"
@@ -336,7 +352,10 @@ export default function StudentLectures() {
                     </p>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
+                    <Button
+                      className="w-full bg-indigo-600 hover:bg-indigo-700"
+                      onClick={() => handleWatchLecture(lecture)}
+                    >
                       <Play className="w-4 h-4 mr-2" />
                       Watch Now
                     </Button>
@@ -397,7 +416,10 @@ export default function StudentLectures() {
                         />
                       </div>
                     </div>
-                    <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
+                    <Button
+                      className="w-full bg-indigo-600 hover:bg-indigo-700"
+                      onClick={() => handleWatchLecture(lecture)}
+                    >
                       <Play className="w-4 h-4 mr-2" />
                       Continue Watching
                     </Button>
@@ -417,6 +439,40 @@ export default function StudentLectures() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Video Player Modal */}
+      <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{selectedLecture?.title}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="aspect-video bg-black rounded-lg overflow-hidden">
+              <video
+                controls
+                className="w-full h-full"
+                poster={selectedLecture?.thumbnail}
+              >
+                <source
+                  src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                  type="video/mp4"
+                />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <div className="flex items-center justify-between text-sm text-gray-600">
+              <div className="flex items-center gap-4">
+                <span>Instructor: {selectedLecture?.instructor}</span>
+                <span>Duration: {selectedLecture?.duration}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Eye className="w-4 h-4" />
+                <span>{selectedLecture?.views} views</span>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -53,7 +53,7 @@ function PaymentForm({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ amount: amount * 100 }),
-        }
+        },
       );
       const { clientSecret } = await res.json();
 
@@ -80,8 +80,12 @@ function PaymentForm({
     <form onSubmit={handleSubmit}>
       {/* Order Summary */}
       <div className="bg-gray-50 rounded-xl p-4 mb-6">
-        <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Amount Due</p>
-        <p className="text-3xl font-bold text-gray-900">${amount.toLocaleString()}</p>
+        <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
+          Amount Due
+        </p>
+        <p className="text-3xl font-bold text-gray-900">
+          ${amount.toLocaleString()}
+        </p>
         <p className="text-sm text-gray-500 mt-1">Tuition Fee Installment</p>
       </div>
 
@@ -159,9 +163,24 @@ function PaymentForm({
         >
           {loading ? (
             <>
-              <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+              <svg
+                className="animate-spin w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8z"
+                />
               </svg>
               Processing...
             </>
@@ -195,7 +214,6 @@ export default function CheckoutModal({
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden">
-
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
@@ -219,26 +237,42 @@ export default function CheckoutModal({
               <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-5">
                 <CheckCircle className="w-10 h-10 text-green-500" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Payment Successful!</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                Payment Successful!
+              </h3>
               <p className="text-gray-500 mb-2">
                 Your payment of{" "}
-                <span className="font-semibold text-gray-800">${amount.toLocaleString()}</span>{" "}
+                <span className="font-semibold text-gray-800">
+                  ${amount.toLocaleString()}
+                </span>{" "}
                 has been processed.
               </p>
-              <p className="text-xs text-gray-400 mb-8">A receipt has been sent to your email.</p>
+              <p className="text-xs text-gray-400 mb-8">
+                A receipt has been sent to your email.
+              </p>
 
               <div className="bg-gray-50 rounded-xl p-4 text-left mb-6">
                 <div className="flex justify-between text-sm mb-2">
                   <span className="text-gray-500">Transaction ID</span>
-                  <span className="font-mono text-gray-700">PAY-{Date.now().toString().slice(-8)}</span>
+                  <span className="font-mono text-gray-700">
+                    PAY-{Date.now().toString().slice(-8)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm mb-2">
                   <span className="text-gray-500">Date</span>
-                  <span className="text-gray-700">{new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                  <span className="text-gray-700">
+                    {new Date().toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Amount</span>
-                  <span className="font-semibold text-green-600">${amount.toLocaleString()}</span>
+                  <span className="font-semibold text-green-600">
+                    ${amount.toLocaleString()}
+                  </span>
                 </div>
               </div>
 
