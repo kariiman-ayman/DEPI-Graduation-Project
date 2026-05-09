@@ -22,6 +22,46 @@ export default function AdminStudents() {
     (typeof students)[0] | null
   >(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const handleExportStudents = () => {
+    // Convert students data to CSV format
+    const headers = [
+      "ID",
+      "Name",
+      "Email",
+      "Department",
+      "Year",
+      "GPA",
+      "Status",
+    ];
+    const csvContent = [
+      headers.join(","),
+      ...students.map((student) =>
+        [
+          student.id,
+          `"${student.name}"`,
+          student.email,
+          student.department,
+          student.year,
+          student.gpa,
+          student.status,
+        ].join(","),
+      ),
+    ].join("\n");
+
+    // Create and download the CSV file
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `students_${new Date().toISOString().split("T")[0]}.csv`,
+    );
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const students = [
     {
@@ -115,7 +155,11 @@ export default function AdminStudents() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="gap-2">
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={handleExportStudents}
+          >
             <Download className="w-4 h-4" />
             Export
           </Button>
