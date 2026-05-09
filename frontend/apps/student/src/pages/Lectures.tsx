@@ -47,6 +47,8 @@ export default function StudentLectures() {
       watchProgress: 100,
       thumbnail:
         "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400&h=225&fit=crop",
+      videoUrl:
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     },
     {
       id: 2,
@@ -61,6 +63,8 @@ export default function StudentLectures() {
       watchProgress: 65,
       thumbnail:
         "https://images.unsplash.com/photo-1509228627152-72ae9ae6848d?w=400&h=225&fit=crop",
+      videoUrl:
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
     },
     {
       id: 3,
@@ -75,6 +79,8 @@ export default function StudentLectures() {
       watchProgress: 0,
       thumbnail:
         "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400&h=225&fit=crop",
+      videoUrl:
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
     },
     {
       id: 4,
@@ -89,6 +95,8 @@ export default function StudentLectures() {
       watchProgress: 100,
       thumbnail:
         "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=400&h=225&fit=crop",
+      videoUrl:
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
     },
     {
       id: 5,
@@ -103,6 +111,8 @@ export default function StudentLectures() {
       watchProgress: 40,
       thumbnail:
         "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=225&fit=crop",
+      videoUrl:
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
     },
     {
       id: 6,
@@ -117,6 +127,8 @@ export default function StudentLectures() {
       watchProgress: 0,
       thumbnail:
         "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=225&fit=crop",
+      videoUrl:
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
     },
   ];
 
@@ -128,6 +140,36 @@ export default function StudentLectures() {
   const handleWatchLecture = (lecture) => {
     setSelectedLecture(lecture);
     setIsVideoOpen(true);
+  };
+
+  const handleDownloadLecture = async (lecture) => {
+    try {
+      // Show loading state or notification
+      console.log(`Downloading: ${lecture.title}`);
+
+      // For demo purposes, we'll simulate download with a placeholder
+      // In production, this would download the actual video file
+      const response = await fetch(lecture.videoUrl);
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${lecture.title.replace(/[^a-z0-9]/gi, "_").toLowerCase()}.mp4`;
+
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      console.log(`Download completed: ${lecture.title}`);
+    } catch (error) {
+      console.error("Download failed:", error);
+      // You could show a toast notification here
+      alert("Download failed. Please try again.");
+    }
   };
 
   const courses = [
@@ -295,7 +337,11 @@ export default function StudentLectures() {
                         ? "Continue"
                         : "Watch"}
                     </Button>
-                    <Button variant="outline" size="icon">
+                    <Button
+                      variant="outline"
+                      onClick={() => handleDownloadLecture(lecture)}
+                      className="px-3"
+                    >
                       <Download className="w-4 h-4" />
                     </Button>
                   </div>
@@ -352,13 +398,22 @@ export default function StudentLectures() {
                     </p>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <Button
-                      className="w-full bg-indigo-600 hover:bg-indigo-700"
-                      onClick={() => handleWatchLecture(lecture)}
-                    >
-                      <Play className="w-4 h-4 mr-2" />
-                      Watch Now
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                        onClick={() => handleWatchLecture(lecture)}
+                      >
+                        <Play className="w-4 h-4 mr-2" />
+                        Watch Now
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => handleDownloadLecture(lecture)}
+                        className="px-3"
+                      >
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -423,6 +478,15 @@ export default function StudentLectures() {
                       <Play className="w-4 h-4 mr-2" />
                       Continue Watching
                     </Button>
+                    <div className="mt-2 flex justify-end">
+                      <Button
+                        variant="outline"
+                        onClick={() => handleDownloadLecture(lecture)}
+                        className="px-3"
+                      >
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -453,10 +517,7 @@ export default function StudentLectures() {
                 className="w-full h-full"
                 poster={selectedLecture?.thumbnail}
               >
-                <source
-                  src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                  type="video/mp4"
-                />
+                <source src={selectedLecture?.videoUrl} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -466,6 +527,14 @@ export default function StudentLectures() {
                 <span>Duration: {selectedLecture?.duration}</span>
               </div>
               <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDownloadLecture(selectedLecture)}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download
+                </Button>
                 <Eye className="w-4 h-4" />
                 <span>{selectedLecture?.views} views</span>
               </div>
