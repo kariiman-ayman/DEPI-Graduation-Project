@@ -23,6 +23,47 @@ export default function AdminInstructors() {
   >(null);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
+  const handleExportInstructors = () => {
+    // Convert instructors data to CSV format
+    const headers = [
+      "ID",
+      "Name",
+      "Email",
+      "Department",
+      "Courses",
+      "Experience",
+      "Status",
+    ];
+    const csvContent = [
+      headers.join(","),
+      ...instructors.map((instructor) =>
+        [
+          instructor.id,
+          `"${instructor.name}"`,
+          instructor.email,
+          instructor.department,
+          instructor.courses,
+          instructor.experience,
+          instructor.status,
+        ].join(","),
+      ),
+    ].join("\n");
+
+    // Create and download the CSV file
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `instructors_${new Date().toISOString().split("T")[0]}.csv`,
+    );
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const instructors = [
     {
       id: "INS001",
@@ -115,7 +156,11 @@ export default function AdminInstructors() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="gap-2">
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={handleExportInstructors}
+          >
             <Download className="w-4 h-4" />
             Export
           </Button>

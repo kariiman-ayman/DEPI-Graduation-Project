@@ -34,6 +34,34 @@ import {
 } from "recharts";
 
 export default function AdminReports() {
+  const handleExportReports = () => {
+    // Create a comprehensive report with all data
+    const reportData = {
+      summary: {
+        totalStudents: 1247,
+        totalInstructors: 89,
+        totalCourses: 156,
+        totalRevenue: 245000,
+      },
+      attendanceData,
+      performanceData,
+    };
+
+    // Convert to JSON and download
+    const jsonContent = JSON.stringify(reportData, null, 2);
+    const blob = new Blob([jsonContent], { type: "application/json;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `comprehensive_report_${new Date().toISOString().split("T")[0]}.json`,
+    );
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   const attendanceData = [
     { week: "Week 1", rate: 92 },
     { week: "Week 2", rate: 89 },
@@ -76,7 +104,7 @@ export default function AdminReports() {
             Comprehensive insights and data analysis
           </p>
         </div>
-        <Button variant="outline" className="gap-2">
+        <Button variant="outline" className="gap-2" onClick={handleExportReports}>
           <Download className="w-4 h-4" />
           Export All Reports
         </Button>
