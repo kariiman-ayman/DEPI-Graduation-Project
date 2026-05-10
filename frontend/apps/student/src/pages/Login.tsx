@@ -1,8 +1,6 @@
-import { useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
-// import { loginWithEmailPassword } from "_core/auth/api";
-// import { setSession } from "_core/auth/session";
-// import type { UserRole } from "_core/auth/types";
+import { Login } from "../api/auth";
+import { Alert, AlertDescription } from "_core/components/ui/alert";
+import { Button } from "_core/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,29 +8,14 @@ import {
   CardTitle,
 } from "_core/components/ui/card";
 import { Input } from "_core/components/ui/input";
-import { Button } from "_core/components/ui/button";
 import { Label } from "_core/components/ui/label";
-import { Alert, AlertDescription } from "_core/components/ui/alert";
+import { useState } from "react";
+import { useAuthStore } from "_core/store/authStore";
+import { useNavigate } from "react-router";
 
-function appUrlForRole(role: any): string | null {
-  const env = (import.meta as any).env ?? {};
-  const admin = env.VITE_ADMIN_APP_URL as string | undefined;
-  const student = env.VITE_STUDENT_APP_URL as string | undefined;
-  const instructor = env.VITE_INSTRUCTOR_APP_URL as string | undefined;
-  if (role === "admin") return admin ?? null;
-  if (role === "student") return student ?? null;
-  return instructor ?? null;
-}
-
-export default function StudentLogin() {
+export default function LoginPage() {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const from = useMemo(() => {
-    const st = location.state as { from?: string } | null;
-    return st?.from ?? "/profile";
-  }, [location.state]);
-
+  const setUser = useAuthStore((state) => state.setUser);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,28 +26,9 @@ export default function StudentLogin() {
     setError(null);
     setIsSubmitting(true);
     try {
-      // const session = await loginWithEmailPassword({ email, password });
-      const session = {
-        token: "dev-token",
-        user: {
-          email: "dev@local",
-          role: "student" as const,
-          name: "Dev Student",
-        },
-      };
-      // setSession(session);
-
-      if (session.user.role !== "student") {
-        const target = appUrlForRole(session.user.role);
-        if (target) {
-          const url = new URL(target);
-          url.pathname = "/profile";
-          window.location.assign(url.toString());
-          return;
-        }
-      }
-
-      navigate(from, { replace: true });
+      const user = await Login({ email, password });
+      setUser(user);
+      navigate("/", { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -76,16 +40,10 @@ export default function StudentLogin() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Student Login</CardTitle>
+          <CardTitle>Login</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
-            {error ? (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            ) : null}
-
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -105,11 +63,18 @@ export default function StudentLogin() {
                 id="password"
                 type="password"
                 value={password}
+                placeholder="Enter your password"
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 required
               />
             </div>
+
+            {error ? (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            ) : null}
 
             <Button className="w-full" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Signing in..." : "Sign in"}

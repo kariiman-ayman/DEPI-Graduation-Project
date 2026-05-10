@@ -1,27 +1,32 @@
-import { Outlet, Link, useLocation } from "react-router";
+import { Badge } from "_core/components/ui/badge";
+import { Button } from "_core/components/ui/button";
+import { useAuthStore } from "_core/store/authStore";
 import {
-  LayoutDashboard,
-  Users,
-  BookOpen,
   BarChart3,
   Bell,
+  BookOpen,
+  Gauge,
   GraduationCap,
-  UserCheck,
+  LayoutGrid,
   LogOut,
+  Mail,
+  Users,
+  UserStar,
 } from "lucide-react";
-import { Button } from "_core/components/ui/button";
-import { Badge } from "_core/components/ui/badge";
-// import { clearSession } from "_core/auth/session";
+import { Link, Outlet, useLocation } from "react-router";
 
 export default function Layout() {
   const location = useLocation();
+  const Logout = useAuthStore((state) => state.logout);
 
   const menuItems = [
-    { path: "/", icon: LayoutDashboard, label: "Dashboard" },
+    { path: "/", icon: Gauge, label: "Dashboard" },
     { path: "/students", icon: Users, label: "Students" },
-    { path: "/instructors", icon: UserCheck, label: "Instructors" },
-    { path: "/courses", icon: BookOpen, label: "Courses" },
     { path: "/reports", icon: BarChart3, label: "Reports" },
+    { path: "/instructors", icon: UserStar, label: "Instructors" },
+    { path: "/courses", icon: BookOpen, label: "Courses" },
+    { path: "/departments", icon: LayoutGrid, label: "Departments" },
+    { path: "/invitations", icon: Mail, label: "Invitations" },
   ];
 
   const isActive = (path: string) => {
@@ -68,10 +73,7 @@ export default function Layout() {
           <Button
             variant="ghost"
             className="w-full justify-start gap-3 text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              // clearSession();
-              window.location.assign("/login");
-            }}
+            onClick={Logout}
           >
             <LogOut className="w-5 h-5" />
             <span>Logout</span>

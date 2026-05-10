@@ -13,9 +13,10 @@ import {
 
 import { Button } from "_core/components/ui/button";
 import { Badge } from "_core/components/ui/badge";
-// import { clearSession } from "_core/auth/session";
+import { useAuthStore } from "_core/store/authStore";
 
 export default function Layout() {
+  const Logout = useAuthStore((state) => state.logout);
   const location = useLocation();
 
   const menuItems = [
@@ -71,10 +72,7 @@ export default function Layout() {
           <Button
             variant="ghost"
             className="w-full justify-start gap-3 text-gray-700 hover:bg-gray-100"
-            onClick={() => {
-              // clearSession();
-              window.location.assign("/login");
-            }}
+            onClick={Logout}
           >
             <LogOut className="w-5 h-5" />
             <span>Logout</span>

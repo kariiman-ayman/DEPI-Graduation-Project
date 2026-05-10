@@ -12,9 +12,15 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@types/nodemailer": "^8.0.0",
+    "axios": "^1.16.0",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "serverless-http": "^4.0.0"
+    "firebase-admin": "^13.9.0",
+    "nodemailer": "^8.0.7",
+    "serverless-http": "^4.0.0",
+    "uuid": "^14.0.0"
   },
   "scripts": {
     "dev": "bun run --watch src/index.ts",

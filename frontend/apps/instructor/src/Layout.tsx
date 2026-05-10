@@ -6,11 +6,14 @@ import {
   GraduationCap,
   Video,
   Bell,
+  LogOut,
 } from "lucide-react";
 import { Button } from "_core/components/ui/button";
 import { Badge } from "_core/components/ui/badge";
+import { useAuthStore } from "_core/store/authStore";
 
 export default function Layout() {
+  const Logout = useAuthStore((state) => state.logout);
   const location = useLocation();
 
   const menuItems = [
@@ -64,6 +67,17 @@ export default function Layout() {
             </Link>
           ))}
         </nav>
+
+        <div className="p-4 border-t border-gray-200">
+          <Button
+            variant="ghost"
+            className="w-full justify-start gap-3 text-gray-700 hover:bg-gray-100"
+            onClick={Logout}
+          >
+            <LogOut className="w-5 h-5" />
+            <span>Logout</span>
+          </Button>
+        </div>
       </aside>
 
       {/* Main Content */}
