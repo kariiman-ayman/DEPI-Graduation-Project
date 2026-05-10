@@ -1,7 +1,7 @@
 import type {
   CreateDepartmentDTO,
   DepartmentList,
-} from "@/types/department.types";
+} from "../types/department.types";
 import api from "_core/api";
 
 const URL = "admin/department";
