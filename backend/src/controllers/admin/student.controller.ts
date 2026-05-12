@@ -1,21 +1,34 @@
 import type { Request, Response, NextFunction } from "express";
 import { db } from "@/config/firebase";
 
-export const getStudentsController = async (req: Request, res: Response, next: NextFunction) => {
+export const getStudentsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const usersSnap = await db.collection("users").where("role", "==", "student").get();
-    const students = usersSnap.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+    const usersSnap = await db
+      .collection("users")
+      .where("role", "==", "student")
+      .get();
+    const students = usersSnap.docs.map((doc) => ({
+      id: doc.id,
+      ...(doc.data() as any),
+    }));
 
     const results = await Promise.all(
       students.map(async (student) => {
         const [enrollmentsSnap, gradesSnap, paymentsSnap] = await Promise.all([
-          db.collection("enrollments").where("studentId", "==", student.id).get(),
+          db
+            .collection("enrollments")
+            .where("studentId", "==", student.id)
+            .get(),
           db.collection("grades").where("studentId", "==", student.id).get(),
           db.collection("payments").where("studentId", "==", student.id).get(),
         ]);
 
         const enrolledCourses = enrollmentsSnap.docs.filter(
-          (d) => d.data().status === "active"
+          (d) => d.data().status === "active",
         ).length;
 
         const gradePoints = gradesSnap.docs
@@ -24,9 +37,11 @@ export const getStudentsController = async (req: Request, res: Response, next: N
         const averageGrade =
           gradePoints.length > 0
             ? Math.round(
-                (gradePoints.reduce((a: number, b: number) => a + b, 0) / gradePoints.length) * 100
+                (gradePoints.reduce((a: number, b: number) => a + b, 0) /
+                  gradePoints.length) *
+                  100,
               ) / 100
-            : (student.initialGpa as number | undefined) ?? null;
+            : ((student.initialGpa as number | undefined) ?? null);
 
         const totalPaid = paymentsSnap.docs
           .filter((d) => d.data().status === "paid")
@@ -42,7 +57,7 @@ export const getStudentsController = async (req: Request, res: Response, next: N
           averageGrade,
           totalPaid,
         };
-      })
+      }),
     );
 
     res.json({ students: results });
@@ -54,75 +69,104 @@ export const getStudentsController = async (req: Request, res: Response, next: N
 export const getStudentDetailsController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
 
-    const userDoc = await db.collection("users").doc(id).get();
+    const userDoc = await db
+      .collection("users")
+      .doc(id as string)
+      .get();
     if (!userDoc.exists || (userDoc.data() as any).role !== "student") {
       res.status(404).json({ message: "Student not found" });
       return;
     }
     const student = { id: userDoc.id, ...(userDoc.data() as any) };
 
-    const [enrollmentsSnap, gradesSnap, paymentsSnap, attendanceSnap] = await Promise.all([
-      db.collection("enrollments").where("studentId", "==", id).get(),
-      db.collection("grades").where("studentId", "==", id).get(),
-      db.collection("payments").where("studentId", "==", id).get(),
-      db.collection("attendance").where("studentId", "==", id).get(),
-    ]);
+    const [enrollmentsSnap, gradesSnap, paymentsSnap, attendanceSnap] =
+      await Promise.all([
+        db.collection("enrollments").where("studentId", "==", id).get(),
+        db.collection("grades").where("studentId", "==", id).get(),
+        db.collection("payments").where("studentId", "==", id).get(),
+        db.collection("attendance").where("studentId", "==", id).get(),
+      ]);
 
-    const enrollments = enrollmentsSnap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
+    const enrollments = enrollmentsSnap.docs.map((d) => ({
+      id: d.id,
+      ...(d.data() as any),
+    }));
     const gradesMap = new Map(
-      gradesSnap.docs.map((d) => [d.data().courseId, { id: d.id, ...(d.data() as any) }])
+      gradesSnap.docs.map((d) => [
+        d.data().courseId,
+        { id: d.id, ...(d.data() as any) },
+      ]),
     );
     const paymentsMap = new Map(
-      paymentsSnap.docs.map((d) => [d.data().courseId, { id: d.id, ...(d.data() as any) }])
+      paymentsSnap.docs.map((d) => [
+        d.data().courseId,
+        { id: d.id, ...(d.data() as any) },
+      ]),
     );
     const attendanceRecords = attendanceSnap.docs.map((d) => ({
       id: d.id,
       ...(d.data() as any),
     }));
 
-    const courseIds = [...new Set(enrollments.map((e: any) => e.courseId as string))];
+    const courseIds = [
+      ...new Set(enrollments.map((e: any) => e.courseId as string)),
+    ];
     const courseSnaps =
       courseIds.length > 0
-        ? await Promise.all(courseIds.map((cid) => db.collection("courses").doc(cid).get()))
+        ? await Promise.all(
+            courseIds.map((cid) => db.collection("courses").doc(cid).get()),
+          )
         : [];
     const coursesMap = new Map(
-      courseSnaps.filter((s) => s.exists).map((s) => [s.id, { id: s.id, ...(s.data() as any) }])
+      courseSnaps
+        .filter((s) => s.exists)
+        .map((s) => [s.id, { id: s.id, ...(s.data() as any) }]),
     );
 
     const instructorIds = [
       ...new Set(
         Array.from(coursesMap.values())
           .map((c: any) => c.instructorId)
-          .filter(Boolean)
+          .filter(Boolean),
       ),
     ];
     const instructorSnaps =
       instructorIds.length > 0
         ? await Promise.all(
-            instructorIds.map((iid) => db.collection("users").doc(iid as string).get())
+            instructorIds.map((iid) =>
+              db
+                .collection("users")
+                .doc(iid as string)
+                .get(),
+            ),
           )
         : [];
     const instructorsMap = new Map(
       instructorSnaps
         .filter((s) => s.exists)
-        .map((s) => [s.id, (s.data() as any)?.name || (s.data() as any)?.email])
+        .map((s) => [
+          s.id,
+          (s.data() as any)?.name || (s.data() as any)?.email,
+        ]),
     );
 
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toISOString().split("T")[0]!;
 
     const courses = enrollments.map((enrollment: any) => {
       const course = coursesMap.get(enrollment.courseId) as any;
       const grade = (gradesMap.get(enrollment.courseId) as any) || null;
       const payment = (paymentsMap.get(enrollment.courseId) as any) || null;
       const courseAttendance = attendanceRecords.filter(
-        (a: any) => a.courseId === enrollment.courseId
+        (a: any) => a.courseId === enrollment.courseId,
       );
-      const presentCount = courseAttendance.filter((a: any) => a.status === "present").length;
+      const presentCount = courseAttendance.filter(
+        (a: any) => a.status === "present",
+      ).length;
       const attendanceRate =
         courseAttendance.length > 0
           ? Math.round((presentCount / courseAttendance.length) * 100)
@@ -132,15 +176,17 @@ export const getStudentDetailsController = async (
         ? payment.status === "paid"
           ? "paid"
           : payment.dueDate < today
-          ? "overdue"
-          : "pending"
+            ? "overdue"
+            : "pending"
         : null;
 
       return {
         courseId: enrollment.courseId,
         enrollmentStatus: enrollment.status,
         title: course?.title || "Unknown Course",
-        instructor: course ? instructorsMap.get(course.instructorId) || "—" : "—",
+        instructor: course
+          ? instructorsMap.get(course.instructorId) || "—"
+          : "—",
         credits: course?.credits || 0,
         lectureTime: course?.lectureTime || null,
         grade: grade
@@ -165,7 +211,11 @@ export const getStudentDetailsController = async (
               method: payment.method,
             }
           : null,
-        attendance: { present: presentCount, total: courseAttendance.length, rate: attendanceRate },
+        attendance: {
+          present: presentCount,
+          total: courseAttendance.length,
+          rate: attendanceRate,
+        },
       };
     });
 
@@ -173,7 +223,11 @@ export const getStudentDetailsController = async (
       const data = d.data() as any;
       const course = coursesMap.get(data.courseId) as any;
       const effectiveStatus =
-        data.status === "paid" ? "paid" : data.dueDate < today ? "overdue" : "pending";
+        data.status === "paid"
+          ? "paid"
+          : data.dueDate < today
+            ? "overdue"
+            : "pending";
       return {
         id: d.id,
         courseId: data.courseId,
@@ -189,9 +243,13 @@ export const getStudentDetailsController = async (
     });
 
     const attendanceTotal = attendanceRecords.length;
-    const attendancePresent = attendanceRecords.filter((a: any) => a.status === "present").length;
+    const attendancePresent = attendanceRecords.filter(
+      (a: any) => a.status === "present",
+    ).length;
     const attendanceRate =
-      attendanceTotal > 0 ? Math.round((attendancePresent / attendanceTotal) * 100) : 0;
+      attendanceTotal > 0
+        ? Math.round((attendancePresent / attendanceTotal) * 100)
+        : 0;
 
     const gradePoints = Array.from(gradesMap.values())
       .map((g: any) => g.gradePoints)
@@ -199,9 +257,11 @@ export const getStudentDetailsController = async (
     const averageGrade =
       gradePoints.length > 0
         ? Math.round(
-            (gradePoints.reduce((a: number, b: number) => a + b, 0) / gradePoints.length) * 100
+            (gradePoints.reduce((a: number, b: number) => a + b, 0) /
+              gradePoints.length) *
+              100,
           ) / 100
-        : (student.initialGpa as number | undefined) ?? null;
+        : ((student.initialGpa as number | undefined) ?? null);
 
     const totalPaid = paymentsSnap.docs
       .filter((d) => d.data().status === "paid")
@@ -217,7 +277,8 @@ export const getStudentDetailsController = async (
       academicYear: (student.academicYear as number | undefined) ?? null,
       createdAt: student.createdAt?.toDate?.()?.toISOString() ?? null,
       stats: {
-        enrolledCourses: enrollments.filter((e: any) => e.status === "active").length,
+        enrolledCourses: enrollments.filter((e: any) => e.status === "active")
+          .length,
         attendanceRate,
         averageGrade,
         totalPaid,

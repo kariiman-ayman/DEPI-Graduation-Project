@@ -4,20 +4,25 @@ import { db } from "@/config/firebase";
 export const getDashboardController = async (
   _req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
-    const [studentsSnap, instructorsSnap, coursesSnap, departmentsSnap, paymentsSnap] =
-      await Promise.all([
-        db.collection("users").where("role", "==", "student").get(),
-        db.collection("users").where("role", "==", "instructor").get(),
-        db.collection("courses").get(),
-        db.collection("departments").get(),
-        db.collection("payments").get(),
-      ]);
+    const [
+      studentsSnap,
+      instructorsSnap,
+      coursesSnap,
+      departmentsSnap,
+      paymentsSnap,
+    ] = await Promise.all([
+      db.collection("users").where("role", "==", "student").get(),
+      db.collection("users").where("role", "==", "instructor").get(),
+      db.collection("courses").get(),
+      db.collection("departments").get(),
+      db.collection("payments").get(),
+    ]);
 
     // ── Payment totals ──────────────────────────────────────────────────────
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toISOString().split("T")[0]!;
     let totalCollected = 0;
     let totalOutstanding = 0;
     let totalOverdue = 0;
@@ -59,7 +64,7 @@ export const getDashboardController = async (
       departmentsSnap.docs.map((d) => [
         d.id,
         { name: (d.data() as any).name, code: (d.data() as any).code },
-      ])
+      ]),
     );
 
     const deptCounts = new Map<string, number>();
