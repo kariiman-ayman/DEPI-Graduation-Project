@@ -247,3 +247,65 @@
     transform: rotate(360deg);
   }
 }
+
+/* ── Dark mode ─────────────────────────────────────────── */
+.dark .login-root {
+  background: #0f172a;
+}
+.dark .bg-grid {
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.07) 1px, transparent 1px);
+}
+.dark .login-card {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+.dark .card-title {
+  color: #f1f5f9;
+}
+.dark .card-subtitle {
+  color: #94a3b8;
+}
+.dark .field-label {
+  color: #cbd5e1 !important;
+}
+.dark .field-input {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+.dark .field-input::placeholder {
+  color: #475569 !important;
+}
+.dark .field-input:focus {
+  border-color: #6366f1 !important;
+  background: #1e293b !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+}
+.dark .field-icon {
+  color: #64748b;
+}
+.dark .is-focused .field-icon {
+  color: #818cf8;
+}
+.dark .toggle-vis {
+  color: #64748b;
+}
+.dark .toggle-vis:hover {
+  color: #94a3b8;
+}
+.dark .forgot-link {
+  color: #818cf8;
+}
+.dark .forgot-link:hover {
+  color: #a5b4fc;
+}
+.dark .error-alert {
+  background: rgba(127, 29, 29, 0.25) !important;
+  border-color: #7f1d1d !important;
+}
+.dark .error-alert [data-slot="alert-description"] {
+  color: #fca5a5 !important;
+}

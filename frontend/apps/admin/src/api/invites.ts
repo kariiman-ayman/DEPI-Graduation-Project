@@ -1,14 +1,21 @@
 import api from "_core/api";
 import type { InviteDTO, InvitesList } from "../types/invites.types";
 
-const URL = "/admin/invite";
+const BASE = "/admin/invite";
 
-export const invite = async (req: InviteDTO) => {
-  const res = await api.post(URL, req);
-  return res.data;
+export const invite = async (req: InviteDTO): Promise<void> => {
+  await api.post(BASE, req);
 };
 
 export const getInvitations = async (): Promise<InvitesList[]> => {
-  const res = await api.get(`${URL}/list`);
+  const res = await api.get(`${BASE}/list`);
   return res.data;
+};
+
+export const resendInvitation = async (token: string): Promise<void> => {
+  await api.post(`${BASE}/${token}/resend`);
+};
+
+export const revokeInvitation = async (token: string): Promise<void> => {
+  await api.delete(`${BASE}/${token}`);
 };

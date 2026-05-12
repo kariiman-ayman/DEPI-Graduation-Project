@@ -238,22 +238,22 @@ export default function CourseDetail() {
             <div className="flex items-center gap-3 mb-2">
               <Badge
                 variant="outline"
-                className="text-indigo-600 border-indigo-300"
+                className="text-indigo-600 dark:text-indigo-400 border-indigo-300"
               >
                 {course.id}
               </Badge>
               <Badge
                 className={
                   course.status === "Full"
-                    ? "bg-orange-100 text-orange-700"
-                    : "bg-green-100 text-green-700"
+                    ? "bg-orange-100 dark:bg-orange-900/20 text-orange-700"
+                    : "bg-green-100 dark:bg-green-900/20 text-green-700"
                 }
               >
                 {course.status}
               </Badge>
             </div>
             <h3 className="text-2xl mb-1">{course.name}</h3>
-            <p className="text-sm text-gray-500">{course.instructor}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{course.instructor}</p>
           </div>
         </div>
         <div className="flex gap-3">
@@ -267,7 +267,7 @@ export default function CourseDetail() {
           </Button>
           <Button
             variant="outline"
-            className="gap-2 text-red-600 border-red-300 hover:bg-red-50"
+            className="gap-2 text-red-600 border-red-300 dark:border-red-900 hover:bg-red-50 dark:hover:bg-red-900/20"
           >
             <Trash2 className="w-4 h-4" />
             Delete Course
@@ -283,7 +283,7 @@ export default function CourseDetail() {
 
       {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="bg-white border-b w-full justify-start rounded-none h-auto p-0">
+        <TabsList className="bg-white dark:bg-gray-900 border-b w-full justify-start rounded-none h-auto p-0">
           <TabsTrigger
             value="overview"
             className="data-[state=active]:border-b-2 data-[state=active]:border-indigo-600 rounded-none"
@@ -316,11 +316,11 @@ export default function CourseDetail() {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center">
                     <BookOpen className="w-5 h-5 text-indigo-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Department</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Department</p>
                     <p className="text-sm">{course.department}</p>
                   </div>
                 </div>
@@ -330,11 +330,11 @@ export default function CourseDetail() {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center">
                     <Clock className="w-5 h-5 text-indigo-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Schedule</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Schedule</p>
                     <p className="text-sm">{course.schedule}</p>
                   </div>
                 </div>
@@ -344,11 +344,11 @@ export default function CourseDetail() {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center">
                     <MapPin className="w-5 h-5 text-indigo-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Room</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Room</p>
                     <p className="text-sm">{course.room}</p>
                   </div>
                 </div>
@@ -358,11 +358,11 @@ export default function CourseDetail() {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center">
                     <GraduationCap className="w-5 h-5 text-indigo-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Credits</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Credits</p>
                     <p className="text-sm">{course.credits} Credits</p>
                   </div>
                 </div>
@@ -372,11 +372,11 @@ export default function CourseDetail() {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center">
                     <Users className="w-5 h-5 text-indigo-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Capacity</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Capacity</p>
                     <p className="text-sm">
                       {course.enrolled}/{course.capacity} Students
                     </p>
@@ -388,11 +388,11 @@ export default function CourseDetail() {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center">
                     <Calendar className="w-5 h-5 text-indigo-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Semester</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Semester</p>
                     <p className="text-sm">{course.semester}</p>
                   </div>
                 </div>
@@ -406,7 +406,7 @@ export default function CourseDetail() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
                   Current Enrollment
                 </span>
                 <span className="text-sm">
@@ -423,7 +423,7 @@ export default function CourseDetail() {
               <CardTitle className="text-sm">Course Description</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                 {course.description}
               </p>
             </CardContent>
@@ -436,7 +436,7 @@ export default function CourseDetail() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="relative flex-1 max-w-sm">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
                   <Input
                     placeholder="Search by name or ID..."
                     className="pl-10"
@@ -466,11 +466,11 @@ export default function CourseDetail() {
                   </TableHeader>
                   <TableBody>
                     {filteredStudents.map((student) => (
-                      <TableRow key={student.id} className="hover:bg-gray-50">
+                      <TableRow key={student.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                         <TableCell>{student.id}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                            <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center">
                               <span className="text-indigo-600 text-xs">
                                 {student.name
                                   .split(" ")
@@ -481,7 +481,7 @@ export default function CourseDetail() {
                             <span>{student.name}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="text-gray-600">
+                        <TableCell className="text-gray-600 dark:text-gray-400">
                           {student.email}
                         </TableCell>
                         <TableCell>{student.year}</TableCell>
@@ -507,7 +507,7 @@ export default function CourseDetail() {
                             }
                             className={
                               student.status === "Active"
-                                ? "bg-green-100 text-green-700"
+                                ? "bg-green-100 dark:bg-green-900/20 text-green-700"
                                 : ""
                             }
                           >
@@ -518,7 +518,7 @@ export default function CourseDetail() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                           >
                             Remove
                           </Button>
@@ -529,8 +529,8 @@ export default function CourseDetail() {
                 </Table>
               ) : (
                 <div className="text-center py-12">
-                  <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500">
+                  <Users className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-500 dark:text-gray-400">
                     No students enrolled in this course
                   </p>
                   <Button className="mt-4 bg-indigo-600 hover:bg-indigo-700">
@@ -576,12 +576,12 @@ export default function CourseDetail() {
                     return (
                       <TableRow
                         key={student.studentId}
-                        className="hover:bg-gray-50"
+                        className="hover:bg-gray-50 dark:hover:bg-gray-800"
                       >
                         <TableCell>
                           <div>
                             <p className="text-sm">{student.name}</p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
                               {student.studentId}
                             </p>
                           </div>
@@ -671,7 +671,7 @@ export default function CourseDetail() {
                     return (
                       <TableRow
                         key={student.studentId}
-                        className="hover:bg-gray-50"
+                        className="hover:bg-gray-50 dark:hover:bg-gray-800"
                       >
                         <TableCell>{student.studentId}</TableCell>
                         <TableCell>{student.name}</TableCell>

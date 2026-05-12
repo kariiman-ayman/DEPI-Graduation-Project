@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from "_core/components/ui/card";
 import { Input } from "_core/components/ui/input";
 import { Button } from "_core/components/ui/button";
 import { Badge } from "_core/components/ui/badge";
-import { Search, UserPlus, Download } from "lucide-react";
+import { Search, UserPlus, AlertCircle } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -12,224 +12,209 @@ import {
   TableHeader,
   TableRow,
 } from "_core/components/ui/table";
-import { AddStudentModal } from "_core/components/modals/AddStudentModal";
 import { StudentDetailsModal } from "_core/components/modals/StudentDetailsModal";
+import { InviteModal } from "../components/InviteModal";
+import { useStudents, useStudentDetails } from "../hooks/useStudents";
+
+function getInitials(name: string | null) {
+  if (!name) return "?";
+  return (
+    name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0]!.toUpperCase())
+      .join("") || "?"
+  );
+}
+
+function GpaDisplay({ gpa }: { gpa: number | null }) {
+  if (gpa === null) return <span className="text-gray-400 dark:text-gray-500">—</span>;
+  const color =
+    gpa >= 3.7 ? "text-green-600" : gpa >= 3.0 ? "text-blue-600" : "text-orange-600";
+  return <span className={color}>{gpa.toFixed(2)}</span>;
+}
 
 export default function AdminStudents() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState<
-    (typeof students)[0] | null
-  >(null);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-  const students = [
-    {
-      id: "STU001",
-      name: "Alex Martinez",
-      email: "alex.m@campus.edu",
-      department: "Engineering",
-      year: "3rd Year",
-      gpa: 3.85,
-      status: "Active",
-    },
-    {
-      id: "STU002",
-      name: "Sarah Johnson",
-      email: "sarah.j@campus.edu",
-      department: "Business",
-      year: "2nd Year",
-      gpa: 3.92,
-      status: "Active",
-    },
-    {
-      id: "STU003",
-      name: "Michael Chen",
-      email: "michael.c@campus.edu",
-      department: "Sciences",
-      year: "4th Year",
-      gpa: 3.67,
-      status: "Active",
-    },
-    {
-      id: "STU004",
-      name: "Emily Davis",
-      email: "emily.d@campus.edu",
-      department: "Arts",
-      year: "1st Year",
-      gpa: 3.78,
-      status: "Active",
-    },
-    {
-      id: "STU005",
-      name: "Daniel Kim",
-      email: "daniel.k@campus.edu",
-      department: "Engineering",
-      year: "3rd Year",
-      gpa: 3.54,
-      status: "Active",
-    },
-    {
-      id: "STU006",
-      name: "Sofia Rodriguez",
-      email: "sofia.r@campus.edu",
-      department: "Medicine",
-      year: "2nd Year",
-      gpa: 3.89,
-      status: "Inactive",
-    },
-    {
-      id: "STU007",
-      name: "James Wilson",
-      email: "james.w@campus.edu",
-      department: "Business",
-      year: "4th Year",
-      gpa: 3.45,
-      status: "Active",
-    },
-    {
-      id: "STU008",
-      name: "Olivia Brown",
-      email: "olivia.b@campus.edu",
-      department: "Sciences",
-      year: "1st Year",
-      gpa: 3.95,
-      status: "Active",
-    },
-  ];
+  const { data: students, isLoading, isError, error } = useStudents();
+  const { data: studentDetail, isLoading: loadingDetail } = useStudentDetails(selectedStudentId);
 
-  const filteredStudents = students.filter(
-    (student) =>
-      student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.email.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filtered = (students ?? []).filter((s) => {
+    const q = searchTerm.toLowerCase();
+    return (
+      (s.name ?? "").toLowerCase().includes(q) ||
+      s.email.toLowerCase().includes(q) ||
+      s.id.toLowerCase().includes(q)
+    );
+  });
+
+  const handleView = (id: string) => {
+    setSelectedStudentId(id);
+    setIsDetailsOpen(true);
+  };
+
+  const handleCloseDetails = (open: boolean) => {
+    setIsDetailsOpen(open);
+    if (!open) setSelectedStudentId(null);
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-2xl">Student Management</h3>
-          <p className="text-sm text-gray-500">
+          <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            Student Management
+          </h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Manage student enrollments and information
           </p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline" className="gap-2">
-            <Download className="w-4 h-4" />
-            Export
-          </Button>
-          <Button
-            className="gap-2 bg-indigo-600 hover:bg-indigo-700"
-            onClick={() => setIsAddModalOpen(true)}
-          >
-            <UserPlus className="w-4 h-4" />
-            Add Student
-          </Button>
-        </div>
+        <Button
+          className="gap-2 bg-indigo-600 hover:bg-indigo-700"
+          onClick={() => setIsInviteOpen(true)}
+        >
+          <UserPlus className="w-4 h-4" />
+          Invite Student
+        </Button>
       </div>
 
-      <Card>
+      <Card className="dark:bg-gray-900 dark:border-gray-800">
         <CardHeader>
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input
-                placeholder="Search students by name, ID, or email..."
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+          <div className="relative max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
+            <Input
+              placeholder="Search by name, email, or ID…"
+              className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
         </CardHeader>
+
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Student ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Department</TableHead>
-                <TableHead>Year</TableHead>
-                <TableHead>GPA</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredStudents.map((student) => (
-                <TableRow key={student.id}>
-                  <TableCell>{student.id}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                        <span className="text-indigo-600 text-xs">
-                          {student.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </span>
-                      </div>
-                      <span>{student.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-gray-600">
-                    {student.email}
-                  </TableCell>
-                  <TableCell>{student.department}</TableCell>
-                  <TableCell>{student.year}</TableCell>
-                  <TableCell>
-                    <span
-                      className={
-                        student.gpa >= 3.7
-                          ? "text-green-600"
-                          : student.gpa >= 3.0
-                            ? "text-blue-600"
-                            : "text-orange-600"
-                      }
-                    >
-                      {student.gpa.toFixed(2)}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        student.status === "Active" ? "default" : "secondary"
-                      }
-                      className={
-                        student.status === "Active"
-                          ? "bg-green-100 text-green-700"
-                          : ""
-                      }
-                    >
-                      {student.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedStudent(student);
-                        setIsDetailsModalOpen(true);
-                      }}
-                    >
-                      View
-                    </Button>
-                  </TableCell>
-                </TableRow>
+          {isLoading && (
+            <div className="space-y-3 py-2">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="h-10 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" />
               ))}
-            </TableBody>
-          </Table>
+            </div>
+          )}
+
+          {isError && (
+            <div className="flex items-center gap-3 text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900 rounded-lg px-4 py-3">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <p className="text-sm">
+                {error instanceof Error ? error.message : "Failed to load students"}
+              </p>
+            </div>
+          )}
+
+          {!isLoading && !isError && (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Student</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead className="text-center">Year</TableHead>
+                  <TableHead className="text-center">Courses</TableHead>
+                  <TableHead className="text-center">Avg GPA</TableHead>
+                  <TableHead className="text-right">Total Paid</TableHead>
+                  <TableHead className="text-center">Status</TableHead>
+                  <TableHead />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filtered.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center py-12 text-gray-400 dark:text-gray-500">
+                      {searchTerm ? "No students match your search." : "No students found."}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filtered.map((student) => (
+                    <TableRow key={student.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center shrink-0">
+                            <span className="text-indigo-600 dark:text-indigo-400 text-xs font-medium">
+                              {getInitials(student.name)}
+                            </span>
+                          </div>
+                          <span className="font-medium text-gray-900 dark:text-white">
+                            {student.name ?? <span className="text-gray-400 italic">No name</span>}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-gray-600 dark:text-gray-400">
+                        {student.email}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {student.academicYear ? (
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-full">
+                            Year {student.academicYear}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 dark:text-gray-500">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-center text-gray-700 dark:text-gray-200">
+                        {student.enrolledCourses}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <GpaDisplay gpa={student.averageGrade} />
+                      </TableCell>
+                      <TableCell className="text-right text-gray-700 dark:text-gray-200">
+                        ${student.totalPaid.toLocaleString()}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge
+                          className={
+                            student.enrolledCourses > 0
+                              ? "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400"
+                              : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                          }
+                        >
+                          {student.enrolledCourses > 0 ? "Active" : "Inactive"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleView(student.id)}
+                          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
+                        >
+                          View
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          )}
+
+          {!isLoading && !isError && students && (
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-4">
+              {filtered.length} of {students.length} student{students.length !== 1 ? "s" : ""}
+            </p>
+          )}
         </CardContent>
       </Card>
 
-      <AddStudentModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
+      <InviteModal open={isInviteOpen} onOpenChange={setIsInviteOpen} />
+
       <StudentDetailsModal
-        open={isDetailsModalOpen}
-        onOpenChange={setIsDetailsModalOpen}
-        student={selectedStudent}
+        open={isDetailsOpen}
+        onOpenChange={handleCloseDetails}
+        studentId={selectedStudentId}
+        detail={studentDetail ?? null}
+        isLoading={loadingDetail}
       />
     </div>
   );

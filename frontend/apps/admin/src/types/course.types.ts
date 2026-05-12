@@ -8,6 +8,8 @@ export interface CreateCourseDTO {
   };
   instructorId: string;
   departmentId: string;
+  minYear?: number | null;
+  capacity?: number | null;
 }
 
 export interface CoursesList {
@@ -23,10 +25,13 @@ export interface CoursesList {
     id: string;
     name: string;
     email: string;
-  };
+  } | null;
   department: {
     id: string;
     code: string;
     name: string;
-  };
+  } | null;
+  minYear: number | null;
+  capacity: number | null;
+  enrolledCount: number;
 }

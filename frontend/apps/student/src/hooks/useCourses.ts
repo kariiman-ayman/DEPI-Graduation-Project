@@ -1,9 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCourses } from "../api/courses";
+import { getCourses, getEnrolledCourses } from "../api/courses";
 
-export const useCourses = () => {
-  return useQuery({
-    queryKey: ["courses"],
-    queryFn: getCourses,
-  });
-};
+export const useCourses = () =>
+  useQuery({ queryKey: ["courses"], queryFn: getCourses });
+
+export const useEnrolledCourses = () =>
+  useQuery({ queryKey: ["enrolled-courses"], queryFn: getEnrolledCourses });

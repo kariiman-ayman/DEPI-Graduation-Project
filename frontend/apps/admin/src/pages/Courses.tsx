@@ -1,18 +1,17 @@
 import { Button } from "_core/components/ui/button";
+import { Badge } from "_core/components/ui/badge";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "_core/components/ui/card";
-import { BookOpen, Clock, Plus } from "lucide-react";
+import { BookOpen, Clock, Plus, Users, Layers } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router";
 import { AddCourseModal } from "../components/AddCourseModal";
 import { useCourses } from "../hooks/useCourses";
 
 export default function AdminCourses() {
-  const navigate = useNavigate();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const { data: courses, isLoading } = useCourses();
@@ -26,7 +25,7 @@ export default function AdminCourses() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-2xl">Course Management</h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Manage courses and track enrollments
           </p>
         </div>
@@ -46,37 +45,49 @@ export default function AdminCourses() {
               <div className="flex items-start justify-between">
                 <div>
                   <CardTitle className="text-lg mb-1">{course.title}</CardTitle>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     {course.instructor.name}
                   </p>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                 <BookOpen className="w-4 h-4" />
-                <span>{course.department.name}</span>
+                <span>{course.department?.name ?? "—"}</span>
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                 <Clock className="w-4 h-4" />
                 <span>
-                  {course.lectureTime.day} {course.lectureTime.start} -{" "}
+                  {course.lectureTime.day} {course.lectureTime.start} –{" "}
                   {course.lectureTime.end}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t">
-                <span className="text-sm text-gray-600">
-                  {course.credits} Credits
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <Users className="w-4 h-4" />
+                <span>
+                  {course.enrolledCount}
+                  {course.capacity !== null ? `/${course.capacity}` : ""} enrolled
                 </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate(`/courses/${course.id}`)}
-                >
-                  Manage
-                </Button>
+                {course.capacity !== null && course.enrolledCount >= course.capacity && (
+                  <Badge className="text-xs bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 ml-auto">
+                    Full
+                  </Badge>
+                )}
+              </div>
+
+              <div className="flex items-center pt-2 border-t">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {course.credits} credits
+                </span>
+                {course.minYear !== null && (
+                  <span className="flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-full ml-2">
+                    <Layers className="w-3 h-3" />
+                    Yr {course.minYear}+
+                  </span>
+                )}
               </div>
             </CardContent>
           </Card>

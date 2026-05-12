@@ -8,4 +8,6 @@ export interface CreateCourseDTO {
   };
   instructorId: string;
   departmentId: string;
+  minYear?: number | null;
+  capacity?: number | null;
 }

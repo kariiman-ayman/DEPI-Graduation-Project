@@ -1,378 +1,324 @@
+import { useNavigate } from "react-router";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "_core/components/ui/card";
-import {
-  BookOpen,
-  Trophy,
-  DollarSign,
-  Flame,
-  Award,
-  Target,
-  Star,
-  TrendingUp,
+  BookOpen, ClipboardCheck, Award, DollarSign,
+  AlertCircle, Calendar, ChevronRight, CreditCard,
 } from "lucide-react";
-import { Progress } from "_core/components/ui/progress";
-import { Badge } from "_core/components/ui/badge";
 import { Button } from "_core/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "_core/components/ui/dialog";
-import { useState } from "react";
+import { Badge } from "_core/components/ui/badge";
+import { useProfile } from "../hooks/useProfile";
+import { useEnrolledCourses } from "../hooks/useCourses";
+import { useMyPayments } from "../hooks/usePayments";
+
+function gradeColor(letter: string | null) {
+  if (!letter) return "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400";
+  if (letter.startsWith("A")) return "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400";
+  if (letter.startsWith("B")) return "bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400";
+  if (letter.startsWith("C")) return "bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400";
+  return "bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400";
+}
+
+function paymentStatusColor(status: string) {
+  if (status === "paid") return "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400";
+  if (status === "overdue") return "bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400";
+  return "bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400";
+}
+
+function StatCard({
+  icon: Icon, label, value, sub, color,
+}: {
+  icon: React.ElementType; label: string; value: string; sub?: string; color: string;
+}) {
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 flex items-center gap-4 shadow-sm">
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
+        <Icon className="w-5 h-5" />
+      </div>
+      <div>
+        <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+        <p className="text-xl font-semibold text-gray-900 dark:text-white">{value}</p>
+        {sub && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{sub}</p>}
+      </div>
+    </div>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 animate-pulse">
+      <div className="flex items-center gap-4">
+        <div className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-gray-700 shrink-0" />
+        <div className="space-y-2 flex-1">
+          <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded w-20" />
+          <div className="h-5 bg-gray-100 dark:bg-gray-700 rounded w-12" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function StudentDashboard() {
-  const [selectedCourse, setSelectedCourse] = useState<
-    | {
-        code: string;
-        name: string;
-        instructor: string;
-        progress: number;
-        nextClass: string;
-        attendance: number;
-      }
-    | null
-  >(null);
+  const navigate = useNavigate();
 
-  const stats = [
-    {
-      title: "Enrolled Courses",
-      value: "6",
-      icon: BookOpen,
-      color: "bg-blue-500",
-    },
-    {
-      title: "Current GPA",
-      value: "3.85",
-      icon: Trophy,
-      color: "bg-green-500",
-    },
-    {
-      title: "Avg. Attendance",
-      value: "92%",
-      icon: Target,
-      color: "bg-purple-500",
-    },
-    {
-      title: "Outstanding Fees",
-      value: "$1,200",
-      icon: DollarSign,
-      color: "bg-orange-500",
-    },
-  ];
+  const { data: profile, isLoading: loadingProfile, isError: errorProfile } = useProfile();
+  const { data: enrolled, isLoading: loadingEnrolled } = useEnrolledCourses();
+  const { data: payments, isLoading: loadingPayments } = useMyPayments();
 
-  const courses = [
-    {
-      code: "CS401",
-      name: "Advanced Data Structures",
-      instructor: "Dr. Johnson",
-      progress: 65,
-      nextClass: "Today, 10:00 AM",
-      attendance: 91,
-    },
-    {
-      code: "CS301",
-      name: "Database Systems",
-      instructor: "Prof. Chen",
-      progress: 58,
-      nextClass: "Tomorrow, 2:00 PM",
-      attendance: 88,
-    },
-    {
-      code: "BUS201",
-      name: "Business Analytics",
-      instructor: "Dr. Davis",
-      progress: 72,
-      nextClass: "Wed, 11:00 AM",
-      attendance: 95,
-    },
-  ];
+  const overdueCount = (payments?.payments ?? []).filter((p) => p.status === "overdue").length;
+  const pendingPayments = (payments?.payments ?? []).filter((p) => p.status !== "paid");
+  const paidRatio =
+    payments && payments.totalFee > 0
+      ? Math.round((payments.totalPaid / payments.totalFee) * 100)
+      : 0;
 
-  const achievements = [
-    {
-      icon: Flame,
-      title: "15 Day Streak",
-      description: "Perfect attendance",
-      color: "bg-orange-500",
-    },
-    {
-      icon: Award,
-      title: "Dean's List",
-      description: "GPA above 3.8",
-      color: "bg-yellow-500",
-    },
-    {
-      icon: Star,
-      title: "Top 10%",
-      description: "In your class",
-      color: "bg-purple-500",
-    },
-    {
-      icon: TrendingUp,
-      title: "Improving",
-      description: "+0.3 GPA this sem",
-      color: "bg-green-500",
-    },
-  ];
-
-  const upcomingDeadlines = [
-    {
-      course: "CS401",
-      task: "Assignment 3: Tree Algorithms",
-      due: "Tomorrow",
-      priority: "high",
-    },
-    {
-      course: "CS301",
-      task: "Database Project Milestone",
-      due: "3 days",
-      priority: "medium",
-    },
-    {
-      course: "BUS201",
-      task: "Case Study Analysis",
-      due: "1 week",
-      priority: "low",
-    },
-  ];
+  if (errorProfile) {
+    return (
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-red-100 dark:border-red-900/30 p-8 text-center shadow-sm">
+        <div className="w-14 h-14 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-3">
+          <AlertCircle className="w-7 h-7 text-red-500" />
+        </div>
+        <p className="text-lg font-semibold text-gray-900 dark:text-white">Failed to load dashboard</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Please refresh the page</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <Card key={stat.title}>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div
-                  className={`${stat.color} w-12 h-12 rounded-lg flex items-center justify-center`}
-                >
-                  <stat.icon className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">{stat.title}</p>
-                  <p className="text-2xl">{stat.value}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      {/* Header */}
+      <div>
+        <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          {loadingProfile ? (
+            <span className="inline-block h-7 w-48 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" />
+          ) : (
+            `Welcome, ${profile?.name?.split(" ")[0] ?? "Student"}`
+          )}
+        </h3>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          Here's an overview of your academic progress
+        </p>
       </div>
 
+      {/* Stat cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {loadingProfile ? (
+          [1, 2, 3, 4].map((i) => <SkeletonCard key={i} />)
+        ) : (
+          <>
+            <StatCard
+              icon={BookOpen}
+              label="Enrolled Courses"
+              value={String(profile?.stats.enrolledCourses ?? 0)}
+              color="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+            />
+            <StatCard
+              icon={Award}
+              label="Average Grade"
+              value={profile?.stats.averageGrade !== null && profile?.stats.averageGrade !== undefined
+                ? String(profile.stats.averageGrade)
+                : "—"}
+              color="bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400"
+            />
+            <StatCard
+              icon={ClipboardCheck}
+              label="Attendance Rate"
+              value={`${profile?.stats.attendanceRate ?? 0}%`}
+              color="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400"
+            />
+            <StatCard
+              icon={DollarSign}
+              label="Outstanding"
+              value={`$${(payments?.totalOutstanding ?? 0).toLocaleString()}`}
+              sub={overdueCount > 0 ? `${overdueCount} overdue` : undefined}
+              color={overdueCount > 0
+                ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+                : "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400"}
+            />
+          </>
+        )}
+      </div>
+
+      {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* My Courses */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>My Courses</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {courses.map((course) => (
-                <div
-                  key={course.code}
-                  className="border rounded-lg p-4 space-y-3"
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <Badge variant="outline" className="mb-2">
-                        {course.code}
-                      </Badge>
-                      <h4 className="mb-1">{course.name}</h4>
-                      <p className="text-sm text-gray-500">
-                        {course.instructor}
-                      </p>
-                    </div>
-                    <Button size="sm" onClick={() => setSelectedCourse(course)}>
-                      View
-                    </Button>
+
+        {/* Enrolled courses */}
+        <div className="lg:col-span-2 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+            <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-indigo-500" />
+              Enrolled Courses
+            </h2>
+            <button
+              onClick={() => navigate("/courses")}
+              className="flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+            >
+              View all
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {loadingEnrolled && (
+            <div className="divide-y divide-gray-100 dark:divide-gray-800">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="px-6 py-4 animate-pulse flex items-center justify-between gap-4">
+                  <div className="space-y-2 flex-1">
+                    <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded w-14" />
+                    <div className="h-4 bg-gray-100 dark:bg-gray-700 rounded w-2/3" />
+                    <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded w-1/2" />
                   </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="text-gray-500">Next Class</p>
-                      <p>{course.nextClass}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Attendance</p>
-                      <p className="text-green-600">{course.attendance}%</p>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between text-sm mb-2">
-                      <span className="text-gray-600">Course Progress</span>
-                      <span>{course.progress}%</span>
-                    </div>
-                    <Progress value={course.progress} className="h-2" />
-                  </div>
+                  <div className="h-6 w-14 bg-gray-100 dark:bg-gray-700 rounded-full shrink-0" />
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          )}
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Upcoming Deadlines</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {upcomingDeadlines.map((deadline, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 border rounded-lg"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Badge variant="outline" className="text-xs">
-                          {deadline.course}
-                        </Badge>
-                        <Badge
-                          className={`text-xs ${
-                            deadline.priority === "high"
-                              ? "bg-red-100 text-red-700"
-                              : deadline.priority === "medium"
-                                ? "bg-yellow-100 text-yellow-700"
-                                : "bg-blue-100 text-blue-700"
-                          }`}
-                        >
-                          {deadline.priority}
-                        </Badge>
-                      </div>
-                      <p className="text-sm">{deadline.task}</p>
+          {!loadingEnrolled && (enrolled ?? []).length === 0 && (
+            <div className="px-6 py-12 text-center">
+              <p className="text-sm text-gray-500 dark:text-gray-400">No enrolled courses yet</p>
+              <Button
+                size="sm"
+                className="mt-3 bg-indigo-600 hover:bg-indigo-700"
+                onClick={() => navigate("/courses?tab=available")}
+              >
+                Browse courses
+              </Button>
+            </div>
+          )}
+
+          {!loadingEnrolled && enrolled && enrolled.length > 0 && (
+            <div className="divide-y divide-gray-100 dark:divide-gray-800">
+              {enrolled.slice(0, 5).map((course) => (
+                <div key={course.enrollmentId} className="px-6 py-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-full">
+                        {course.department?.code ?? "—"}
+                      </span>
                     </div>
-                    <p className="text-sm text-gray-500 ml-4">
-                      Due {deadline.due}
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                      {course.title}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-0.5">
+                      <Calendar className="w-3 h-3" />
+                      {course.lectureTime?.day} {course.lectureTime?.start}–{course.lectureTime?.end}
                     </p>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                  <Badge className={`shrink-0 text-xs ${gradeColor(course.grade?.letterGrade ?? null)}`}>
+                    {course.grade?.letterGrade ?? "Enrolled"}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Gamification & Achievements */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Achievements</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-3">
-                {achievements.map((achievement, index) => (
-                  <div
-                    key={index}
-                    className="text-center p-4 border rounded-lg"
-                  >
-                    <div
-                      className={`${achievement.color} w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2`}
-                    >
-                      <achievement.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <h5 className="text-sm mb-1">{achievement.title}</h5>
-                    <p className="text-xs text-gray-500">
-                      {achievement.description}
-                    </p>
-                  </div>
+        {/* Payment summary */}
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+            <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <CreditCard className="w-4 h-4 text-indigo-500" />
+              Payments
+            </h2>
+            <button
+              onClick={() => navigate("/payments")}
+              className="flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+            >
+              View all
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {loadingPayments && (
+            <div className="p-6 space-y-4 animate-pulse">
+              <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded w-full" />
+              <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded w-full" />
+              <div className="space-y-3 mt-2">
+                {[1, 2].map((i) => (
+                  <div key={i} className="h-12 bg-gray-100 dark:bg-gray-700 rounded-lg" />
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Attendance Streak</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center mb-4">
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-full mb-3">
-                  <Flame className="w-10 h-10 text-white" />
-                </div>
-                <p className="text-3xl mb-1">15 Days</p>
-                <p className="text-sm text-gray-500">Current streak</p>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Longest Streak</span>
-                  <span>22 days</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">This Semester</span>
-                  <span className="text-green-600">92% attendance</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Payment Status</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-gray-600">Tuition Paid</span>
-                    <span>$3,800 / $5,000</span>
-                  </div>
-                  <Progress value={76} className="h-2" />
-                </div>
-                <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                  <p className="text-sm text-orange-800">
-                    Next payment due:{" "}
-                    <span className="font-medium">March 15, 2026</span>
-                  </p>
-                </div>
-                <Button className="w-full" variant="outline">
-                  View Payment History
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      <Dialog
-        open={!!selectedCourse}
-        onOpenChange={(open) => {
-          if (!open) setSelectedCourse(null);
-        }}
-      >
-        <DialogContent>
-          {selectedCourse ? (
-            <DialogHeader>
-              <DialogTitle>
-                {selectedCourse.code} — {selectedCourse.name}
-              </DialogTitle>
-              <DialogDescription>{selectedCourse.instructor}</DialogDescription>
-            </DialogHeader>
-          ) : null}
-
-          {selectedCourse ? (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="rounded-lg border p-3">
-                <div className="text-xs text-gray-500">Next class</div>
-                <div className="mt-1">{selectedCourse.nextClass}</div>
-              </div>
-              <div className="rounded-lg border p-3">
-                <div className="text-xs text-gray-500">Attendance</div>
-                <div className="mt-1">{selectedCourse.attendance}%</div>
-              </div>
-              <div className="rounded-lg border p-3 sm:col-span-2">
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span>Progress</span>
-                  <span>{selectedCourse.progress}%</span>
-                </div>
-                <div className="mt-2">
-                  <Progress value={selectedCourse.progress} className="h-2" />
-                </div>
               </div>
             </div>
-          ) : null}
-        </DialogContent>
-      </Dialog>
+          )}
+
+          {!loadingPayments && (
+            <div className="p-6 space-y-5">
+              {/* Progress bar */}
+              <div>
+                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-2">
+                  <span>
+                    <span className="font-medium text-gray-700 dark:text-gray-200">
+                      ${(payments?.totalPaid ?? 0).toLocaleString()}
+                    </span>{" "}
+                    paid
+                  </span>
+                  <span>${(payments?.totalFee ?? 0).toLocaleString()} total</span>
+                </div>
+                <div className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-indigo-500 rounded-full transition-all"
+                    style={{ width: `${paidRatio}%` }}
+                  />
+                </div>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 text-right">{paidRatio}% paid</p>
+              </div>
+
+              {/* Outstanding/overdue summary */}
+              {(payments?.totalOutstanding ?? 0) > 0 && (
+                <div className={`rounded-xl px-4 py-3 text-xs ${
+                  overdueCount > 0
+                    ? "bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-700 dark:text-red-400"
+                    : "bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-900/30 text-amber-700 dark:text-amber-400"
+                }`}>
+                  {overdueCount > 0
+                    ? `${overdueCount} payment${overdueCount > 1 ? "s" : ""} overdue — $${payments!.totalOutstanding.toLocaleString()} due`
+                    : `$${payments!.totalOutstanding.toLocaleString()} outstanding`}
+                </div>
+              )}
+
+              {/* Pending payment list */}
+              {pendingPayments.length === 0 ? (
+                <p className="text-sm text-center text-gray-500 dark:text-gray-400 py-2">
+                  All payments up to date
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {pendingPayments.slice(0, 3).map((p) => (
+                    <div
+                      key={p.id}
+                      className="flex items-center justify-between gap-2 rounded-xl bg-gray-50 dark:bg-gray-800 px-3 py-2.5"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium text-gray-800 dark:text-gray-200 truncate">
+                          {p.courseName}
+                        </p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">
+                          Due {new Date(p.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-xs font-medium text-gray-700 dark:text-gray-200">
+                          ${p.amount.toLocaleString()}
+                        </span>
+                        <Badge className={`text-xs ${paymentStatusColor(p.status)}`}>
+                          {p.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => navigate("/payments")}
+              >
+                Manage Payments
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

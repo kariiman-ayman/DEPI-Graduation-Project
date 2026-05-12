@@ -37,6 +37,8 @@ export function AddCourseModal({ open, onOpenChange }: AddCourseModalProps) {
       start: "",
       end: "",
     },
+    minYear: null as number | null,
+    capacity: "" as number | "",
   });
 
   const { data: departments } = useDepartments();
@@ -45,22 +47,21 @@ export function AddCourseModal({ open, onOpenChange }: AddCourseModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutateAsync(formData);
+    mutateAsync({
+      ...formData,
+      capacity: formData.capacity !== "" ? (formData.capacity as number) : null,
+    });
 
-    // Handle form submission
     onOpenChange(false);
 
-    // Reset form
     setFormData({
       title: "",
       departmentId: "",
       instructorId: "",
       credits: 0,
-      lectureTime: {
-        day: "",
-        start: "",
-        end: "",
-      },
+      lectureTime: { day: "", start: "", end: "" },
+      minYear: null,
+      capacity: "",
     });
   };
 
@@ -214,6 +215,45 @@ export function AddCourseModal({ open, onOpenChange }: AddCourseModalProps) {
                     })
                   }
                   required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Min. Academic Year <span className="text-gray-400 font-normal">(optional)</span></Label>
+                <div className="grid grid-cols-5 gap-1.5">
+                  {[null, 1, 2, 3, 4].map((yr) => (
+                    <button
+                      key={yr ?? "none"}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, minYear: yr })}
+                      className={`py-2 rounded-lg border-2 text-xs font-medium transition-all ${
+                        formData.minYear === yr
+                          ? "bg-indigo-50 border-indigo-500 text-indigo-700"
+                          : "border-gray-200 hover:border-gray-300 text-gray-600"
+                      }`}
+                    >
+                      {yr === null ? "Any" : `Yr ${yr}`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="capacity">Max Students <span className="text-gray-400 font-normal">(optional)</span></Label>
+                <Input
+                  id="capacity"
+                  type="number"
+                  min={1}
+                  placeholder="e.g. 40"
+                  value={formData.capacity}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      capacity: e.target.value === "" ? "" : parseInt(e.target.value),
+                    })
+                  }
                 />
               </div>
             </div>

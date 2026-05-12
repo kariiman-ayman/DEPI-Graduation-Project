@@ -1,9 +1,20 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+export type UserProfile = {
+  email: string;
+  role: string;
+  name: string;
+  title?: string;
+  specialization?: string;
+  createdAt?: any;
+  [key: string]: any;
+};
+
 type User = {
   uid: string;
   token: string;
+  user?: UserProfile;
 };
 
 type AuthStore = {

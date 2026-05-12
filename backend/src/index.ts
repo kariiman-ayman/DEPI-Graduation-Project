@@ -26,7 +26,7 @@ app.use("/student", studentRoutes);
 app.use("/instructor", instructorRoutes);
 
 if (process.env.ENV === "dev") {
-  const PORT = 5000;
+  const PORT = 5200;
 
   app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

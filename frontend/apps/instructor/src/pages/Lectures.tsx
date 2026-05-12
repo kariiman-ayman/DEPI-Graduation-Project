@@ -1,11 +1,7 @@
-import { Badge } from "_core/components/ui/badge";
+import { useState } from "react";
+import { Upload, Video, Clock, Calendar, Eye } from "lucide-react";
 import { Button } from "_core/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "_core/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "_core/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -13,83 +9,52 @@ import {
   SelectTrigger,
   SelectValue,
 } from "_core/components/ui/select";
-import { Calendar, Clock, Eye, Upload, Video } from "lucide-react";
-import { useState } from "react";
 import { UploadModal } from "../components/UploadModal";
 import { useCourses } from "../hooks/useCourses";
+import { useLectures } from "../hooks/useLectures";
+
+function formatDuration(seconds: number | null): string {
+  if (seconds === null) return "—";
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+function isThisWeek(iso: string | null): boolean {
+  if (!iso) return false;
+  const d = new Date(iso);
+  const now = new Date();
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() - now.getDay());
+  weekStart.setHours(0, 0, 0, 0);
+  return d >= weekStart;
+}
+
+function LectureSkeleton() {
+  return (
+    <div className="border border-gray-100 dark:border-gray-800 rounded-xl p-4 flex items-start gap-4 animate-pulse">
+      <div className="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-lg shrink-0" />
+      <div className="flex-1 space-y-2">
+        <div className="h-4 bg-gray-100 dark:bg-gray-700 rounded w-1/2" />
+        <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded w-1/3" />
+        <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded w-1/4" />
+      </div>
+    </div>
+  );
+}
 
 export default function InstructorLectures() {
-  const [selectedCourse, setSelectedCourse] = useState("CS401");
+  const [selectedCourseId, setSelectedCourseId] = useState<string>("all");
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { data: courses } = useCourses();
+  const { data: courses = [] } = useCourses();
+  const { data: lectures = [], isLoading, isError } = useLectures(
+    selectedCourseId === "all" ? undefined : selectedCourseId,
+  );
 
-  if (!courses) return <div>Loading...</div>;
-
-  const lectures = [
-    {
-      id: 1,
-      title: "Introduction to Binary Trees",
-      course: "CS401",
-      duration: "1:45:30",
-      uploadDate: "2026-02-18",
-      views: 42,
-      size: "245 MB",
-      status: "Published",
-    },
-    {
-      id: 2,
-      title: "AVL Trees and Balancing",
-      course: "CS401",
-      duration: "2:10:15",
-      uploadDate: "2026-02-15",
-      views: 45,
-      size: "312 MB",
-      status: "Published",
-    },
-    {
-      id: 3,
-      title: "Graph Algorithms - DFS & BFS",
-      course: "CS401",
-      duration: "1:55:45",
-      uploadDate: "2026-02-12",
-      views: 45,
-      size: "278 MB",
-      status: "Published",
-    },
-    {
-      id: 4,
-      title: "Dynamic Programming Fundamentals",
-      course: "CS401",
-      duration: "2:20:00",
-      uploadDate: "2026-02-10",
-      views: 43,
-      size: "335 MB",
-      status: "Published",
-    },
-    {
-      id: 5,
-      title: "Hash Tables and Collision Resolution",
-      course: "CS401",
-      duration: "1:38:22",
-      uploadDate: "2026-02-08",
-      views: 44,
-      size: "198 MB",
-      status: "Published",
-    },
-  ];
-
-  const stats = [
-    { label: "Total Videos", value: "24", icon: Video, color: "bg-blue-500" },
-    { label: "Total Views", value: "1,047", icon: Eye, color: "bg-green-500" },
-    {
-      label: "Total Duration",
-      value: "42h 15m",
-      icon: Clock,
-      color: "bg-purple-500",
-    },
-    { label: "This Week", value: "3", icon: Calendar, color: "bg-indigo-500" },
-  ];
+  const thisWeekCount = lectures.filter((l) => isThisWeek(l.createdAt)).length;
 
   return (
     <>
@@ -102,8 +67,10 @@ export default function InstructorLectures() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-2xl">Lecture Recordings</h3>
-            <p className="text-sm text-gray-500">
+            <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
+              Lecture Recordings
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Upload and manage recorded lectures
             </p>
           </div>
@@ -116,38 +83,51 @@ export default function InstructorLectures() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat) => (
-            <Card key={stat.label}>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`${stat.color} w-12 h-12 rounded-lg flex items-center justify-center`}
-                  >
-                    <stat.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">{stat.label}</p>
-                    <p className="text-2xl">{stat.value}</p>
-                  </div>
+        {/* Stat cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                  <Video className="w-6 h-6 text-white" />
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Videos</p>
+                  <p className="text-2xl font-semibold">{isLoading ? "—" : lectures.length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center">
+                  <Calendar className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Uploaded This Week</p>
+                  <p className="text-2xl font-semibold">{isLoading ? "—" : thisWeekCount}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
+        {/* Lecture list */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>My Lectures</CardTitle>
-              <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+              <Select value={selectedCourseId} onValueChange={setSelectedCourseId}>
                 <SelectTrigger className="w-64">
-                  <SelectValue />
+                  <SelectValue placeholder="All courses" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">All courses</SelectItem>
                   {courses.map((course) => (
                     <SelectItem key={course.id} value={course.id}>
-                      {course.id} - {course.title}
+                      {course.title}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -155,86 +135,83 @@ export default function InstructorLectures() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {lectures.map((lecture) => (
-                <div
-                  key={lecture.id}
-                  className="border rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Video className="w-8 h-8 text-indigo-600" />
+            {isError && (
+              <p className="text-sm text-red-600 dark:text-red-400 py-4 text-center">
+                Failed to load lectures
+              </p>
+            )}
+
+            {isLoading && (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => <LectureSkeleton key={i} />)}
+              </div>
+            )}
+
+            {!isLoading && !isError && lectures.length === 0 && (
+              <div className="py-12 text-center">
+                <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Video className="w-6 h-6 text-indigo-500" />
+                </div>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  No lectures yet
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  Upload your first lecture recording to get started
+                </p>
+              </div>
+            )}
+
+            {!isLoading && !isError && lectures.length > 0 && (
+              <div className="space-y-3">
+                {lectures.map((lecture) => (
+                  <div
+                    key={lecture.id}
+                    className="flex items-start gap-4 border border-gray-100 dark:border-gray-800 rounded-xl p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                  >
+                    <div className="w-14 h-14 bg-indigo-100 dark:bg-indigo-900/20 rounded-lg flex items-center justify-center shrink-0">
+                      <Video className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <h4 className="mb-1">{lecture.title}</h4>
-                          <div className="flex items-center gap-3 text-sm text-gray-500">
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              <span>{lecture.duration}</span>
-                            </div>
-                            <span>•</span>
-                            <div className="flex items-center gap-1">
-                              <Eye className="w-4 h-4" />
-                              <span>{lecture.views} views</span>
-                            </div>
-                            <span>•</span>
-                            <span>{lecture.size}</span>
-                          </div>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <h4 className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                            {lecture.title}
+                          </h4>
+                          <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">
+                            {lecture.courseName}
+                          </p>
                         </div>
-                        <Badge className="bg-green-100 text-green-700">
-                          {lecture.status}
-                        </Badge>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="shrink-0"
+                          onClick={() => window.open(lecture.videoUrl, "_blank")}
+                        >
+                          <Eye className="w-3.5 h-3.5 mr-1.5" />
+                          Preview
+                        </Button>
                       </div>
-                      <div className="flex items-center justify-between mt-3">
-                        <p className="text-sm text-gray-500">
-                          Uploaded on{" "}
-                          {new Date(lecture.uploadDate).toLocaleDateString(
-                            "en-US",
-                            {
+                      <div className="flex items-center gap-4 mt-2 text-xs text-gray-500 dark:text-gray-400">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {formatDuration(lecture.duration)}
+                        </span>
+                        {lecture.createdAt && (
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {new Date(lecture.createdAt).toLocaleDateString("en-US", {
                               month: "short",
                               day: "numeric",
                               year: "numeric",
-                            },
-                          )}
-                        </p>
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="sm">
-                            <Eye className="w-4 h-4 mr-2" />
-                            Preview
-                          </Button>
-                          <Button variant="outline" size="sm">
-                            Edit
-                          </Button>
-                        </div>
+                            })}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Upload Guidelines</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3 text-sm text-gray-600">
-              {[
-                "Supported formats: MP4, MOV, AVI (Max size: 2GB)",
-                "Recommended resolution: 1080p or higher",
-                "Add clear titles and descriptions for better student engagement",
-                "Videos are automatically transcoded for optimal streaming",
-              ].map((text) => (
-                <div key={text} className="flex items-start gap-2">
-                  <div className="w-2 h-2 bg-indigo-600 rounded-full mt-1.5" />
-                  <p>{text}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

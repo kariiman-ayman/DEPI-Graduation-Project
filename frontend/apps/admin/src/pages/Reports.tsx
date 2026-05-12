@@ -72,7 +72,7 @@ export default function AdminReports() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-2xl">Reports & Analytics</h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Comprehensive insights and data analysis
           </p>
         </div>
@@ -87,11 +87,11 @@ export default function AdminReports() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Retention Rate</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Retention Rate</p>
                 <p className="text-2xl">92.4%</p>
               </div>
             </div>
@@ -101,11 +101,11 @@ export default function AdminReports() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
                 <TrendingUp className="w-6 h-6 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Avg GPA</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Avg GPA</p>
                 <p className="text-2xl">3.65</p>
               </div>
             </div>
@@ -115,11 +115,11 @@ export default function AdminReports() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
                 <BookOpen className="w-6 h-6 text-purple-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Course Completion</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Course Completion</p>
                 <p className="text-2xl">88.7%</p>
               </div>
             </div>
@@ -129,11 +129,11 @@ export default function AdminReports() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/20 rounded-lg flex items-center justify-center">
                 <DollarSign className="w-6 h-6 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Collection Rate</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Collection Rate</p>
                 <p className="text-2xl">94.2%</p>
               </div>
             </div>
@@ -244,29 +244,29 @@ export default function AdminReports() {
                   >
                     <div className="flex items-center justify-between mb-4">
                       <h4 className="text-lg">{dept.department}</h4>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
                         {dept.students} students
                       </span>
                     </div>
                     <div className="grid grid-cols-3 gap-4">
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <p className="text-sm text-gray-600 mb-1">
+                      <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                           Average GPA
                         </p>
                         <p className="text-xl text-green-600">
                           {dept.avgGpa.toFixed(2)}
                         </p>
                       </div>
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <p className="text-sm text-gray-600 mb-1">
+                      <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                           Retention Rate
                         </p>
                         <p className="text-xl text-blue-600">
                           {dept.retention}%
                         </p>
                       </div>
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <p className="text-sm text-gray-600 mb-1">Enrollment</p>
+                      <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Enrollment</p>
                         <p className="text-xl text-indigo-600">
                           {dept.students}
                         </p>

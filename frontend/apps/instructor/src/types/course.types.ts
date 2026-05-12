@@ -11,5 +11,8 @@ export interface CoursesList {
     id: string;
     code: string;
     name: string;
-  };
+  } | null;
+  minYear: number | null;
+  capacity: number | null;
+  enrolledCount: number;
 }

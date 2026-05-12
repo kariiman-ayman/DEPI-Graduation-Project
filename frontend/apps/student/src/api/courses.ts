@@ -1,9 +1,14 @@
 import api from "_core/api";
-import type { CoursesList } from "../types/course.types";
+import type { CoursesList, EnrolledCourse } from "../types/course.types";
 
-const URL = "/student/courses";
+const BASE = "/student/courses";
 
 export const getCourses = async (): Promise<CoursesList[]> => {
-  const res = await api.get(`${URL}/list`);
+  const res = await api.get(`${BASE}/list`);
+  return res.data;
+};
+
+export const getEnrolledCourses = async (): Promise<EnrolledCourse[]> => {
+  const res = await api.get(`${BASE}/enrolled`);
   return res.data;
 };

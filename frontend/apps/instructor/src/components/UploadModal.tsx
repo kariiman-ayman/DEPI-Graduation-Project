@@ -221,7 +221,7 @@ export function UploadModal({ open, onClose, courses }: UploadModalProps) {
                   <SelectContent>
                     {courses.map((c) => (
                       <SelectItem key={c.id} value={c.id}>
-                        {c.department.code} — {c.title}
+                        {c.department?.code ?? "—"} — {c.title}
                       </SelectItem>
                     ))}
                   </SelectContent>

@@ -12,3 +12,8 @@ export const Login = async (req: LoginRequest) => {
   const res = await api.post(`${URL}/login`, req);
   return res.data;
 };
+
+export const validateInvite = async (token: string): Promise<{ email: string; role: string }> => {
+  const res = await api.get(`${URL}/validate-invite`, { params: { token } });
+  return res.data;
+};

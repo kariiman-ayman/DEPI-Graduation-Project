@@ -32,17 +32,13 @@ export const createCourse = async (data: CreateCourseDTO) => {
   // create course
   const courseRef = await db.collection("courses").add({
     title: data.title,
-
     instructorId: data.instructorId,
-
     departmentId: data.departmentId,
-
     lectureTime: data.lectureTime,
-
     credits: data.credits,
-
+    minYear: data.minYear ?? null,
+    capacity: data.capacity ?? null,
     createdAt: new Date(),
-
     updatedAt: new Date(),
   });
 
@@ -54,56 +50,40 @@ export const createCourse = async (data: CreateCourseDTO) => {
 };
 
 export const getCourses = async () => {
-  const snapshot = await db
-    .collection("courses")
-    .orderBy("createdAt", "desc")
-    .get();
+  const [snapshot, enrollmentsSnap] = await Promise.all([
+    db.collection("courses").orderBy("createdAt", "desc").get(),
+    db.collection("enrollments").where("status", "==", "active").get(),
+  ]);
+
+  const enrolledCountMap = new Map<string, number>();
+  enrollmentsSnap.docs.forEach((doc) => {
+    const cid = doc.data().courseId as string;
+    enrolledCountMap.set(cid, (enrolledCountMap.get(cid) ?? 0) + 1);
+  });
 
   const courses = await Promise.all(
     snapshot.docs.map(async (doc) => {
       const course = doc.data();
 
-      // get instructor
-      const instructorDoc = await db
-        .collection("users")
-        .doc(course.instructorId)
-        .get();
-
-      // get department
-      const departmentDoc = await db
-        .collection("departments")
-        .doc(course.departmentId)
-        .get();
+      const [instructorDoc, departmentDoc] = await Promise.all([
+        db.collection("users").doc(course.instructorId).get(),
+        db.collection("departments").doc(course.departmentId).get(),
+      ]);
 
       return {
         id: doc.id,
-
         title: course.title,
-
         credits: course.credits,
-
         lectureTime: course.lectureTime,
-
+        minYear: (course.minYear as number | undefined) ?? null,
+        capacity: (course.capacity as number | undefined) ?? null,
+        enrolledCount: enrolledCountMap.get(doc.id) ?? 0,
         instructor: instructorDoc.exists
-          ? {
-              id: instructorDoc.id,
-
-              name: instructorDoc.data()?.name,
-
-              email: instructorDoc.data()?.email,
-            }
+          ? { id: instructorDoc.id, name: instructorDoc.data()?.name, email: instructorDoc.data()?.email }
           : null,
-
         department: departmentDoc.exists
-          ? {
-              id: departmentDoc.id,
-
-              name: departmentDoc.data()?.name,
-
-              code: departmentDoc.data()?.code,
-            }
+          ? { id: departmentDoc.id, name: departmentDoc.data()?.name, code: departmentDoc.data()?.code }
           : null,
-
         createdAt: course.createdAt,
       };
     }),
@@ -113,41 +93,34 @@ export const getCourses = async () => {
 };
 
 export const getInstructorCourses = async (instructorId: string) => {
-  const snapshot = await db
-    .collection("courses")
-    .where("instructorId", "==", instructorId)
-    .orderBy("createdAt", "asc")
-    .get();
+  const [snapshot, enrollmentsSnap] = await Promise.all([
+    db.collection("courses").where("instructorId", "==", instructorId).orderBy("createdAt", "asc").get(),
+    db.collection("enrollments").where("status", "==", "active").get(),
+  ]);
+
+  const enrolledCountMap = new Map<string, number>();
+  enrollmentsSnap.docs.forEach((doc) => {
+    const cid = doc.data().courseId as string;
+    enrolledCountMap.set(cid, (enrolledCountMap.get(cid) ?? 0) + 1);
+  });
 
   const courses = await Promise.all(
     snapshot.docs.map(async (doc) => {
       const course = doc.data();
 
-      // get department
-      const departmentDoc = await db
-        .collection("departments")
-        .doc(course.departmentId)
-        .get();
+      const departmentDoc = await db.collection("departments").doc(course.departmentId).get();
 
       return {
         id: doc.id,
-
         title: course.title,
-
         credits: course.credits,
-
         lectureTime: course.lectureTime,
-
+        minYear: (course.minYear as number | undefined) ?? null,
+        capacity: (course.capacity as number | undefined) ?? null,
+        enrolledCount: enrolledCountMap.get(doc.id) ?? 0,
         department: departmentDoc.exists
-          ? {
-              id: departmentDoc.id,
-
-              name: departmentDoc.data()?.name,
-
-              code: departmentDoc.data()?.code,
-            }
+          ? { id: departmentDoc.id, name: departmentDoc.data()?.name, code: departmentDoc.data()?.code }
           : null,
-
         createdAt: course.createdAt,
       };
     }),

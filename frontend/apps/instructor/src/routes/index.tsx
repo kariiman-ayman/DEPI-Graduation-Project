@@ -5,6 +5,7 @@ import InstructorCourses from "../pages/Courses";
 import InstructorDashboard from "../pages/Dashboard";
 import InstructorGrades from "../pages/Grades";
 import InstructorLectures from "../pages/Lectures";
+import InstructorProfile from "../pages/Profile";
 import LoginPage from "../pages/Login";
 import SignUpPage from "../pages/Signup";
 import { ProtectedRoute, PublicRoute, NotFoundRedirect } from "_core/routes";
@@ -38,6 +39,11 @@ export const router = createBrowserRouter([
       {
         index: true,
         Component: InstructorDashboard,
+      },
+
+      {
+        path: "profile",
+        Component: InstructorProfile,
       },
 
       {

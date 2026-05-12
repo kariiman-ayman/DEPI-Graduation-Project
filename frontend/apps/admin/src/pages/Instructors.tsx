@@ -33,7 +33,7 @@ export default function AdminInstructors() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-2xl">Instructor Management</h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Manage instructor information and assignments
           </p>
         </div>
@@ -49,7 +49,7 @@ export default function AdminInstructors() {
         <CardHeader>
           <div className="flex items-center gap-4">
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
               <Input
                 placeholder="Search instructors by name, ID, or email..."
                 className="pl-10"
@@ -74,7 +74,7 @@ export default function AdminInstructors() {
                   <TableCell>{instructor.id}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center">
                         <span className="text-indigo-600 text-xs">
                           {instructor.name
                             .split(" ")
@@ -85,7 +85,7 @@ export default function AdminInstructors() {
                       <span>{instructor.name}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-gray-600">
+                  <TableCell className="text-gray-600 dark:text-gray-400">
                     {instructor.email}
                   </TableCell>
                 </TableRow>

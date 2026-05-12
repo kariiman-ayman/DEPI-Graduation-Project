@@ -1,20 +1,14 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "_core/components/ui/card";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { useCourseAttendance, useSaveAttendance } from "../hooks/useAttendance";
+import { useCourses } from "../hooks/useCourses";
+import { useCourseGrades, useUpsertGrade } from "../hooks/useGrades";
+import type { InstructorCourseGrade } from "../types/grade.types";
+import { Card, CardContent, CardHeader, CardTitle } from "_core/components/ui/card";
 import { Button } from "_core/components/ui/button";
 import { Badge } from "_core/components/ui/badge";
 import { Input } from "_core/components/ui/input";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "_core/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "_core/components/ui/tabs";
 import { Progress } from "_core/components/ui/progress";
 import { Checkbox } from "_core/components/ui/checkbox";
 import {
@@ -25,753 +19,410 @@ import {
   TableHeader,
   TableRow,
 } from "_core/components/ui/table";
-import {
-  ArrowLeft,
-  Search,
-  Download,
-  Save,
-  BookOpen,
-  Clock,
-  MapPin,
-  Calendar,
-  Users,
-  GraduationCap,
-} from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
+
+function computeTotal(m: number, a: number, p: number, f: number): number {
+  return +(m * 0.3 + a * 0.2 + p * 0.25 + f * 0.25).toFixed(1);
+}
+
+function toLetterGrade(total: number): string {
+  if (total >= 95) return "A+";
+  if (total >= 90) return "A";
+  if (total >= 87) return "A-";
+  if (total >= 83) return "B+";
+  if (total >= 80) return "B";
+  if (total >= 77) return "B-";
+  if (total >= 73) return "C+";
+  if (total >= 70) return "C";
+  if (total >= 67) return "C-";
+  if (total >= 60) return "D";
+  return "F";
+}
+
+function getGradeColor(grade: string | null): string {
+  if (!grade) return "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
+  if (grade.startsWith("A")) return "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400";
+  if (grade.startsWith("B")) return "bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400";
+  if (grade.startsWith("C")) return "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400";
+  return "bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400";
+}
+
+type EditRow = { midterm: number; assignments: number; project: number; final: number };
+type EditsMap = Record<string, EditRow>;
+
+function rowFromGrade(g: InstructorCourseGrade): EditRow {
+  return {
+    midterm: g.midterm ?? 0,
+    assignments: g.assignments ?? 0,
+    project: g.project ?? 0,
+    final: g.final ?? 0,
+  };
+}
 
 export default function InstructorCourseDetail() {
   const navigate = useNavigate();
-  // const { courseId } = useParams();
-  const [searchTerm, setSearchTerm] = useState("");
+  const { courseId = "" } = useParams();
+  const today = new Date().toISOString().split("T")[0];
 
-  // Mock course data
-  const course = {
-    id: "CS401",
-    name: "Advanced Data Structures",
-    instructor: "Dr. Sarah Johnson",
-    department: "Computer Science",
-    enrolled: 45,
-    capacity: 50,
-    credits: 4,
-    schedule: "Mon, Wed 10:00 AM - 11:30 AM",
-    room: "Engineering Building, Room 201",
-    semester: "Fall 2026",
-    status: "Active",
-    description:
-      "This course covers advanced data structures including trees, graphs, heaps, hash tables, and their applications. Students will learn to analyze algorithm complexity and implement efficient solutions to complex problems. Topics include balanced search trees, graph algorithms, dynamic programming, and advanced sorting techniques.",
-  };
+  // ── course header ─────────────────────────────────────────────────────────
+  const { data: courses = [] } = useCourses();
+  const course = courses.find((c) => c.id === courseId);
 
-  const enrolledStudents = [
-    {
-      id: "STU001",
-      name: "Alex Martinez",
-      email: "alex.m@campus.edu",
-      year: "3rd Year",
-      gpa: 3.85,
-      status: "Active",
-    },
-    {
-      id: "STU002",
-      name: "Sarah Johnson",
-      email: "sarah.j@campus.edu",
-      year: "2nd Year",
-      gpa: 3.92,
-      status: "Active",
-    },
-    {
-      id: "STU003",
-      name: "Michael Chen",
-      email: "michael.c@campus.edu",
-      year: "4th Year",
-      gpa: 3.67,
-      status: "Active",
-    },
-    {
-      id: "STU005",
-      name: "Daniel Kim",
-      email: "daniel.k@campus.edu",
-      year: "3rd Year",
-      gpa: 3.54,
-      status: "Active",
-    },
-    {
-      id: "STU008",
-      name: "Olivia Brown",
-      email: "olivia.b@campus.edu",
-      year: "1st Year",
-      gpa: 3.95,
-      status: "Active",
-    },
-  ];
+  // ── grades ────────────────────────────────────────────────────────────────
+  const [edits, setEdits] = useState<EditsMap>({});
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedMsg, setSavedMsg] = useState(false);
 
-  const [grades, setGrades] = useState([
-    {
-      studentId: "STU001",
-      name: "Alex Martinez",
-      midterm: 85,
-      assignments: 92,
-      project: 88,
-      final: 90,
-    },
-    {
-      studentId: "STU002",
-      name: "Sarah Johnson",
-      midterm: 92,
-      assignments: 95,
-      project: 94,
-      final: 93,
-    },
-    {
-      studentId: "STU003",
-      name: "Michael Chen",
-      midterm: 78,
-      assignments: 82,
-      project: 85,
-      final: 80,
-    },
-    {
-      studentId: "STU005",
-      name: "Daniel Kim",
-      midterm: 75,
-      assignments: 80,
-      project: 78,
-      final: 76,
-    },
-    {
-      studentId: "STU008",
-      name: "Olivia Brown",
-      midterm: 95,
-      assignments: 98,
-      project: 96,
-      final: 97,
-    },
-  ]);
+  const { data: gradeData, isFetching: gradesFetching } = useCourseGrades(courseId);
+  const { mutateAsync: upsertGrade } = useUpsertGrade();
 
-  const [attendance, setAttendance] = useState([
-    {
-      studentId: "STU001",
-      name: "Alex Martinez",
-      present: true,
-    },
-    {
-      studentId: "STU002",
-      name: "Sarah Johnson",
-      present: true,
-    },
-    {
-      studentId: "STU003",
-      name: "Michael Chen",
-      present: false,
-    },
-    {
-      studentId: "STU005",
-      name: "Daniel Kim",
-      present: true,
-    },
-    {
-      studentId: "STU008",
-      name: "Olivia Brown",
-      present: true,
-    },
-  ]);
+  useEffect(() => {
+    if (!gradeData) return;
+    const initial: EditsMap = {};
+    for (const g of gradeData) initial[g.studentId] = rowFromGrade(g);
+    setEdits(initial);
+  }, [gradeData]);
 
-  const updateGrade = (studentId: string, field: string, value: string) => {
-    setGrades((prev) =>
-      prev.map((g) =>
-        g.studentId === studentId ? { ...g, [field]: parseInt(value) || 0 } : g,
-      ),
-    );
-  };
+  function handleGradeChange(studentId: string, field: keyof EditRow, raw: string) {
+    const value = Math.min(100, Math.max(0, Number(raw) || 0));
+    setEdits((prev) => ({
+      ...prev,
+      [studentId]: {
+        ...(prev[studentId] ?? { midterm: 0, assignments: 0, project: 0, final: 0 }),
+        [field]: value,
+      },
+    }));
+  }
 
-  const toggleAttendance = (studentId: string) => {
-    setAttendance((prev) =>
-      prev.map((a) =>
-        a.studentId === studentId ? { ...a, present: !a.present } : a,
-      ),
-    );
-  };
+  async function handleSaveGrades() {
+    if (!courseId || Object.keys(edits).length === 0) return;
+    setIsSaving(true);
+    try {
+      await Promise.all(
+        Object.entries(edits).map(([studentId, row]) =>
+          upsertGrade({ studentId, courseId, ...row }),
+        ),
+      );
+      setSavedMsg(true);
+      setTimeout(() => setSavedMsg(false), 3000);
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
-  const calculateGrade = (student: (typeof grades)[0]) => {
-    const weighted =
-      student.midterm * 0.3 +
-      student.assignments * 0.2 +
-      student.project * 0.25 +
-      student.final * 0.25;
-    return weighted.toFixed(1);
-  };
+  // ── attendance ────────────────────────────────────────────────────────────
+  const [attendanceDate, setAttendanceDate] = useState(today);
+  const [marks, setMarks] = useState<Record<string, "present" | "absent">>({});
+  const [savingAttendance, setSavingAttendance] = useState(false);
+  const [attendanceSavedMsg, setAttendanceSavedMsg] = useState(false);
 
-  const getLetterGrade = (numericGrade: number) => {
-    if (numericGrade >= 93) return "A";
-    if (numericGrade >= 90) return "A-";
-    if (numericGrade >= 87) return "B+";
-    if (numericGrade >= 83) return "B";
-    if (numericGrade >= 80) return "B-";
-    if (numericGrade >= 77) return "C+";
-    if (numericGrade >= 73) return "C";
-    if (numericGrade >= 70) return "C-";
-    if (numericGrade >= 60) return "D";
-    return "F";
-  };
+  const { data: attendanceData, isLoading: attendanceLoading } = useCourseAttendance(courseId, attendanceDate);
+  const { mutateAsync: doSave } = useSaveAttendance();
 
-  const filteredStudents = enrolledStudents.filter(
-    (student) =>
-      student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.id.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  useEffect(() => {
+    if (!attendanceData) return;
+    const initial: Record<string, "present" | "absent"> = {};
+    attendanceData.students.forEach((s) => {
+      initial[s.studentId] = s.todayStatus ?? "present";
+    });
+    setMarks(initial);
+  }, [attendanceData]);
 
-  const enrollmentPercentage = (course.enrolled / course.capacity) * 100;
+  function toggleAttendanceMark(studentId: string, checked: boolean) {
+    setMarks((prev) => ({ ...prev, [studentId]: checked ? "present" : "absent" }));
+  }
 
-  const gradeDistribution = grades.reduce(
-    (acc, student) => {
-      const grade = parseFloat(calculateGrade(student));
-      const letter = getLetterGrade(grade);
-      if (letter.startsWith("A")) acc.A++;
-      else if (letter.startsWith("B")) acc.B++;
-      else if (letter.startsWith("C")) acc.C++;
-      else if (letter.startsWith("D")) acc.D++;
-      else acc.F++;
-      return acc;
-    },
-    { A: 0, B: 0, C: 0, D: 0, F: 0 },
-  );
+  async function handleSaveAttendance() {
+    if (!courseId || !attendanceData) return;
+    setSavingAttendance(true);
+    try {
+      const records = attendanceData.students.map((s) => ({
+        studentId: s.studentId,
+        status: marks[s.studentId] ?? "absent",
+      }));
+      await doSave({ courseId, date: attendanceDate, records });
+      setAttendanceSavedMsg(true);
+      setTimeout(() => setAttendanceSavedMsg(false), 3000);
+    } finally {
+      setSavingAttendance(false);
+    }
+  }
 
-  const presentCount = attendance.filter((a) => a.present).length;
-  const attendanceRate = (presentCount / attendance.length) * 100;
+  const attendanceStudents = attendanceData?.students ?? [];
+  const presentCount = attendanceStudents.filter((s) => marks[s.studentId] === "present").length;
+  const attendanceRate =
+    attendanceStudents.length > 0 ? (presentCount / attendanceStudents.length) * 100 : 0;
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-start gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/courses")}
-            className="mt-1"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <Badge
-                variant="outline"
-                className="text-indigo-600 border-indigo-300"
-              >
-                {course.id}
-              </Badge>
-              <Badge
-                className={
-                  course.status === "Full"
-                    ? "bg-orange-100 text-orange-700"
-                    : "bg-green-100 text-green-700"
-                }
-              >
-                {course.status}
-              </Badge>
-            </div>
-            <h3 className="text-2xl mb-1">{course.name}</h3>
-            <p className="text-sm text-gray-500">{course.instructor}</p>
-          </div>
+      <div className="flex items-start gap-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/courses")}
+          className="mt-1"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <div>
+          <h3 className="text-2xl mb-0.5">{course?.title ?? "Course Detail"}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {[
+              course?.department?.name,
+              course?.credits ? `${course.credits} credits` : null,
+              course?.lectureTime
+                ? `${course.lectureTime.day} ${course.lectureTime.start}–${course.lectureTime.end}`
+                : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="bg-white border-b w-full justify-start rounded-none h-auto p-0">
-          <TabsTrigger
-            value="overview"
-            className="data-[state=active]:border-b-2 data-[state=active]:border-indigo-600 rounded-none"
-          >
-            Overview
-          </TabsTrigger>
-          <TabsTrigger
-            value="students"
-            className="data-[state=active]:border-b-2 data-[state=active]:border-indigo-600 rounded-none"
-          >
-            Students
-          </TabsTrigger>
-          <TabsTrigger
-            value="grades"
-            className="data-[state=active]:border-b-2 data-[state=active]:border-indigo-600 rounded-none"
-          >
-            Grades
-          </TabsTrigger>
-          <TabsTrigger
-            value="attendance"
-            className="data-[state=active]:border-b-2 data-[state=active]:border-indigo-600 rounded-none"
-          >
-            Attendance
-          </TabsTrigger>
+      <Tabs defaultValue="grades" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="grades">Grades</TabsTrigger>
+          <TabsTrigger value="attendance">Attendance</TabsTrigger>
         </TabsList>
 
-        {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                    <BookOpen className="w-5 h-5 text-indigo-600" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Department</p>
-                    <p className="text-sm">{course.department}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                    <Clock className="w-5 h-5 text-indigo-600" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Schedule</p>
-                    <p className="text-sm">{course.schedule}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-indigo-600" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Room</p>
-                    <p className="text-sm">{course.room}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                    <GraduationCap className="w-5 h-5 text-indigo-600" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Credits</p>
-                    <p className="text-sm">{course.credits} Credits</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                    <Users className="w-5 h-5 text-indigo-600" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Capacity</p>
-                    <p className="text-sm">
-                      {course.enrolled}/{course.capacity} Students
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-indigo-600" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Semester</p>
-                    <p className="text-sm">{course.semester}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
+        {/* Grades Tab */}
+        <TabsContent value="grades">
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm">Enrollment Status</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600">
-                  Current Enrollment
-                </span>
-                <span className="text-sm">
-                  {course.enrolled}/{course.capacity} (
-                  {enrollmentPercentage.toFixed(0)}%)
-                </span>
-              </div>
-              <Progress value={enrollmentPercentage} className="h-2" />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm">Course Description</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                {course.description}
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Students Tab */}
-        <TabsContent value="students" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="relative max-w-sm">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <Input
-                  placeholder="Search by name or ID..."
-                  className="pl-10"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm">Grade Management</CardTitle>
+                <div className="flex items-center gap-3">
+                  {savedMsg && (
+                    <span className="text-sm text-green-600 font-medium">Saved!</span>
+                  )}
+                  <Button
+                    className="gap-2 bg-indigo-600 hover:bg-indigo-700"
+                    onClick={handleSaveGrades}
+                    disabled={isSaving || Object.keys(edits).length === 0}
+                  >
+                    <Save className="w-4 h-4" />
+                    {isSaving ? "Saving…" : "Save Changes"}
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Student ID</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Year</TableHead>
-                    <TableHead>GPA</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>Student</TableHead>
+                    <TableHead className="text-center">Midterm (30%)</TableHead>
+                    <TableHead className="text-center">Assignments (20%)</TableHead>
+                    <TableHead className="text-center">Project (25%)</TableHead>
+                    <TableHead className="text-center">Final (25%)</TableHead>
+                    <TableHead className="text-center">Total</TableHead>
+                    <TableHead className="text-center">Grade</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredStudents.map((student) => (
-                    <TableRow key={student.id} className="hover:bg-gray-50">
-                      <TableCell>{student.id}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                            <span className="text-indigo-600 text-xs">
-                              {student.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
-                            </span>
-                          </div>
-                          <span>{student.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-gray-600">
-                        {student.email}
-                      </TableCell>
-                      <TableCell>{student.year}</TableCell>
-                      <TableCell>
-                        <span
-                          className={
-                            student.gpa >= 3.7
-                              ? "text-green-600"
-                              : student.gpa >= 3.0
-                                ? "text-blue-600"
-                                : "text-orange-600"
-                          }
-                        >
-                          {student.gpa.toFixed(2)}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            student.status === "Active"
-                              ? "default"
-                              : "secondary"
-                          }
-                          className={
-                            student.status === "Active"
-                              ? "bg-green-100 text-green-700"
-                              : ""
-                          }
-                        >
-                          {student.status}
-                        </Badge>
+                  {gradesFetching ? (
+                    [...Array(4)].map((_, i) => (
+                      <TableRow key={i}>
+                        <TableCell colSpan={7}>
+                          <div className="h-8 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : gradeData?.length === 0 ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={7}
+                        className="text-center text-gray-400 dark:text-gray-500 py-12"
+                      >
+                        No students enrolled in this course
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    gradeData?.map((student) => {
+                      const row = edits[student.studentId] ?? {
+                        midterm: 0,
+                        assignments: 0,
+                        project: 0,
+                        final: 0,
+                      };
+                      const total = computeTotal(
+                        row.midterm,
+                        row.assignments,
+                        row.project,
+                        row.final,
+                      );
+                      const letter = toLetterGrade(total);
+                      const initials = student.studentName
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .slice(0, 2);
+
+                      return (
+                        <TableRow key={student.studentId}>
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span className="text-indigo-600 dark:text-indigo-400 text-xs">
+                                  {initials}
+                                </span>
+                              </div>
+                              <div>
+                                <p className="text-sm">{student.studentName}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                  {student.studentEmail}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          {(
+                            ["midterm", "assignments", "project", "final"] as const
+                          ).map((field) => (
+                            <TableCell key={field} className="text-center">
+                              <Input
+                                type="number"
+                                value={row[field]}
+                                onChange={(e) =>
+                                  handleGradeChange(
+                                    student.studentId,
+                                    field,
+                                    e.target.value,
+                                  )
+                                }
+                                className="w-16 text-center"
+                                min="0"
+                                max="100"
+                              />
+                            </TableCell>
+                          ))}
+                          <TableCell className="text-center font-medium">
+                            {total.toFixed(1)}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge className={getGradeColor(letter)}>{letter}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
-        </TabsContent>
-
-        {/* Grades Tab */}
-        <TabsContent value="grades" className="space-y-6">
-          <div className="flex gap-6">
-            <Card className="flex-1">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm">Grade Management</CardTitle>
-                  <div className="flex gap-2">
-                    <Button variant="outline" className="gap-2">
-                      <Download className="w-4 h-4" />
-                      Export
-                    </Button>
-                    <Button className="gap-2 bg-indigo-600 hover:bg-indigo-700">
-                      <Save className="w-4 h-4" />
-                      Save Changes
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Student</TableHead>
-                      <TableHead>Midterm (30%)</TableHead>
-                      <TableHead>Assignments (20%)</TableHead>
-                      <TableHead>Project (25%)</TableHead>
-                      <TableHead>Final (25%)</TableHead>
-                      <TableHead>Current Grade</TableHead>
-                      <TableHead>Letter</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {grades.map((student) => {
-                      const currentGrade = parseFloat(calculateGrade(student));
-                      const letter = getLetterGrade(currentGrade);
-                      return (
-                        <TableRow
-                          key={student.studentId}
-                          className="hover:bg-gray-50"
-                        >
-                          <TableCell>
-                            <div>
-                              <p className="text-sm">{student.name}</p>
-                              <p className="text-xs text-gray-500">
-                                {student.studentId}
-                              </p>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              className="w-16 h-8"
-                              value={student.midterm}
-                              onChange={(e) =>
-                                updateGrade(
-                                  student.studentId,
-                                  "midterm",
-                                  e.target.value,
-                                )
-                              }
-                              min="0"
-                              max="100"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              className="w-16 h-8"
-                              value={student.assignments}
-                              onChange={(e) =>
-                                updateGrade(
-                                  student.studentId,
-                                  "assignments",
-                                  e.target.value,
-                                )
-                              }
-                              min="0"
-                              max="100"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              className="w-16 h-8"
-                              value={student.project}
-                              onChange={(e) =>
-                                updateGrade(
-                                  student.studentId,
-                                  "project",
-                                  e.target.value,
-                                )
-                              }
-                              min="0"
-                              max="100"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              className="w-16 h-8"
-                              value={student.final}
-                              onChange={(e) =>
-                                updateGrade(
-                                  student.studentId,
-                                  "final",
-                                  e.target.value,
-                                )
-                              }
-                              min="0"
-                              max="100"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <span
-                              className={
-                                currentGrade >= 90
-                                  ? "text-green-600"
-                                  : currentGrade >= 80
-                                    ? "text-blue-600"
-                                    : currentGrade >= 70
-                                      ? "text-orange-600"
-                                      : "text-red-600"
-                              }
-                            >
-                              {currentGrade.toFixed(1)}%
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant="outline"
-                              className={
-                                letter.startsWith("A")
-                                  ? "text-green-600 border-green-300"
-                                  : letter.startsWith("B")
-                                    ? "text-blue-600 border-blue-300"
-                                    : letter.startsWith("C")
-                                      ? "text-orange-600 border-orange-300"
-                                      : "text-red-600 border-red-300"
-                              }
-                            >
-                              {letter}
-                            </Badge>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-
-            <Card className="w-64">
-              <CardHeader>
-                <CardTitle className="text-sm">Grade Distribution</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">A Grades</span>
-                    <Badge className="bg-green-100 text-green-700">
-                      {gradeDistribution.A}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">B Grades</span>
-                    <Badge className="bg-blue-100 text-blue-700">
-                      {gradeDistribution.B}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">C Grades</span>
-                    <Badge className="bg-orange-100 text-orange-700">
-                      {gradeDistribution.C}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">D Grades</span>
-                    <Badge className="bg-yellow-100 text-yellow-700">
-                      {gradeDistribution.D}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">F Grades</span>
-                    <Badge className="bg-red-100 text-red-700">
-                      {gradeDistribution.F}
-                    </Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </TabsContent>
 
         {/* Attendance Tab */}
         <TabsContent value="attendance" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm">
-                Today's Attendance - April 13, 2026
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm">Attendance</CardTitle>
+                <input
+                  type="date"
+                  value={attendanceDate}
+                  onChange={(e) => setAttendanceDate(e.target.value)}
+                  className="h-9 rounded-md border border-input bg-background px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="mb-6 flex items-center gap-6">
-                <div className="text-4xl text-green-600">
-                  {attendanceRate.toFixed(0)}%
-                </div>
-                <div className="flex-1">
-                  <Progress value={attendanceRate} className="h-3" />
-                  <p className="text-sm text-gray-600 mt-2">
-                    {presentCount} out of {attendance.length} students present
-                  </p>
-                </div>
-              </div>
-
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Student ID</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Mark Attendance</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {attendance.map((student) => (
-                    <TableRow
-                      key={student.studentId}
-                      className="hover:bg-gray-50"
-                    >
-                      <TableCell>{student.studentId}</TableCell>
-                      <TableCell>{student.name}</TableCell>
-                      <TableCell>
-                        <Badge
-                          className={
-                            student.present
-                              ? "bg-green-100 text-green-700"
-                              : "bg-red-100 text-red-700"
-                          }
-                        >
-                          {student.present ? "Present" : "Absent"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Checkbox
-                            checked={student.present}
-                            onCheckedChange={() =>
-                              toggleAttendance(student.studentId)
-                            }
-                          />
-                          <span className="text-sm text-gray-600">Present</span>
-                        </div>
-                      </TableCell>
-                    </TableRow>
+              {attendanceLoading ? (
+                <div className="space-y-2">
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-10 bg-gray-100 dark:bg-gray-700 rounded animate-pulse"
+                    />
                   ))}
-                </TableBody>
-              </Table>
+                </div>
+              ) : attendanceStudents.length === 0 ? (
+                <p className="text-center text-gray-400 dark:text-gray-500 py-10">
+                  No enrolled students.
+                </p>
+              ) : (
+                <>
+                  <div className="mb-6 flex items-center gap-6">
+                    <div className="text-4xl text-green-600">
+                      {attendanceRate.toFixed(0)}%
+                    </div>
+                    <div className="flex-1">
+                      <Progress value={attendanceRate} className="h-3" />
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                        {presentCount} out of {attendanceStudents.length} students present
+                      </p>
+                    </div>
+                  </div>
 
-              <div className="flex justify-end mt-6">
-                <Button className="gap-2 bg-indigo-600 hover:bg-indigo-700">
-                  <Save className="w-4 h-4" />
-                  Save Attendance
-                </Button>
-              </div>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Mark Present</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {attendanceStudents.map((student) => {
+                        const isPresent = marks[student.studentId] === "present";
+                        return (
+                          <TableRow
+                            key={student.studentId}
+                            className="hover:bg-gray-50 dark:hover:bg-gray-800"
+                          >
+                            <TableCell>
+                              <div>
+                                <p className="text-sm">{student.name}</p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500">
+                                  {student.email}
+                                </p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                className={
+                                  isPresent
+                                    ? "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400"
+                                    : "bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400"
+                                }
+                              >
+                                {isPresent ? "Present" : "Absent"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Checkbox
+                                checked={isPresent}
+                                onCheckedChange={(checked) =>
+                                  toggleAttendanceMark(
+                                    student.studentId,
+                                    checked === true,
+                                  )
+                                }
+                              />
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+
+                  <div className="flex items-center justify-end gap-3 mt-6">
+                    {attendanceSavedMsg && (
+                      <span className="text-sm text-green-600 font-medium">Saved!</span>
+                    )}
+                    <Button
+                      onClick={handleSaveAttendance}
+                      disabled={savingAttendance}
+                      className="gap-2 bg-indigo-600 hover:bg-indigo-700"
+                    >
+                      <Save className="w-4 h-4" />
+                      {savingAttendance ? "Saving…" : "Save Attendance"}
+                    </Button>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
