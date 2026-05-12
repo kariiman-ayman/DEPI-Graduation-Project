@@ -1,11 +1,11 @@
+import { Badge } from "_core/components/ui/badge";
+import { Button } from "_core/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "_core/components/ui/card";
-import { Button } from "_core/components/ui/button";
-import { Badge } from "_core/components/ui/badge";
 import { Progress } from "_core/components/ui/progress";
 import {
   Tabs,
@@ -13,15 +13,17 @@ import {
   TabsList,
   TabsTrigger,
 } from "_core/components/ui/tabs";
-import { Users, Clock, Calendar, FileText, Video, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Calendar, Clock, FileText, Plus, Users, Video } from "lucide-react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
+import { useCourses } from "../hooks/useCourses";
+import { useEnrollCourse } from "../hooks/useEnrollments";
 
 export default function StudentCourses() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const initialEnrolledCourses = [
+  const enrolledCourses = [
     {
       code: "CS401",
       name: "Advanced Data Structures",
@@ -60,33 +62,8 @@ export default function StudentCourses() {
     },
   ];
 
-  const initialAvailableCourses = [
-    {
-      code: "CS501",
-      name: "Machine Learning",
-      instructor: "Dr. James Wilson",
-      credits: 4,
-      enrolled: 28,
-      capacity: 30,
-      schedule: "Mon, Wed 2:00 PM",
-      prerequisites: "CS401",
-    },
-    {
-      code: "CS402",
-      name: "Software Engineering",
-      instructor: "Prof. Sofia Rodriguez",
-      credits: 3,
-      enrolled: 35,
-      capacity: 40,
-      schedule: "Tue, Thu 10:00 AM",
-      prerequisites: "CS301",
-    },
-  ];
-
-  const [enrolledCourses, setEnrolledCourses] = useState(initialEnrolledCourses);
-  const [availableCourses, setAvailableCourses] = useState(
-    initialAvailableCourses,
-  );
+  const { data: availableCourses } = useCourses();
+  const { mutateAsync } = useEnrollCourse();
 
   const tabFromUrl = searchParams.get("tab");
   const defaultTab = tabFromUrl === "available" ? "available" : "enrolled";
@@ -94,10 +71,7 @@ export default function StudentCourses() {
     defaultTab,
   );
 
-  const enrolledCodes = useMemo(
-    () => new Set(enrolledCourses.map((c) => c.code)),
-    [enrolledCourses],
-  );
+  if (!availableCourses) return <div>Loading...</div>;
 
   function goToAvailableCourses() {
     setActiveTab("available");
@@ -115,32 +89,7 @@ export default function StudentCourses() {
   }
 
   function enroll(courseCode: string) {
-    const course = availableCourses.find((c) => c.code === courseCode);
-    if (!course) return;
-    if (enrolledCodes.has(course.code)) return;
-    if (course.enrolled >= course.capacity) return;
-
-    setAvailableCourses((prev) =>
-      prev.map((c) =>
-        c.code === course.code ? { ...c, enrolled: c.enrolled + 1 } : c,
-      ),
-    );
-    setEnrolledCourses((prev) => [
-      ...prev,
-      {
-        code: course.code,
-        name: course.name,
-        instructor: course.instructor,
-        credits: course.credits,
-        enrolled: course.enrolled + 1,
-        capacity: course.capacity,
-        schedule: course.schedule,
-        room: "TBA",
-        progress: 0,
-        grade: "Enrolled",
-      },
-    ]);
-
+    mutateAsync(courseCode);
     setActiveTab("enrolled");
     setSearchParams({}, { replace: true });
   }
@@ -256,81 +205,64 @@ export default function StudentCourses() {
 
         <TabsContent value="available" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {availableCourses.map((course) => {
-              const enrollmentPercentage =
-                (course.enrolled / course.capacity) * 100;
-              return (
-                <Card key={course.code}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <Badge variant="outline" className="mb-2">
-                          {course.code}
-                        </Badge>
-                        <CardTitle className="text-lg mb-1">
-                          {course.name}
-                        </CardTitle>
-                        <p className="text-sm text-gray-500">
-                          {course.instructor}
-                        </p>
-                      </div>
-                      <Badge className="bg-blue-100 text-blue-700">
-                        Available
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600">{course.schedule}</span>
-                    </div>
-
+            {availableCourses.map((course) => (
+              <Card key={course.id}>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
                     <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            Seats Available
-                          </span>
-                        </div>
-                        <span className="text-sm">
-                          {course.capacity - course.enrolled}/{course.capacity}
-                        </span>
-                      </div>
-                      <Progress value={enrollmentPercentage} className="h-2" />
+                      <Badge variant="outline" className="mb-2">
+                        {course.department.code}
+                      </Badge>
+                      <CardTitle className="text-lg mb-1">
+                        {course.title}
+                      </CardTitle>
+                      <p className="text-sm text-gray-500">
+                        {course.instructor.name}
+                      </p>
                     </div>
+                    <Badge className="bg-blue-100 text-blue-700">
+                      Available
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Calendar className="w-4 h-4 text-gray-400" />
+                    <span className="text-gray-600">
+                      {course.lectureTime.day} {course.lectureTime.start} -{" "}
+                      {course.lectureTime.end}
+                    </span>
+                  </div>
 
-                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                      <div>
-                        <p className="text-sm text-gray-600">Prerequisites</p>
-                        <Badge variant="outline" className="mt-1">
-                          {course.prerequisites}
-                        </Badge>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-gray-600">Credits</p>
-                        <p className="text-lg">{course.credits}</p>
-                      </div>
+                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                    {/* <div>
+                      <p className="text-sm text-gray-600">Prerequisites</p>
+                      <Badge variant="outline" className="mt-1">
+                        {course.prerequisites}
+                      </Badge>
+                    </div> */}
+                    <div className="text-right">
+                      <p className="text-sm text-gray-600">Credits</p>
+                      <p className="text-lg">{course.credits}</p>
                     </div>
+                  </div>
 
-                    <Button
-                      className="w-full bg-indigo-600 hover:bg-indigo-700"
-                      disabled={
-                        enrolledCodes.has(course.code) ||
-                        course.enrolled >= course.capacity
-                      }
-                      onClick={() => enroll(course.code)}
-                    >
-                      {enrolledCodes.has(course.code)
-                        ? "Already Enrolled"
-                        : course.enrolled >= course.capacity
-                          ? "Full"
-                          : "Enroll Now"}
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
+                  <Button
+                    className="w-full bg-indigo-600 hover:bg-indigo-700"
+                    // disabled={
+                    //   enrolledCodes.has(course.code) ||
+                    //   course.enrolled >= course.capacity
+                    // }
+                    onClick={() => enroll(course.id)}
+                  >
+                    {/* {enrolledCodes.has(course.code)
+                      ? "Already Enrolled" */}
+
+                    {"Enroll Now"}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
 
           <Card>
