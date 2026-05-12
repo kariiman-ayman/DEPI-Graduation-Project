@@ -1,27 +1,21 @@
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import { Badge } from "../ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Progress } from "../ui/progress";
-import {
-  Mail,
-  Calendar,
-  GraduationCap,
-  CreditCard,
-  BookOpen,
-  TrendingUp,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Users,
-  BarChart2,
   AlertCircle,
+  BarChart2,
+  BookOpen,
+  Calendar,
+  CheckCircle,
+  Clock,
+  CreditCard,
   Layers,
+  Mail,
+  TrendingUp,
+  Users,
+  XCircle,
 } from "lucide-react";
+import { Badge } from "../ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Progress } from "../ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 interface StudentCourse {
   courseId: string;
   enrollmentStatus: "active" | "inactive";
@@ -109,7 +103,11 @@ function getInitials(name: string | null) {
   );
 }
 
-function PaymentStatusBadge({ status }: { status: "paid" | "pending" | "overdue" }) {
+function PaymentStatusBadge({
+  status,
+}: {
+  status: "paid" | "pending" | "overdue";
+}) {
   if (status === "paid")
     return (
       <Badge className="bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 gap-1">
@@ -130,14 +128,13 @@ function PaymentStatusBadge({ status }: { status: "paid" | "pending" | "overdue"
 }
 
 function GradeLetterBadge({ grade }: { grade: string }) {
-  const color =
-    grade.startsWith("A")
-      ? "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400"
-      : grade.startsWith("B")
+  const color = grade.startsWith("A")
+    ? "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400"
+    : grade.startsWith("B")
       ? "bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400"
       : grade.startsWith("C")
-      ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400"
-      : "bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400";
+        ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400"
+        : "bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400";
   return <Badge className={color}>{grade}</Badge>;
 }
 
@@ -156,13 +153,19 @@ function StatCard({
 }) {
   return (
     <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 flex items-center gap-3">
-      <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${color}`}>
+      <div
+        className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${color}`}
+      >
         <Icon className="w-4 h-4" />
       </div>
       <div>
         <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
-        <p className="text-lg font-semibold text-gray-900 dark:text-white">{value}</p>
-        {sub && <p className="text-xs text-gray-400 dark:text-gray-500">{sub}</p>}
+        <p className="text-lg font-semibold text-gray-900 dark:text-white">
+          {value}
+        </p>
+        {sub && (
+          <p className="text-xs text-gray-400 dark:text-gray-500">{sub}</p>
+        )}
       </div>
     </div>
   );
@@ -232,7 +235,10 @@ export function StudentDetailsModal({
         {isLoading && (
           <div className="space-y-3 py-8">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-14 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse" />
+              <div
+                key={i}
+                className="h-14 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse"
+              />
             ))}
           </div>
         )}
@@ -240,7 +246,9 @@ export function StudentDetailsModal({
         {!isLoading && !detail && (
           <div className="py-10 text-center">
             <AlertCircle className="w-8 h-8 text-red-400 mx-auto mb-2" />
-            <p className="text-sm text-gray-500 dark:text-gray-400">Failed to load student data.</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Failed to load student data.
+            </p>
           </div>
         )}
 
@@ -302,12 +310,14 @@ export function StudentDetailsModal({
               {detail.stats.totalPaid + detail.stats.totalDue > 0 && (
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400">Payment progress</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Payment progress
+                    </span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {Math.round(
                         (detail.stats.totalPaid /
                           (detail.stats.totalPaid + detail.stats.totalDue)) *
-                          100
+                          100,
                       )}
                       %
                     </span>
@@ -341,7 +351,9 @@ export function StudentDetailsModal({
               {detail.courses.length === 0 ? (
                 <div className="py-12 text-center">
                   <BookOpen className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-500 dark:text-gray-400">No courses enrolled.</p>
+                  <p className="text-gray-500 dark:text-gray-400">
+                    No courses enrolled.
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -352,7 +364,9 @@ export function StudentDetailsModal({
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-white">{course.title}</p>
+                          <p className="font-medium text-gray-900 dark:text-white">
+                            {course.title}
+                          </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                             {course.instructor} · {course.credits} credits
                             {course.lectureTime &&
@@ -370,10 +384,14 @@ export function StudentDetailsModal({
                             {course.enrollmentStatus}
                           </Badge>
                           {course.grade && (
-                            <GradeLetterBadge grade={course.grade.letterGrade} />
+                            <GradeLetterBadge
+                              grade={course.grade.letterGrade}
+                            />
                           )}
                           {course.payment && (
-                            <PaymentStatusBadge status={course.payment.status} />
+                            <PaymentStatusBadge
+                              status={course.payment.status}
+                            />
                           )}
                         </div>
                       </div>
@@ -381,18 +399,23 @@ export function StudentDetailsModal({
                       <div className="grid grid-cols-3 gap-3 text-xs">
                         {/* Attendance */}
                         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2.5">
-                          <p className="text-gray-500 dark:text-gray-400 mb-1">Attendance</p>
+                          <p className="text-gray-500 dark:text-gray-400 mb-1">
+                            Attendance
+                          </p>
                           <p className="font-semibold text-gray-900 dark:text-white">
                             {course.attendance.rate}%
                           </p>
                           <p className="text-gray-400 dark:text-gray-500">
-                            {course.attendance.present}/{course.attendance.total} sessions
+                            {course.attendance.present}/
+                            {course.attendance.total} sessions
                           </p>
                         </div>
 
                         {/* Grade breakdown */}
                         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2.5">
-                          <p className="text-gray-500 dark:text-gray-400 mb-1">Grade</p>
+                          <p className="text-gray-500 dark:text-gray-400 mb-1">
+                            Grade
+                          </p>
                           {course.grade ? (
                             <>
                               <p className="font-semibold text-gray-900 dark:text-white">
@@ -403,13 +426,17 @@ export function StudentDetailsModal({
                               </p>
                             </>
                           ) : (
-                            <p className="text-gray-400 dark:text-gray-500 italic">Not graded</p>
+                            <p className="text-gray-400 dark:text-gray-500 italic">
+                              Not graded
+                            </p>
                           )}
                         </div>
 
                         {/* Payment */}
                         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2.5">
-                          <p className="text-gray-500 dark:text-gray-400 mb-1">Payment</p>
+                          <p className="text-gray-500 dark:text-gray-400 mb-1">
+                            Payment
+                          </p>
                           {course.payment ? (
                             <>
                               <p className="font-semibold text-gray-900 dark:text-white">
@@ -420,7 +447,9 @@ export function StudentDetailsModal({
                               </p>
                             </>
                           ) : (
-                            <p className="text-gray-400 dark:text-gray-500 italic">No payment</p>
+                            <p className="text-gray-400 dark:text-gray-500 italic">
+                              No payment
+                            </p>
                           )}
                         </div>
                       </div>
@@ -435,19 +464,25 @@ export function StudentDetailsModal({
               {/* Summary row */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4">
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Transactions</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                    Transactions
+                  </p>
                   <p className="text-xl font-semibold text-gray-900 dark:text-white">
                     {detail.payments.length}
                   </p>
                 </div>
                 <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4">
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Paid</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                    Total Paid
+                  </p>
                   <p className="text-xl font-semibold text-green-600 dark:text-green-400">
                     ${detail.stats.totalPaid.toLocaleString()}
                   </p>
                 </div>
                 <div className="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-4">
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Outstanding</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                    Outstanding
+                  </p>
                   <p className="text-xl font-semibold text-orange-600 dark:text-orange-400">
                     ${detail.stats.totalDue.toLocaleString()}
                   </p>
@@ -458,7 +493,9 @@ export function StudentDetailsModal({
               {detail.payments.length === 0 ? (
                 <div className="py-12 text-center">
                   <BarChart2 className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-500 dark:text-gray-400">No payment records found.</p>
+                  <p className="text-gray-500 dark:text-gray-400">
+                    No payment records found.
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -479,7 +516,9 @@ export function StudentDetailsModal({
                             <span>Due: {payment.dueDate}</span>
                             {payment.method && <span>· {payment.method}</span>}
                             {payment.transactionId && (
-                              <span className="font-mono">{payment.transactionId}</span>
+                              <span className="font-mono">
+                                {payment.transactionId}
+                              </span>
                             )}
                           </div>
                         </div>

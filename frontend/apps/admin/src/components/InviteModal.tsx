@@ -1,23 +1,16 @@
-import { useState } from "react";
+import { Button } from "_core/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "_core/components/ui/dialog";
-import { Button } from "_core/components/ui/button";
 import { Input } from "_core/components/ui/input";
 import { Label } from "_core/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "_core/components/ui/select";
-import { CheckCircle, GraduationCap, Users, ShieldCheck } from "lucide-react";
+import { CheckCircle, GraduationCap, ShieldCheck, Users } from "lucide-react";
+import { useState } from "react";
 import { useCreateInvitation } from "../hooks/useInvites";
 import type { InviteRole } from "../types/invites.types";
 
@@ -87,12 +80,18 @@ export function InviteModal({ open, onOpenChange }: InviteModalProps) {
       await mutateAsync({
         email,
         role,
-        ...(role === "student" && academicYear ? { academicYear: academicYear as number } : {}),
-        ...(role === "student" && gpaNum !== undefined ? { initialGpa: gpaNum } : {}),
+        ...(role === "student" && academicYear
+          ? { academicYear: academicYear as number }
+          : {}),
+        ...(role === "student" && gpaNum !== undefined
+          ? { initialGpa: gpaNum }
+          : {}),
       });
       setSent(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send invitation");
+      setError(
+        err instanceof Error ? err.message : "Failed to send invitation",
+      );
     }
   };
 
@@ -104,7 +103,8 @@ export function InviteModal({ open, onOpenChange }: InviteModalProps) {
         <DialogHeader>
           <DialogTitle>Send Invitation</DialogTitle>
           <DialogDescription>
-            The recipient will receive an email with a personalised sign-up link for their role.
+            The recipient will receive an email with a personalised sign-up link
+            for their role.
           </DialogDescription>
         </DialogHeader>
 
@@ -113,9 +113,12 @@ export function InviteModal({ open, onOpenChange }: InviteModalProps) {
             <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto">
               <CheckCircle className="w-8 h-8 text-green-500" />
             </div>
-            <p className="text-lg font-semibold text-gray-900">Invitation sent!</p>
+            <p className="text-lg font-semibold text-gray-900">
+              Invitation sent!
+            </p>
             <p className="text-sm text-gray-500">
-              An email was sent to <span className="font-medium text-gray-700">{email}</span> with a
+              An email was sent to{" "}
+              <span className="font-medium text-gray-700">{email}</span> with a
               sign-up link for the{" "}
               <span className="font-medium capitalize">{role}</span> portal.
             </p>
@@ -125,7 +128,10 @@ export function InviteModal({ open, onOpenChange }: InviteModalProps) {
               </Button>
               <Button
                 className="bg-indigo-600 hover:bg-indigo-700"
-                onClick={() => { setSent(false); setEmail(""); }}
+                onClick={() => {
+                  setSent(false);
+                  setEmail("");
+                }}
               >
                 Send Another
               </Button>
@@ -175,7 +181,9 @@ export function InviteModal({ open, onOpenChange }: InviteModalProps) {
 
                 {/* Role description */}
                 {selectedRole && (
-                  <p className="text-xs text-gray-500 mt-1 px-1">{selectedRole.desc}</p>
+                  <p className="text-xs text-gray-500 mt-1 px-1">
+                    {selectedRole.desc}
+                  </p>
                 )}
               </div>
 
@@ -204,7 +212,10 @@ export function InviteModal({ open, onOpenChange }: InviteModalProps) {
 
                   <div className="space-y-1.5">
                     <Label htmlFor="inv-gpa">
-                      Initial GPA <span className="text-gray-400 font-normal">(optional, 0.0–4.0)</span>
+                      Initial GPA{" "}
+                      <span className="text-gray-400 font-normal">
+                        (optional, 0.0–4.0)
+                      </span>
                     </Label>
                     <Input
                       id="inv-gpa"
@@ -234,7 +245,12 @@ export function InviteModal({ open, onOpenChange }: InviteModalProps) {
               </Button>
               <Button
                 type="submit"
-                disabled={isPending || !email || !role || (role === "student" && !academicYear)}
+                disabled={
+                  isPending ||
+                  !email ||
+                  !role ||
+                  (role === "student" && !academicYear)
+                }
                 className="bg-indigo-600 hover:bg-indigo-700"
               >
                 {isPending ? "Sending…" : "Send Invitation"}

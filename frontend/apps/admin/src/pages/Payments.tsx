@@ -1,6 +1,10 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "_core/components/ui/card";
 import { Badge } from "_core/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "_core/components/ui/card";
 import { Input } from "_core/components/ui/input";
 import {
   Select,
@@ -17,23 +21,29 @@ import {
   TableHeader,
   TableRow,
 } from "_core/components/ui/table";
-import {
-  DollarSign,
-  CheckCircle,
-  AlertCircle,
-  Clock,
-  Search,
-  Users,
-} from "lucide-react";
-import { useAllPayments } from "../hooks/usePayments";
+import { AlertCircle, Clock, DollarSign, Search, Users } from "lucide-react";
+import { useState } from "react";
 import type { AdminPayment, PaymentStatus } from "../api/payments";
+import { useAllPayments } from "../hooks/usePayments";
 
 function statusBadge(status: PaymentStatus) {
   if (status === "paid")
-    return <Badge className="bg-green-100 dark:bg-green-900/20 text-green-700">Paid</Badge>;
+    return (
+      <Badge className="bg-green-100 dark:bg-green-900/20 text-green-700">
+        Paid
+      </Badge>
+    );
   if (status === "overdue")
-    return <Badge className="bg-red-100 dark:bg-red-900/20 text-red-700">Overdue</Badge>;
-  return <Badge className="bg-orange-100 dark:bg-orange-900/20 text-orange-700">Pending</Badge>;
+    return (
+      <Badge className="bg-red-100 dark:bg-red-900/20 text-red-700">
+        Overdue
+      </Badge>
+    );
+  return (
+    <Badge className="bg-orange-100 dark:bg-orange-900/20 text-orange-700">
+      Pending
+    </Badge>
+  );
 }
 
 function StatCard({
@@ -53,13 +63,19 @@ function StatCard({
     <Card>
       <CardContent className="p-6">
         <div className="flex items-center gap-4">
-          <div className={`${color} w-12 h-12 rounded-lg flex items-center justify-center shrink-0`}>
+          <div
+            className={`${color} w-12 h-12 rounded-lg flex items-center justify-center shrink-0`}
+          >
             {icon}
           </div>
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
             <p className="text-2xl font-semibold">{value}</p>
-            {sub && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{sub}</p>}
+            {sub && (
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                {sub}
+              </p>
+            )}
           </div>
         </div>
       </CardContent>
@@ -70,7 +86,9 @@ function StatCard({
 export default function AdminPayments() {
   const { data, isLoading } = useAllPayments();
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | PaymentStatus>("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | PaymentStatus>(
+    "all",
+  );
 
   const payments: AdminPayment[] = data?.payments ?? [];
 
@@ -86,10 +104,10 @@ export default function AdminPayments() {
     return matchStatus && matchSearch;
   });
 
-  const totalCollected   = data?.totalCollected   ?? 0;
+  const totalCollected = data?.totalCollected ?? 0;
   const totalOutstanding = data?.totalOutstanding ?? 0;
-  const totalOverdue     = data?.totalOverdue     ?? 0;
-  const totalStudents    = data?.totalStudents    ?? 0;
+  const totalOverdue = data?.totalOverdue ?? 0;
+  const totalStudents = data?.totalStudents ?? 0;
 
   return (
     <div className="space-y-6">
@@ -215,11 +233,16 @@ export default function AdminPayments() {
           {isLoading ? (
             <div className="space-y-2">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-10 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" />
+                <div
+                  key={i}
+                  className="h-10 bg-gray-100 dark:bg-gray-700 rounded animate-pulse"
+                />
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <p className="text-center text-gray-400 dark:text-gray-500 py-12">No payments match your filter.</p>
+            <p className="text-center text-gray-400 dark:text-gray-500 py-12">
+              No payments match your filter.
+            </p>
           ) : (
             <Table>
               <TableHeader>
@@ -240,7 +263,9 @@ export default function AdminPayments() {
                     <TableCell>
                       <div>
                         <p className="text-sm font-medium">{p.studentName}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500">{p.studentEmail}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">
+                          {p.studentEmail}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -251,11 +276,14 @@ export default function AdminPayments() {
                     </TableCell>
                     <TableCell>{statusBadge(p.status)}</TableCell>
                     <TableCell className="text-sm text-gray-600 dark:text-gray-400">
-                      {new Date(p.dueDate + "T00:00:00").toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
+                      {new Date(p.dueDate + "T00:00:00").toLocaleDateString(
+                        "en-US",
+                        {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        },
+                      )}
                     </TableCell>
                     <TableCell className="text-sm text-gray-600 dark:text-gray-400">
                       {p.paidAt
@@ -275,7 +303,9 @@ export default function AdminPayments() {
                           {p.transactionId}
                         </span>
                       ) : (
-                        <span className="text-gray-400 dark:text-gray-500">—</span>
+                        <span className="text-gray-400 dark:text-gray-500">
+                          —
+                        </span>
                       )}
                     </TableCell>
                   </TableRow>
