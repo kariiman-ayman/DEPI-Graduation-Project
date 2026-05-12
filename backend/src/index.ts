@@ -25,13 +25,5 @@ app.use("/admin", adminRoutes);
 app.use("/student", studentRoutes);
 app.use("/instructor", instructorRoutes);
 
-if (process.env.ENV === "dev") {
-  const PORT = 5200;
-
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
-}
-
 export default app;
 export const handler = serverless(app);
