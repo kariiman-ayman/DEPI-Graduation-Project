@@ -1,0 +1,311 @@
+.login-root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f4ff;
+  padding: 2rem 1rem;
+  font-family: "Inter", sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(37, 99, 235, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(
+    ellipse 70% 70% at 50% 50%,
+    black 40%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.login-card {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  background: #ffffff;
+  border: 1px solid #dbeafe;
+  border-radius: 16px;
+  padding: 2.25rem 2.25rem 2rem;
+  box-shadow:
+    0 4px 6px rgba(37, 99, 235, 0.04),
+    0 20px 40px rgba(37, 99, 235, 0.08);
+  animation: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.brand {
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  margin-block: 24px;
+}
+
+.card-header {
+  margin-bottom: 1.75rem;
+  text-align: center;
+}
+.card-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 5px;
+  letter-spacing: -0.02em;
+}
+.card-subtitle {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.field-label {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #374151 !important;
+}
+.forgot-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: "Inter", sans-serif;
+  color: #2563eb;
+  transition: color 0.15s;
+}
+.forgot-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-icon {
+  position: absolute;
+  left: 11px;
+  width: 15px;
+  height: 15px;
+  color: #94a3b8;
+  pointer-events: none;
+  z-index: 1;
+  transition: color 0.15s;
+}
+.is-focused .field-icon {
+  color: #2563eb;
+}
+
+.field-input {
+  width: 100% !important;
+  height: 40px !important;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding-left: 36px !important;
+  padding-right: 36px !important;
+  font-size: 13.5px !important;
+  font-family: "Inter", sans-serif;
+  color: #0f172a !important;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    background 0.15s;
+}
+.field-input::placeholder {
+  color: #94a3b8 !important;
+}
+.field-input:focus {
+  outline: none !important;
+  border-color: #2563eb !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+}
+
+.toggle-vis {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+.toggle-vis svg {
+  width: 16px;
+  height: 16px;
+}
+.toggle-vis:hover {
+  color: #475569;
+}
+
+.error-alert {
+  background: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 8px;
+  padding: 10px 12px !important;
+}
+.error-icon {
+  width: 15px;
+  height: 15px;
+  color: #dc2626;
+  flex-shrink: 0;
+}
+.error-alert [data-slot="alert-description"] {
+  color: #b91c1c !important;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.submit-btn {
+  width: 100% !important;
+  height: 42px !important;
+  margin-top: 4px;
+  background: #2563eb !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s,
+    transform 0.1s;
+  letter-spacing: 0.01em;
+}
+.submit-btn:hover:not(:disabled) {
+  background: #1d4ed8 !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+.submit-btn:active:not(:disabled) {
+  transform: scale(0.985);
+}
+.submit-btn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Dark mode ─────────────────────────────────────────── */
+.dark .login-root {
+  background: #0f172a;
+}
+.dark .bg-grid {
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.07) 1px, transparent 1px);
+}
+.dark .login-card {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+.dark .card-title {
+  color: #f1f5f9;
+}
+.dark .card-subtitle {
+  color: #94a3b8;
+}
+.dark .field-label {
+  color: #cbd5e1 !important;
+}
+.dark .field-input {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+.dark .field-input::placeholder {
+  color: #475569 !important;
+}
+.dark .field-input:focus {
+  border-color: #6366f1 !important;
+  background: #1e293b !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+}
+.dark .field-icon {
+  color: #64748b;
+}
+.dark .is-focused .field-icon {
+  color: #818cf8;
+}
+.dark .toggle-vis {
+  color: #64748b;
+}
+.dark .toggle-vis:hover {
+  color: #94a3b8;
+}
+.dark .forgot-link {
+  color: #818cf8;
+}
+.dark .forgot-link:hover {
+  color: #a5b4fc;
+}
+.dark .error-alert {
+  background: rgba(127, 29, 29, 0.25) !important;
+  border-color: #7f1d1d !important;
+}
+.dark .error-alert [data-slot="alert-description"] {
+  color: #fca5a5 !important;
+}

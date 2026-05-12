@@ -1,9 +1,7 @@
-import { useState } from "react";
+import { useInstructors } from "../hooks/useInstructor";
+import { Button } from "_core/components/ui/button";
 import { Card, CardContent, CardHeader } from "_core/components/ui/card";
 import { Input } from "_core/components/ui/input";
-import { Button } from "_core/components/ui/button";
-import { Badge } from "_core/components/ui/badge";
-import { Search, UserPlus, Download } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -12,91 +10,16 @@ import {
   TableHeader,
   TableRow,
 } from "_core/components/ui/table";
-import { AddInstructorModal } from "_core/components/modals/AddInstructorModal";
-import { InstructorInfoModal } from "_core/components/modals/InstructorInfoModal";
+import { Download, Search } from "lucide-react";
+import { useState } from "react";
 
 export default function AdminInstructors() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedInstructor, setSelectedInstructor] = useState<
-    (typeof instructors)[0] | null
-  >(null);
-  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const { data: instructors, isLoading } = useInstructors();
 
-  const instructors = [
-    {
-      id: "INS001",
-      name: "Dr. Sarah Johnson",
-      email: "sarah.j@campus.edu",
-      department: "Computer Science",
-      courses: 3,
-      experience: "12 years",
-      status: "Active",
-    },
-    {
-      id: "INS002",
-      name: "Prof. Michael Chen",
-      email: "michael.c@campus.edu",
-      department: "Business",
-      courses: 2,
-      experience: "8 years",
-      status: "Active",
-    },
-    {
-      id: "INS003",
-      name: "Dr. Emily Davis",
-      email: "emily.d@campus.edu",
-      department: "Engineering",
-      courses: 4,
-      experience: "15 years",
-      status: "Active",
-    },
-    {
-      id: "INS004",
-      name: "Dr. James Wilson",
-      email: "james.w@campus.edu",
-      department: "Medicine",
-      courses: 2,
-      experience: "10 years",
-      status: "Active",
-    },
-    {
-      id: "INS005",
-      name: "Prof. Sofia Rodriguez",
-      email: "sofia.r@campus.edu",
-      department: "Arts",
-      courses: 3,
-      experience: "7 years",
-      status: "Active",
-    },
-    {
-      id: "INS006",
-      name: "Dr. Daniel Kim",
-      email: "daniel.k@campus.edu",
-      department: "Sciences",
-      courses: 2,
-      experience: "9 years",
-      status: "On Leave",
-    },
-    {
-      id: "INS007",
-      name: "Dr. Amanda Lee",
-      email: "amanda.l@campus.edu",
-      department: "Mathematics",
-      courses: 3,
-      experience: "11 years",
-      status: "Active",
-    },
-    {
-      id: "INS008",
-      name: "Prof. Robert Taylor",
-      email: "robert.t@campus.edu",
-      department: "Physics",
-      courses: 2,
-      experience: "14 years",
-      status: "Active",
-    },
-  ];
+  if (isLoading) return <div>Loading...</div>;
+
+  if (!instructors) return <div>No instructors found</div>;
 
   const filteredInstructors = instructors.filter(
     (instructor) =>
@@ -110,7 +33,7 @@ export default function AdminInstructors() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-2xl">Instructor Management</h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Manage instructor information and assignments
           </p>
         </div>
@@ -119,13 +42,6 @@ export default function AdminInstructors() {
             <Download className="w-4 h-4" />
             Export
           </Button>
-          <Button
-            className="gap-2 bg-indigo-600 hover:bg-indigo-700"
-            onClick={() => setIsAddModalOpen(true)}
-          >
-            <UserPlus className="w-4 h-4" />
-            Add Instructor
-          </Button>
         </div>
       </div>
 
@@ -133,7 +49,7 @@ export default function AdminInstructors() {
         <CardHeader>
           <div className="flex items-center gap-4">
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
               <Input
                 placeholder="Search instructors by name, ID, or email..."
                 className="pl-10"
@@ -150,11 +66,6 @@ export default function AdminInstructors() {
                 <TableHead>Instructor ID</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Department</TableHead>
-                <TableHead>Courses</TableHead>
-                <TableHead>Experience</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -163,7 +74,7 @@ export default function AdminInstructors() {
                   <TableCell>{instructor.id}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center">
                         <span className="text-indigo-600 text-xs">
                           {instructor.name
                             .split(" ")
@@ -174,43 +85,8 @@ export default function AdminInstructors() {
                       <span>{instructor.name}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-gray-600">
+                  <TableCell className="text-gray-600 dark:text-gray-400">
                     {instructor.email}
-                  </TableCell>
-                  <TableCell>{instructor.department}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">
-                      {instructor.courses} Courses
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-gray-600">
-                    {instructor.experience}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        instructor.status === "Active" ? "default" : "secondary"
-                      }
-                      className={
-                        instructor.status === "Active"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-orange-100 text-orange-700"
-                      }
-                    >
-                      {instructor.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedInstructor(instructor);
-                        setIsInfoModalOpen(true);
-                      }}
-                    >
-                      View
-                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -218,16 +94,6 @@ export default function AdminInstructors() {
           </Table>
         </CardContent>
       </Card>
-
-      <AddInstructorModal
-        open={isAddModalOpen}
-        onOpenChange={setIsAddModalOpen}
-      />
-      <InstructorInfoModal
-        open={isInfoModalOpen}
-        onOpenChange={setIsInfoModalOpen}
-        instructor={selectedInstructor}
-      />
     </div>
   );
 }
