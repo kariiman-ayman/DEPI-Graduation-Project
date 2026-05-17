@@ -1,19 +1,19 @@
-import "dotenv/config";
-import cors from "cors";
+// import "dotenv/config";
+// import cors from "cors";
 import express from "express";
 import serverless from "serverless-http";
-import { adminRoutes, instructorRoutes, studentRoutes } from "./routes";
+// import { adminRoutes, instructorRoutes, studentRoutes } from "./routes";
 
 const app = express();
 
-const allowedOrigins = [
-  process.env.ADMIN_FRONTEND_URL ?? "http://localhost:5175",
-  process.env.STUDENT_FRONTEND_URL ?? "http://localhost:5173",
-  process.env.INSTRUCTOR_FRONTEND_URL ?? "http://localhost:5174",
-];
+// const allowedOrigins = [
+//   process.env.ADMIN_FRONTEND_URL ?? "http://localhost:5175",
+//   process.env.STUDENT_FRONTEND_URL ?? "http://localhost:5173",
+//   process.env.INSTRUCTOR_FRONTEND_URL ?? "http://localhost:5174",
+// ];
 
-app.use(cors({ origin: allowedOrigins, credentials: true }));
-app.use(express.json());
+// app.use(cors({ origin: allowedOrigins, credentials: true }));
+// app.use(express.json());
 
 app.get("/", (req, res) => {
   res.json({
@@ -21,9 +21,9 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/admin", adminRoutes);
-app.use("/student", studentRoutes);
-app.use("/instructor", instructorRoutes);
+// app.use("/admin", adminRoutes);
+// app.use("/student", studentRoutes);
+// app.use("/instructor", instructorRoutes);
 
 if (process.env.ENV === "dev") {
   const PORT = 5200;
