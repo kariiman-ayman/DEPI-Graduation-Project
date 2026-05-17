@@ -16,6 +16,8 @@ const allowedOrigins = [
   process.env.INSTRUCTOR_FRONTEND_URL ?? "http://localhost:5174",
 ];
 
+console.log("test test", allowedOrigins);
+
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 
