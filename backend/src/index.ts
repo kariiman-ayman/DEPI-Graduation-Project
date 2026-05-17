@@ -2,7 +2,11 @@ import "dotenv/config";
 import cors from "cors";
 import express from "express";
 import serverless from "serverless-http";
-import { adminRoutes, instructorRoutes, studentRoutes } from "./routes/index";
+import {
+  adminRoutes,
+  instructorRoutes,
+  studentRoutes,
+} from "./routes/index.js";
 
 const app = express();
 

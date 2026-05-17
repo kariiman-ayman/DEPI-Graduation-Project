@@ -1,4 +1,4 @@
-import { AddDepartmentModal } from "../components/AddDepartmentModal";
+import { AddDepartmentModal } from "../components/AddDepartmentModal.js";
 import { Button } from "_core/components/ui/button";
 import { Card, CardContent, CardHeader } from "_core/components/ui/card";
 import { Input } from "_core/components/ui/input";
@@ -12,7 +12,10 @@ import {
 } from "_core/components/ui/table";
 import { PlusCircle, Search } from "lucide-react";
 import { useState } from "react";
-import { useDeleteDepartment, useDepartments } from "../hooks/useDepartments";
+import {
+  useDeleteDepartment,
+  useDepartments,
+} from "../hooks/useDepartments.js";
 
 const Departments = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -44,7 +47,9 @@ const Departments = () => {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-2xl">Departments Management</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Add and manage departments</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Add and manage departments
+          </p>
         </div>
         <div className="flex gap-3">
           <Button

@@ -1,5 +1,5 @@
 import api from "_core/api";
-import type { CoursesList, EnrolledCourse } from "../types/course.types";
+import type { CoursesList, EnrolledCourse } from "../types/course.types.js";
 
 const BASE = "/student/courses";
 

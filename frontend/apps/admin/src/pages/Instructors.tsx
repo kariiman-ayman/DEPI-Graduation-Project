@@ -1,4 +1,4 @@
-import { useInstructors } from "../hooks/useInstructor";
+import { useInstructors } from "../hooks/useInstructor.js";
 import { Button } from "_core/components/ui/button";
 import { Card, CardContent, CardHeader } from "_core/components/ui/card";
 import { Input } from "_core/components/ui/input";

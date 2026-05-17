@@ -1,4 +1,4 @@
-import { getInstructors } from "../api/instructor";
+import { getInstructors } from "../api/instructor.js";
 import { useQuery } from "@tanstack/react-query";
 
 export const useInstructors = () => {

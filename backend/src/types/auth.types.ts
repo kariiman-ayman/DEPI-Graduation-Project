@@ -1,4 +1,4 @@
-import type { Role } from "./common.types";
+import type { Role } from "./common.types.js";
 
 export interface SignupDTO {
   email: string;

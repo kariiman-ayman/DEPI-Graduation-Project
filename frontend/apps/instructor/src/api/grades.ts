@@ -1,5 +1,8 @@
 import api from "_core/api";
-import type { InstructorCourseGrade, UpsertGradeDTO } from "../types/grade.types";
+import type {
+  InstructorCourseGrade,
+  UpsertGradeDTO,
+} from "../types/grade.types.js";
 
 export const getCourseGrades = async (
   courseId: string,

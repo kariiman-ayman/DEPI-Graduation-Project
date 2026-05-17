@@ -1,8 +1,20 @@
 import { useNavigate } from "react-router";
-import { useCourses } from "../hooks/useCourses";
-import { Card, CardContent, CardHeader, CardTitle } from "_core/components/ui/card";
+import { useCourses } from "../hooks/useCourses.js";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "_core/components/ui/card";
 import { Button } from "_core/components/ui/button";
-import { BookOpen, Users, ClipboardCheck, TrendingUp, Calendar, Clock } from "lucide-react";
+import {
+  BookOpen,
+  Users,
+  ClipboardCheck,
+  TrendingUp,
+  Calendar,
+  Clock,
+} from "lucide-react";
 
 function SkeletonCard() {
   return (
@@ -41,7 +53,9 @@ export default function InstructorDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">Dashboard</h3>
+        <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          Dashboard
+        </h3>
         <p className="text-sm text-gray-500 dark:text-gray-400">
           Overview of your courses and students
         </p>
@@ -63,7 +77,9 @@ export default function InstructorDashboard() {
                     <BookOpen className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Active Courses</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Active Courses
+                    </p>
                     <p className="text-2xl font-semibold">{courses.length}</p>
                   </div>
                 </div>
@@ -77,7 +93,9 @@ export default function InstructorDashboard() {
                     <Users className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Total Students</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Total Students
+                    </p>
                     <p className="text-2xl font-semibold">{totalStudents}</p>
                   </div>
                 </div>
@@ -93,7 +111,11 @@ export default function InstructorDashboard() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>My Courses</CardTitle>
-              <Button variant="ghost" size="sm" onClick={() => navigate("/courses")}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/courses")}
+              >
                 View all
               </Button>
             </div>

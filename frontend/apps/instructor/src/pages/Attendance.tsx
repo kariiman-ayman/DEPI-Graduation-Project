@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "_core/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "_core/components/ui/card";
 import { Button } from "_core/components/ui/button";
 import { Badge } from "_core/components/ui/badge";
 import {
@@ -19,8 +24,11 @@ import {
   TableHeader,
   TableRow,
 } from "_core/components/ui/table";
-import { useCourses } from "../hooks/useCourses";
-import { useCourseAttendance, useSaveAttendance } from "../hooks/useAttendance";
+import { useCourses } from "../hooks/useCourses.js";
+import {
+  useCourseAttendance,
+  useSaveAttendance,
+} from "../hooks/useAttendance.js";
 
 export default function InstructorAttendance() {
   const today = new Date().toISOString().split("T")[0];
@@ -33,10 +41,11 @@ export default function InstructorAttendance() {
   const [savedMsg, setSavedMsg] = useState(false);
 
   const { data: courses = [], isLoading: coursesLoading } = useCourses();
-  const { data: attendanceData, isLoading: attendanceLoading, isFetching } = useCourseAttendance(
-    selectedCourseId,
-    selectedDate
-  );
+  const {
+    data: attendanceData,
+    isLoading: attendanceLoading,
+    isFetching,
+  } = useCourseAttendance(selectedCourseId, selectedDate);
   const { mutateAsync: doSave } = useSaveAttendance();
 
   // Seed marks from fetched data whenever course/date/data changes
@@ -50,7 +59,10 @@ export default function InstructorAttendance() {
   }, [attendanceData]);
 
   const toggle = (studentId: string, checked: boolean) => {
-    setMarks((prev) => ({ ...prev, [studentId]: checked ? "present" : "absent" }));
+    setMarks((prev) => ({
+      ...prev,
+      [studentId]: checked ? "present" : "absent",
+    }));
   };
 
   const handleSave = async () => {
@@ -70,14 +82,18 @@ export default function InstructorAttendance() {
   };
 
   const students = attendanceData?.students ?? [];
-  const presentCount = students.filter((s) => marks[s.studentId] === "present").length;
+  const presentCount = students.filter(
+    (s) => marks[s.studentId] === "present",
+  ).length;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-2xl">Attendance Management</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Mark and track student attendance</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Mark and track student attendance
+          </p>
         </div>
       </div>
 
@@ -118,17 +134,24 @@ export default function InstructorAttendance() {
           {/* Date summary bar */}
           <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Selected Date</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Selected Date
+              </p>
               <p className="text-base font-medium">
-                {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+                {new Date(selectedDate + "T00:00:00").toLocaleDateString(
+                  "en-US",
+                  {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  },
+                )}
               </p>
             </div>
-            {selectedDate === today && <Badge className="bg-blue-600">Today</Badge>}
+            {selectedDate === today && (
+              <Badge className="bg-blue-600">Today</Badge>
+            )}
           </div>
 
           {/* Empty / loading states */}
@@ -139,7 +162,10 @@ export default function InstructorAttendance() {
           ) : attendanceLoading || isFetching ? (
             <div className="space-y-2 py-4">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-10 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" />
+                <div
+                  key={i}
+                  className="h-10 bg-gray-100 dark:bg-gray-700 rounded animate-pulse"
+                />
               ))}
             </div>
           ) : students.length === 0 ? (
@@ -182,14 +208,20 @@ export default function InstructorAttendance() {
                               </span>
                             </div>
                             <div>
-                              <p className="text-sm font-medium">{student.name}</p>
-                              <p className="text-xs text-gray-400 dark:text-gray-500">{student.email}</p>
+                              <p className="text-sm font-medium">
+                                {student.name}
+                              </p>
+                              <p className="text-xs text-gray-400 dark:text-gray-500">
+                                {student.email}
+                              </p>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>
                           {student.total === 0 ? (
-                            <span className="text-xs text-gray-400 dark:text-gray-500">No data</span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500">
+                              No data
+                            </span>
                           ) : (
                             <div className="flex items-center gap-2">
                               <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 max-w-24">
@@ -201,7 +233,9 @@ export default function InstructorAttendance() {
                                         ? "bg-blue-500"
                                         : "bg-orange-500"
                                   }`}
-                                  style={{ width: `${student.attendanceRate}%` }}
+                                  style={{
+                                    width: `${student.attendanceRate}%`,
+                                  }}
                                 />
                               </div>
                               <span className="text-sm font-medium">
@@ -213,7 +247,9 @@ export default function InstructorAttendance() {
                         <TableCell>
                           <div className="flex items-center justify-center gap-1">
                             {student.lastSessions.length === 0 ? (
-                              <span className="text-xs text-gray-400 dark:text-gray-500">—</span>
+                              <span className="text-xs text-gray-400 dark:text-gray-500">
+                                —
+                              </span>
                             ) : (
                               student.lastSessions.map((session, idx) => (
                                 <div
@@ -259,7 +295,9 @@ export default function InstructorAttendance() {
                 </p>
                 <div className="flex items-center gap-3">
                   {savedMsg && (
-                    <span className="text-sm text-green-600 font-medium">Saved!</span>
+                    <span className="text-sm text-green-600 font-medium">
+                      Saved!
+                    </span>
                   )}
                   <Button
                     onClick={handleSave}

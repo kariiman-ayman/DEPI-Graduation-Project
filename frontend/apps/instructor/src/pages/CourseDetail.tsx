@@ -1,14 +1,27 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useCourseAttendance, useSaveAttendance } from "../hooks/useAttendance";
-import { useCourses } from "../hooks/useCourses";
-import { useCourseGrades, useUpsertGrade } from "../hooks/useGrades";
-import type { InstructorCourseGrade } from "../types/grade.types";
-import { Card, CardContent, CardHeader, CardTitle } from "_core/components/ui/card";
+import {
+  useCourseAttendance,
+  useSaveAttendance,
+} from "../hooks/useAttendance.js";
+import { useCourses } from "../hooks/useCourses.js";
+import { useCourseGrades, useUpsertGrade } from "../hooks/useGrades.js";
+import type { InstructorCourseGrade } from "../types/grade.types.js";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "_core/components/ui/card";
 import { Button } from "_core/components/ui/button";
 import { Badge } from "_core/components/ui/badge";
 import { Input } from "_core/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "_core/components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "_core/components/ui/tabs";
 import { Progress } from "_core/components/ui/progress";
 import { Checkbox } from "_core/components/ui/checkbox";
 import {
@@ -40,14 +53,23 @@ function toLetterGrade(total: number): string {
 }
 
 function getGradeColor(grade: string | null): string {
-  if (!grade) return "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
-  if (grade.startsWith("A")) return "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400";
-  if (grade.startsWith("B")) return "bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400";
-  if (grade.startsWith("C")) return "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400";
+  if (!grade)
+    return "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
+  if (grade.startsWith("A"))
+    return "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400";
+  if (grade.startsWith("B"))
+    return "bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400";
+  if (grade.startsWith("C"))
+    return "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400";
   return "bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400";
 }
 
-type EditRow = { midterm: number; assignments: number; project: number; final: number };
+type EditRow = {
+  midterm: number;
+  assignments: number;
+  project: number;
+  final: number;
+};
 type EditsMap = Record<string, EditRow>;
 
 function rowFromGrade(g: InstructorCourseGrade): EditRow {
@@ -73,7 +95,8 @@ export default function InstructorCourseDetail() {
   const [isSaving, setIsSaving] = useState(false);
   const [savedMsg, setSavedMsg] = useState(false);
 
-  const { data: gradeData, isFetching: gradesFetching } = useCourseGrades(courseId);
+  const { data: gradeData, isFetching: gradesFetching } =
+    useCourseGrades(courseId);
   const { mutateAsync: upsertGrade } = useUpsertGrade();
 
   useEffect(() => {
@@ -83,12 +106,21 @@ export default function InstructorCourseDetail() {
     setEdits(initial);
   }, [gradeData]);
 
-  function handleGradeChange(studentId: string, field: keyof EditRow, raw: string) {
+  function handleGradeChange(
+    studentId: string,
+    field: keyof EditRow,
+    raw: string,
+  ) {
     const value = Math.min(100, Math.max(0, Number(raw) || 0));
     setEdits((prev) => ({
       ...prev,
       [studentId]: {
-        ...(prev[studentId] ?? { midterm: 0, assignments: 0, project: 0, final: 0 }),
+        ...(prev[studentId] ?? {
+          midterm: 0,
+          assignments: 0,
+          project: 0,
+          final: 0,
+        }),
         [field]: value,
       },
     }));
@@ -116,7 +148,8 @@ export default function InstructorCourseDetail() {
   const [savingAttendance, setSavingAttendance] = useState(false);
   const [attendanceSavedMsg, setAttendanceSavedMsg] = useState(false);
 
-  const { data: attendanceData, isLoading: attendanceLoading } = useCourseAttendance(courseId, attendanceDate);
+  const { data: attendanceData, isLoading: attendanceLoading } =
+    useCourseAttendance(courseId, attendanceDate);
   const { mutateAsync: doSave } = useSaveAttendance();
 
   useEffect(() => {
@@ -129,7 +162,10 @@ export default function InstructorCourseDetail() {
   }, [attendanceData]);
 
   function toggleAttendanceMark(studentId: string, checked: boolean) {
-    setMarks((prev) => ({ ...prev, [studentId]: checked ? "present" : "absent" }));
+    setMarks((prev) => ({
+      ...prev,
+      [studentId]: checked ? "present" : "absent",
+    }));
   }
 
   async function handleSaveAttendance() {
@@ -149,9 +185,13 @@ export default function InstructorCourseDetail() {
   }
 
   const attendanceStudents = attendanceData?.students ?? [];
-  const presentCount = attendanceStudents.filter((s) => marks[s.studentId] === "present").length;
+  const presentCount = attendanceStudents.filter(
+    (s) => marks[s.studentId] === "present",
+  ).length;
   const attendanceRate =
-    attendanceStudents.length > 0 ? (presentCount / attendanceStudents.length) * 100 : 0;
+    attendanceStudents.length > 0
+      ? (presentCount / attendanceStudents.length) * 100
+      : 0;
 
   return (
     <div className="space-y-6">
@@ -166,7 +206,9 @@ export default function InstructorCourseDetail() {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h3 className="text-2xl mb-0.5">{course?.title ?? "Course Detail"}</h3>
+          <h3 className="text-2xl mb-0.5">
+            {course?.title ?? "Course Detail"}
+          </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {[
               course?.department?.name,
@@ -196,7 +238,9 @@ export default function InstructorCourseDetail() {
                 <CardTitle className="text-sm">Grade Management</CardTitle>
                 <div className="flex items-center gap-3">
                   {savedMsg && (
-                    <span className="text-sm text-green-600 font-medium">Saved!</span>
+                    <span className="text-sm text-green-600 font-medium">
+                      Saved!
+                    </span>
                   )}
                   <Button
                     className="gap-2 bg-indigo-600 hover:bg-indigo-700"
@@ -215,7 +259,9 @@ export default function InstructorCourseDetail() {
                   <TableRow>
                     <TableHead>Student</TableHead>
                     <TableHead className="text-center">Midterm (30%)</TableHead>
-                    <TableHead className="text-center">Assignments (20%)</TableHead>
+                    <TableHead className="text-center">
+                      Assignments (20%)
+                    </TableHead>
                     <TableHead className="text-center">Project (25%)</TableHead>
                     <TableHead className="text-center">Final (25%)</TableHead>
                     <TableHead className="text-center">Total</TableHead>
@@ -279,7 +325,12 @@ export default function InstructorCourseDetail() {
                             </div>
                           </TableCell>
                           {(
-                            ["midterm", "assignments", "project", "final"] as const
+                            [
+                              "midterm",
+                              "assignments",
+                              "project",
+                              "final",
+                            ] as const
                           ).map((field) => (
                             <TableCell key={field} className="text-center">
                               <Input
@@ -302,7 +353,9 @@ export default function InstructorCourseDetail() {
                             {total.toFixed(1)}
                           </TableCell>
                           <TableCell className="text-center">
-                            <Badge className={getGradeColor(letter)}>{letter}</Badge>
+                            <Badge className={getGradeColor(letter)}>
+                              {letter}
+                            </Badge>
                           </TableCell>
                         </TableRow>
                       );
@@ -351,7 +404,8 @@ export default function InstructorCourseDetail() {
                     <div className="flex-1">
                       <Progress value={attendanceRate} className="h-3" />
                       <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                        {presentCount} out of {attendanceStudents.length} students present
+                        {presentCount} out of {attendanceStudents.length}{" "}
+                        students present
                       </p>
                     </div>
                   </div>
@@ -366,7 +420,8 @@ export default function InstructorCourseDetail() {
                     </TableHeader>
                     <TableBody>
                       {attendanceStudents.map((student) => {
-                        const isPresent = marks[student.studentId] === "present";
+                        const isPresent =
+                          marks[student.studentId] === "present";
                         return (
                           <TableRow
                             key={student.studentId}
@@ -410,7 +465,9 @@ export default function InstructorCourseDetail() {
 
                   <div className="flex items-center justify-end gap-3 mt-6">
                     {attendanceSavedMsg && (
-                      <span className="text-sm text-green-600 font-medium">Saved!</span>
+                      <span className="text-sm text-green-600 font-medium">
+                        Saved!
+                      </span>
                     )}
                     <Button
                       onClick={handleSaveAttendance}

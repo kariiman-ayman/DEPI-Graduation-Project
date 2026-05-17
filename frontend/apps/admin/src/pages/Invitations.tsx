@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Badge } from "_core/components/ui/badge";
 import { Button } from "_core/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "_core/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "_core/components/ui/card";
 import { Input } from "_core/components/ui/input";
 import {
   Select,
@@ -30,13 +35,13 @@ import {
   Users,
   ShieldCheck,
 } from "lucide-react";
-import { InviteModal } from "../components/InviteModal";
+import { InviteModal } from "../components/InviteModal.js";
 import {
   useInvitations,
   useResendInvitation,
   useRevokeInvitation,
-} from "../hooks/useInvites";
-import type { InvitesList, InviteRole } from "../types/invites.types";
+} from "../hooks/useInvites.js";
+import type { InvitesList, InviteRole } from "../types/invites.types.js";
 
 function roleBadge(role: InviteRole) {
   const styles: Record<InviteRole, string> = {
@@ -59,9 +64,23 @@ function roleBadge(role: InviteRole) {
 }
 
 function statusBadge(inv: InvitesList) {
-  if (inv.used) return <Badge className="bg-green-100 dark:bg-green-900/20 text-green-700">Accepted</Badge>;
-  if (inv.expired) return <Badge className="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">Expired</Badge>;
-  return <Badge className="bg-orange-100 dark:bg-orange-900/20 text-orange-700">Pending</Badge>;
+  if (inv.used)
+    return (
+      <Badge className="bg-green-100 dark:bg-green-900/20 text-green-700">
+        Accepted
+      </Badge>
+    );
+  if (inv.expired)
+    return (
+      <Badge className="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
+        Expired
+      </Badge>
+    );
+  return (
+    <Badge className="bg-orange-100 dark:bg-orange-900/20 text-orange-700">
+      Pending
+    </Badge>
+  );
 }
 
 function relativeTime(iso: string | null): string {
@@ -88,7 +107,8 @@ function expiryLabel(inv: InvitesList): string {
 
 function CopyLinkButton({ link }: { link: string | null }) {
   const [copied, setCopied] = useState(false);
-  if (!link) return <span className="text-gray-300 dark:text-gray-600 text-xs">—</span>;
+  if (!link)
+    return <span className="text-gray-300 dark:text-gray-600 text-xs">—</span>;
   return (
     <button
       onClick={() => {
@@ -100,7 +120,11 @@ function CopyLinkButton({ link }: { link: string | null }) {
       title="Copy invite link"
       className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 transition-colors"
     >
-      {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+      {copied ? (
+        <Check className="w-3.5 h-3.5 text-green-500" />
+      ) : (
+        <Copy className="w-3.5 h-3.5" />
+      )}
       {copied ? "Copied!" : "Copy link"}
     </button>
   );
@@ -119,10 +143,10 @@ export default function Invitations() {
   const { mutate: resend, isPending: resending } = useResendInvitation();
   const { mutate: revoke, isPending: revoking } = useRevokeInvitation();
 
-  const total    = invitations.length;
+  const total = invitations.length;
   const accepted = invitations.filter((i) => i.used).length;
-  const pending  = invitations.filter((i) => !i.used && !i.expired).length;
-  const expired  = invitations.filter((i) => !i.used && i.expired).length;
+  const pending = invitations.filter((i) => !i.used && !i.expired).length;
+  const expired = invitations.filter((i) => !i.used && i.expired).length;
 
   const filtered = invitations.filter((inv) => {
     const q = search.toLowerCase();
@@ -161,19 +185,47 @@ export default function Invitations() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Total Sent", value: total, icon: Mail, color: "bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400" },
-          { label: "Accepted", value: accepted, icon: Check, color: "bg-green-100 dark:bg-green-900/20 text-green-600" },
-          { label: "Pending", value: pending, icon: RotateCcw, color: "bg-orange-100 dark:bg-orange-900/20 text-orange-600" },
-          { label: "Expired", value: expired, icon: Trash2, color: "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400" },
+          {
+            label: "Total Sent",
+            value: total,
+            icon: Mail,
+            color:
+              "bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400",
+          },
+          {
+            label: "Accepted",
+            value: accepted,
+            icon: Check,
+            color: "bg-green-100 dark:bg-green-900/20 text-green-600",
+          },
+          {
+            label: "Pending",
+            value: pending,
+            icon: RotateCcw,
+            color: "bg-orange-100 dark:bg-orange-900/20 text-orange-600",
+          },
+          {
+            label: "Expired",
+            value: expired,
+            icon: Trash2,
+            color:
+              "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400",
+          },
         ].map(({ label, value, icon: Icon, color }) => (
           <Card key={label}>
             <CardContent className="p-5 flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${color}`}>
+              <div
+                className={`w-10 h-10 rounded-lg flex items-center justify-center ${color}`}
+              >
                 <Icon className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
-                <p className="text-2xl font-semibold">{isLoading ? "—" : value}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {label}
+                </p>
+                <p className="text-2xl font-semibold">
+                  {isLoading ? "—" : value}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -194,7 +246,10 @@ export default function Invitations() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <Select value={roleFilter} onValueChange={(v) => setRoleFilter(v as RoleFilter)}>
+            <Select
+              value={roleFilter}
+              onValueChange={(v) => setRoleFilter(v as RoleFilter)}
+            >
               <SelectTrigger className="w-36">
                 <SelectValue />
               </SelectTrigger>
@@ -205,7 +260,10 @@ export default function Invitations() {
                 <SelectItem value="admin">Admin</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
+            <Select
+              value={statusFilter}
+              onValueChange={(v) => setStatusFilter(v as StatusFilter)}
+            >
               <SelectTrigger className="w-36">
                 <SelectValue />
               </SelectTrigger>
@@ -223,11 +281,16 @@ export default function Invitations() {
           {isLoading ? (
             <div className="space-y-2">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-10 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" />
+                <div
+                  key={i}
+                  className="h-10 bg-gray-100 dark:bg-gray-700 rounded animate-pulse"
+                />
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <p className="text-center text-gray-400 dark:text-gray-500 py-12">No invitations match your filters.</p>
+            <p className="text-center text-gray-400 dark:text-gray-500 py-12">
+              No invitations match your filters.
+            </p>
           ) : (
             <Table>
               <TableHeader>
@@ -253,7 +316,9 @@ export default function Invitations() {
                         </div>
                         <div>
                           <p className="text-sm font-medium">{inv.email}</p>
-                          <p className="text-xs text-gray-400 dark:text-gray-500 font-mono">{inv.id.slice(0, 8)}…</p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500 font-mono">
+                            {inv.id.slice(0, 8)}…
+                          </p>
                         </div>
                       </div>
                     </TableCell>

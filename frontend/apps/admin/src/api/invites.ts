@@ -1,5 +1,5 @@
 import api from "_core/api";
-import type { InviteDTO, InvitesList } from "../types/invites.types";
+import type { InviteDTO, InvitesList } from "../types/invites.types.js";
 
 const BASE = "/admin/invite";
 

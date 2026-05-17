@@ -1,11 +1,16 @@
 import api from "_core/api";
-import type { CourseAttendanceResponse, SaveAttendanceDTO } from "../types/attendance.types";
+import type {
+  CourseAttendanceResponse,
+  SaveAttendanceDTO,
+} from "../types/attendance.types.js";
 
 export const getCourseAttendance = async (
   courseId: string,
-  date: string
+  date: string,
 ): Promise<CourseAttendanceResponse> => {
-  const res = await api.get("/instructor/attendance", { params: { courseId, date } });
+  const res = await api.get("/instructor/attendance", {
+    params: { courseId, date },
+  });
   return res.data;
 };
 

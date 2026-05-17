@@ -1,6 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getInvitations, invite, resendInvitation, revokeInvitation } from "../api/invites";
-import type { InviteDTO } from "../types/invites.types";
+import {
+  getInvitations,
+  invite,
+  resendInvitation,
+  revokeInvitation,
+} from "../api/invites.js";
+import type { InviteDTO } from "../types/invites.types.js";
 
 const KEY = ["invitations"] as const;
 

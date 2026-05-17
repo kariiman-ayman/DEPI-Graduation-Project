@@ -11,8 +11,8 @@ import { Input } from "_core/components/ui/input";
 import { Label } from "_core/components/ui/label";
 import { CheckCircle, GraduationCap, ShieldCheck, Users } from "lucide-react";
 import { useState } from "react";
-import { useCreateInvitation } from "../hooks/useInvites";
-import type { InviteRole } from "../types/invites.types";
+import { useCreateInvitation } from "../hooks/useInvites.js";
+import type { InviteRole } from "../types/invites.types.js";
 
 const ROLE_INFO: Record<
   InviteRole,

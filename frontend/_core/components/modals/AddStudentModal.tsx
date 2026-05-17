@@ -6,17 +6,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "../ui/dialog";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+} from "../ui/dialog.js";
+import { Button } from "../ui/button.js";
+import { Input } from "../ui/input.js";
+import { Label } from "../ui/label.js";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "../ui/select.js";
 
 interface AddStudentModalProps {
   open: boolean;
@@ -69,7 +69,9 @@ export function AddStudentModal({ open, onOpenChange }: AddStudentModalProps) {
                   id="firstName"
                   placeholder="John"
                   value={formData.firstName}
-                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, firstName: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -79,7 +81,9 @@ export function AddStudentModal({ open, onOpenChange }: AddStudentModalProps) {
                   id="lastName"
                   placeholder="Doe"
                   value={formData.lastName}
-                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, lastName: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -91,7 +95,9 @@ export function AddStudentModal({ open, onOpenChange }: AddStudentModalProps) {
                 id="studentId"
                 placeholder="STU001"
                 value={formData.studentId}
-                onChange={(e) => setFormData({ ...formData, studentId: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, studentId: e.target.value })
+                }
                 required
               />
             </div>
@@ -103,7 +109,9 @@ export function AddStudentModal({ open, onOpenChange }: AddStudentModalProps) {
                 type="email"
                 placeholder="john.doe@campus.edu"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 required
               />
             </div>
@@ -115,7 +123,9 @@ export function AddStudentModal({ open, onOpenChange }: AddStudentModalProps) {
                 type="tel"
                 placeholder="+1 (555) 000-0000"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
               />
             </div>
 
@@ -124,7 +134,9 @@ export function AddStudentModal({ open, onOpenChange }: AddStudentModalProps) {
                 <Label htmlFor="department">Department *</Label>
                 <Select
                   value={formData.department}
-                  onValueChange={(value) => setFormData({ ...formData, department: value })}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, department: value })
+                  }
                   required
                 >
                   <SelectTrigger id="department">
@@ -137,7 +149,9 @@ export function AddStudentModal({ open, onOpenChange }: AddStudentModalProps) {
                     <SelectItem value="arts">Arts</SelectItem>
                     <SelectItem value="medicine">Medicine</SelectItem>
                     <SelectItem value="mathematics">Mathematics</SelectItem>
-                    <SelectItem value="computer-science">Computer Science</SelectItem>
+                    <SelectItem value="computer-science">
+                      Computer Science
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -146,7 +160,9 @@ export function AddStudentModal({ open, onOpenChange }: AddStudentModalProps) {
                 <Label htmlFor="year">Academic Year *</Label>
                 <Select
                   value={formData.year}
-                  onValueChange={(value) => setFormData({ ...formData, year: value })}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, year: value })
+                  }
                   required
                 >
                   <SelectTrigger id="year">
@@ -164,7 +180,11 @@ export function AddStudentModal({ open, onOpenChange }: AddStudentModalProps) {
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700">

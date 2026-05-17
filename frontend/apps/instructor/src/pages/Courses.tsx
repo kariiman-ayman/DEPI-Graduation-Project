@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { useCourses } from "../hooks/useCourses";
+import { useCourses } from "../hooks/useCourses.js";
 import { BookOpen, Calendar, Clock, Users, Layers } from "lucide-react";
 import { Badge } from "_core/components/ui/badge";
 import { Button } from "_core/components/ui/button";
@@ -25,7 +25,9 @@ export default function InstructorCourses() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">My Courses</h3>
+        <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          My Courses
+        </h3>
         <p className="text-sm text-gray-500 dark:text-gray-400">
           Manage your courses and student grades
         </p>
@@ -33,7 +35,9 @@ export default function InstructorCourses() {
 
       {isLoading && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {[1, 2, 3].map((i) => <CourseCardSkeleton key={i} />)}
+          {[1, 2, 3].map((i) => (
+            <CourseCardSkeleton key={i} />
+          ))}
         </div>
       )}
 
@@ -48,7 +52,9 @@ export default function InstructorCourses() {
           <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <BookOpen className="w-6 h-6 text-indigo-500" />
           </div>
-          <p className="font-semibold text-gray-900 dark:text-white">No courses assigned</p>
+          <p className="font-semibold text-gray-900 dark:text-white">
+            No courses assigned
+          </p>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Contact an admin to be assigned to a course
           </p>
@@ -59,7 +65,8 @@ export default function InstructorCourses() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {courses.map((course) => {
             const isFull =
-              course.capacity !== null && course.enrolledCount >= course.capacity;
+              course.capacity !== null &&
+              course.enrolledCount >= course.capacity;
             const fillPct =
               course.capacity !== null
                 ? Math.min((course.enrolledCount / course.capacity) * 100, 100)
@@ -109,7 +116,10 @@ export default function InstructorCourses() {
                     <span className="flex items-center gap-1">
                       <Users className="w-3 h-3" />
                       {course.enrolledCount}
-                      {course.capacity !== null ? `/${course.capacity}` : ""} enrolled
+                      {course.capacity !== null
+                        ? `/${course.capacity}`
+                        : ""}{" "}
+                      enrolled
                     </span>
                     {fillPct !== null && <span>{Math.round(fillPct)}%</span>}
                   </div>

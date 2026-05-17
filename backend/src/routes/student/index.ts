@@ -1,12 +1,12 @@
 import { Router } from "express";
-import authRoutes from "./auth.routes";
-import coursesRoutes from "./courses.routes";
-import enrollmentRoutes from "./enrollment.routes";
-import lectureRoutes from "./lecture.routes";
-import gradeRoutes from "./grade.routes";
-import attendanceRoutes from "./attendance.routes";
-import paymentRoutes from "./payment.routes";
-import profileRoutes from "./profile.routes";
+import authRoutes from "./auth.routes.js";
+import coursesRoutes from "./courses.routes.js";
+import enrollmentRoutes from "./enrollment.routes.js";
+import lectureRoutes from "./lecture.routes.js";
+import gradeRoutes from "./grade.routes.js";
+import attendanceRoutes from "./attendance.routes.js";
+import paymentRoutes from "./payment.routes.js";
+import profileRoutes from "./profile.routes.js";
 
 const router = Router();
 

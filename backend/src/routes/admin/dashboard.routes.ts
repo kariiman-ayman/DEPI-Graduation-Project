@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getDashboardController } from "../../controllers/admin/dashboard.controller";
+import { getDashboardController } from "../../controllers/admin/dashboard.controller.js";
 
 const router = Router();
 

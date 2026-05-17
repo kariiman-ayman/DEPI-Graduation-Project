@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "_core/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "_core/components/ui/card";
 import { Button } from "_core/components/ui/button";
 import { Badge } from "_core/components/ui/badge";
 import { Progress } from "_core/components/ui/progress";
@@ -18,27 +23,43 @@ import {
   TableHeader,
   TableRow,
 } from "_core/components/ui/table";
-import { useMyPayments } from "../hooks/usePayments";
-import CheckoutModal from "../components/CheckoutModal";
-import type { Payment } from "../types/payment.types";
+import { useMyPayments } from "../hooks/usePayments.js";
+import CheckoutModal from "../components/CheckoutModal.js";
+import type { Payment } from "../types/payment.types.js";
 
 function statusBadge(status: Payment["status"]) {
   if (status === "paid")
-    return <Badge className="bg-green-100 dark:bg-green-900/20 text-green-700">Paid</Badge>;
+    return (
+      <Badge className="bg-green-100 dark:bg-green-900/20 text-green-700">
+        Paid
+      </Badge>
+    );
   if (status === "overdue")
-    return <Badge className="bg-red-100 dark:bg-red-900/20 text-red-700">Overdue</Badge>;
-  return <Badge className="bg-orange-100 dark:bg-orange-900/20 text-orange-700">Pending</Badge>;
+    return (
+      <Badge className="bg-red-100 dark:bg-red-900/20 text-red-700">
+        Overdue
+      </Badge>
+    );
+  return (
+    <Badge className="bg-orange-100 dark:bg-orange-900/20 text-orange-700">
+      Pending
+    </Badge>
+  );
 }
 
 function statusIcon(status: Payment["status"]) {
-  if (status === "paid") return <CheckCircle className="w-4 h-4 text-green-500" />;
-  if (status === "overdue") return <AlertCircle className="w-4 h-4 text-red-500" />;
+  if (status === "paid")
+    return <CheckCircle className="w-4 h-4 text-green-500" />;
+  if (status === "overdue")
+    return <AlertCircle className="w-4 h-4 text-red-500" />;
   return <Clock className="w-4 h-4 text-orange-500" />;
 }
 
 function cardBg(status: Payment["status"]) {
-  if (status === "paid") return "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800";
-  if (status === "overdue") return "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-900";
+  if (status === "paid")
+    return "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800";
+  if (status === "overdue")
+    return "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-900";
   return "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800";
 }
 
@@ -57,7 +78,9 @@ function StatCard({
     <Card>
       <CardContent className="p-6">
         <div className="flex items-center gap-4">
-          <div className={`${color} w-12 h-12 rounded-lg flex items-center justify-center`}>
+          <div
+            className={`${color} w-12 h-12 rounded-lg flex items-center justify-center`}
+          >
             {icon}
           </div>
           <div>
@@ -89,7 +112,9 @@ export default function StudentPayments() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-2xl">Payment Management</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Track tuition fees and payment history</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Track tuition fees and payment history
+          </p>
         </div>
         {nextDue && (
           <Button
@@ -133,7 +158,9 @@ export default function StudentPayments() {
           <CardContent className="space-y-4">
             <div>
               <div className="flex items-center justify-between mb-2 text-sm">
-                <span className="text-gray-600 dark:text-gray-400">Total Progress</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  Total Progress
+                </span>
                 <span className="font-medium">
                   ${totalPaid.toLocaleString()} / ${totalFee.toLocaleString()} (
                   {progressPct.toFixed(1)}%)
@@ -152,28 +179,40 @@ export default function StudentPayments() {
               >
                 <AlertCircle
                   className={`w-5 h-5 mt-0.5 ${
-                    nextDue.status === "overdue" ? "text-red-600" : "text-orange-600"
+                    nextDue.status === "overdue"
+                      ? "text-red-600"
+                      : "text-orange-600"
                   }`}
                 />
                 <div>
                   <p
                     className={`text-sm font-medium ${
-                      nextDue.status === "overdue" ? "text-red-900" : "text-orange-900"
+                      nextDue.status === "overdue"
+                        ? "text-red-900"
+                        : "text-orange-900"
                     }`}
                   >
-                    {nextDue.status === "overdue" ? "Overdue Payment" : "Next Payment Due"}
+                    {nextDue.status === "overdue"
+                      ? "Overdue Payment"
+                      : "Next Payment Due"}
                   </p>
                   <p
                     className={`text-sm ${
-                      nextDue.status === "overdue" ? "text-red-700" : "text-orange-700"
+                      nextDue.status === "overdue"
+                        ? "text-red-700"
+                        : "text-orange-700"
                     }`}
                   >
-                    ${nextDue.amount.toLocaleString()} — {nextDue.courseName} — due{" "}
-                    {new Date(nextDue.dueDate + "T00:00:00").toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                    ${nextDue.amount.toLocaleString()} — {nextDue.courseName} —
+                    due{" "}
+                    {new Date(nextDue.dueDate + "T00:00:00").toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      },
+                    )}
                   </p>
                 </div>
                 <Button
@@ -211,14 +250,21 @@ export default function StudentPayments() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {payments.map((payment) => (
-            <Card key={payment.id} className={`border ${cardBg(payment.status)}`}>
+            <Card
+              key={payment.id}
+              className={`border ${cardBg(payment.status)}`}
+            >
               <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
                     {statusIcon(payment.status)}
                     <div>
-                      <p className="font-medium text-sm">{payment.courseName}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{payment.description}</p>
+                      <p className="font-medium text-sm">
+                        {payment.courseName}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {payment.description}
+                      </p>
                     </div>
                   </div>
                   {statusBadge(payment.status)}
@@ -226,7 +272,9 @@ export default function StudentPayments() {
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-2xl font-semibold">${payment.amount.toLocaleString()}</p>
+                    <p className="text-2xl font-semibold">
+                      ${payment.amount.toLocaleString()}
+                    </p>
                     {payment.status === "paid" ? (
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         Paid{" "}
@@ -240,7 +288,9 @@ export default function StudentPayments() {
                     ) : (
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         Due{" "}
-                        {new Date(payment.dueDate + "T00:00:00").toLocaleDateString("en-US", {
+                        {new Date(
+                          payment.dueDate + "T00:00:00",
+                        ).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
                           year: "numeric",
@@ -285,7 +335,9 @@ export default function StudentPayments() {
               <TableBody>
                 {paidPayments.map((payment) => (
                   <TableRow key={payment.id}>
-                    <TableCell className="font-mono text-xs">{payment.transactionId}</TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {payment.transactionId}
+                    </TableCell>
                     <TableCell>
                       {new Date(payment.paidAt!).toLocaleDateString("en-US", {
                         month: "short",
@@ -301,7 +353,9 @@ export default function StudentPayments() {
                       ${payment.amount.toLocaleString()}
                     </TableCell>
                     <TableCell>
-                      <Badge className="bg-green-100 dark:bg-green-900/20 text-green-700">Completed</Badge>
+                      <Badge className="bg-green-100 dark:bg-green-900/20 text-green-700">
+                        Completed
+                      </Badge>
                     </TableCell>
                   </TableRow>
                 ))}

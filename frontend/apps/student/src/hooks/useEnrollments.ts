@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { enroll } from "../api/enrollments";
+import { enroll } from "../api/enrollments.js";
 
 export const useEnrollCourse = () => {
   const queryClient = useQueryClient();

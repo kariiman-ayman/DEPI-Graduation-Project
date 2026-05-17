@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuthStore } from "../store/authStore";
+import { useAuthStore } from "../store/authStore.js";
 
 const api = axios.create({
   baseURL: "https://depi-graduation-project-backend.vercel.app/",

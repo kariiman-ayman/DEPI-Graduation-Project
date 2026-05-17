@@ -15,19 +15,26 @@ import {
   TabsTrigger,
 } from "_core/components/ui/tabs";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-import { useMyGrades } from "../hooks/useGrades";
-import type { StudentGrade } from "../types/grade.types";
+import { useMyGrades } from "../hooks/useGrades.js";
+import type { StudentGrade } from "../types/grade.types.js";
 
 function getGradeColor(grade: string | null): string {
-  if (!grade) return "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
-  if (grade.startsWith("A")) return "bg-green-100 dark:bg-green-900/20 text-green-700";
-  if (grade.startsWith("B")) return "bg-blue-100 dark:bg-blue-900/20 text-blue-700";
-  if (grade.startsWith("C")) return "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700";
+  if (!grade)
+    return "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
+  if (grade.startsWith("A"))
+    return "bg-green-100 dark:bg-green-900/20 text-green-700";
+  if (grade.startsWith("B"))
+    return "bg-blue-100 dark:bg-blue-900/20 text-blue-700";
+  if (grade.startsWith("C"))
+    return "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700";
   return "bg-red-100 dark:bg-red-900/20 text-red-700";
 }
 
 function buildGradeDistribution(grades: StudentGrade[]) {
-  const buckets: Record<string, { name: string; value: number; color: string }> = {
+  const buckets: Record<
+    string,
+    { name: string; value: number; color: string }
+  > = {
     A: { name: "A / A+", value: 0, color: "#10b981" },
     "A-": { name: "A-", value: 0, color: "#34d399" },
     B: { name: "B / B+", value: 0, color: "#3b82f6" },
@@ -114,7 +121,9 @@ export default function StudentGrades() {
                 <Trophy className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Current GPA</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Current GPA
+                </p>
                 {isLoading ? (
                   <Skeleton className="h-8 w-16 mt-1" />
                 ) : (
@@ -132,7 +141,9 @@ export default function StudentGrades() {
                 <TrendingUp className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Credits Enrolled</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Credits Enrolled
+                </p>
                 {isLoading ? (
                   <Skeleton className="h-8 w-16 mt-1" />
                 ) : (
@@ -150,7 +161,9 @@ export default function StudentGrades() {
                 <Target className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Graded Credits</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Graded Credits
+                </p>
                 {isLoading ? (
                   <Skeleton className="h-8 w-16 mt-1" />
                 ) : (
@@ -168,7 +181,9 @@ export default function StudentGrades() {
                 <Award className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Grade Count</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Grade Count
+                </p>
                 {isLoading ? (
                   <Skeleton className="h-8 w-16 mt-1" />
                 ) : (
@@ -230,9 +245,7 @@ export default function StudentGrades() {
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                               Midterm (30%)
                             </p>
-                            <p className="text-xl">
-                              {course.midterm ?? "—"}
-                            </p>
+                            <p className="text-xl">{course.midterm ?? "—"}</p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
@@ -246,17 +259,13 @@ export default function StudentGrades() {
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                               Project (25%)
                             </p>
-                            <p className="text-xl">
-                              {course.project ?? "—"}
-                            </p>
+                            <p className="text-xl">{course.project ?? "—"}</p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                               Final (25%)
                             </p>
-                            <p className="text-xl">
-                              {course.final ?? "—"}
-                            </p>
+                            <p className="text-xl">{course.final ?? "—"}</p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
@@ -269,10 +278,7 @@ export default function StudentGrades() {
                             </p>
                           </div>
                         </div>
-                        <Progress
-                          value={course.total ?? 0}
-                          className="h-2"
-                        />
+                        <Progress value={course.total ?? 0} className="h-2" />
                       </>
                     )}
                   </CardContent>
@@ -342,8 +348,8 @@ export default function StudentGrades() {
                             </span>
                             <span className="text-sm font-medium">
                               {bucket.value}{" "}
-                              {bucket.value === 1 ? "course" : "courses"} (
-                              {pct}%)
+                              {bucket.value === 1 ? "course" : "courses"} ({pct}
+                              %)
                             </span>
                           </div>
                           <Progress value={pct} className="h-2" />

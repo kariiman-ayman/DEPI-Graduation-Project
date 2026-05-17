@@ -14,7 +14,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "_core/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "_core/components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "_core/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -23,9 +28,9 @@ import {
   SelectValue,
 } from "_core/components/ui/select";
 import { Video, Play, Clock, Eye, BookOpen } from "lucide-react";
-import { useLectures } from "../hooks/useLectures";
-import { saveProgress } from "../api/lectures";
-import type { Lecture } from "../types/lecture.types";
+import { useLectures } from "../hooks/useLectures.js";
+import { saveProgress } from "../api/lectures.js";
+import type { Lecture } from "../types/lecture.types.js";
 
 function formatDuration(seconds: number | null): string {
   if (seconds == null) return "";
@@ -80,8 +85,12 @@ function LectureCard({
         <div className="mb-2">
           <Badge variant="outline">{lecture.courseName}</Badge>
         </div>
-        <CardTitle className="text-base leading-tight">{lecture.title}</CardTitle>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{lecture.instructorName}</p>
+        <CardTitle className="text-base leading-tight">
+          {lecture.title}
+        </CardTitle>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          {lecture.instructorName}
+        </p>
       </CardHeader>
       <CardContent className="pt-0">
         {lecture.watchProgress > 0 && (
@@ -243,7 +252,8 @@ export default function StudentLectures() {
     },
     {
       label: "In Progress",
-      value: lectures.filter((l) => l.watchProgress > 0 && l.watchProgress < 90).length,
+      value: lectures.filter((l) => l.watchProgress > 0 && l.watchProgress < 90)
+        .length,
       icon: Clock,
       color: "bg-purple-500",
     },
@@ -277,7 +287,9 @@ export default function StudentLectures() {
                   <stat.icon className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {stat.label}
+                  </p>
                   <p className="text-2xl">{isLoading ? "—" : stat.value}</p>
                 </div>
               </div>
@@ -319,13 +331,19 @@ export default function StudentLectures() {
             <Card>
               <CardContent className="p-12 text-center">
                 <Video className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-500 dark:text-gray-400">No lectures available</p>
+                <p className="text-gray-500 dark:text-gray-400">
+                  No lectures available
+                </p>
               </CardContent>
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((lecture) => (
-                <LectureCard key={lecture.id} lecture={lecture} onWatch={handleWatch} />
+                <LectureCard
+                  key={lecture.id}
+                  lecture={lecture}
+                  onWatch={handleWatch}
+                />
               ))}
             </div>
           )}
@@ -342,7 +360,9 @@ export default function StudentLectures() {
             <Card>
               <CardContent className="p-12 text-center">
                 <Video className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-500 dark:text-gray-400">No lectures available</p>
+                <p className="text-gray-500 dark:text-gray-400">
+                  No lectures available
+                </p>
               </CardContent>
             </Card>
           ) : (
@@ -370,13 +390,19 @@ export default function StudentLectures() {
             <Card>
               <CardContent className="p-12 text-center">
                 <Video className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-500 dark:text-gray-400">No lectures in progress</p>
+                <p className="text-gray-500 dark:text-gray-400">
+                  No lectures in progress
+                </p>
               </CardContent>
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {continueLectures.map((lecture) => (
-                <LectureCard key={lecture.id} lecture={lecture} onWatch={handleWatch} />
+                <LectureCard
+                  key={lecture.id}
+                  lecture={lecture}
+                  onWatch={handleWatch}
+                />
               ))}
             </div>
           )}

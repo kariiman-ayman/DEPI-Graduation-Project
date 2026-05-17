@@ -6,18 +6,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "../ui/dialog";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Textarea } from "../ui/textarea";
+} from "../ui/dialog.js";
+import { Button } from "../ui/button.js";
+import { Input } from "../ui/input.js";
+import { Label } from "../ui/label.js";
+import { Textarea } from "../ui/textarea.js";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "../ui/select.js";
 
 interface Course {
   id: string;
@@ -38,7 +38,11 @@ interface EditCourseModalProps {
   course: Course | null;
 }
 
-export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalProps) {
+export function EditCourseModal({
+  open,
+  onOpenChange,
+  course,
+}: EditCourseModalProps) {
   const [formData, setFormData] = useState({
     courseId: "",
     courseName: "",
@@ -58,7 +62,10 @@ export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalP
         courseId: course.id,
         courseName: course.name,
         department: course.department.toLowerCase().replace(" ", "-"),
-        instructor: course.instructor.toLowerCase().replace(/\.\s+/g, "-").replace(" ", "-"),
+        instructor: course.instructor
+          .toLowerCase()
+          .replace(/\.\s+/g, "-")
+          .replace(" ", "-"),
         credits: course.credits.toString(),
         capacity: course.capacity.toString(),
         schedule: course.schedule,
@@ -96,7 +103,9 @@ export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalP
                   id="courseId"
                   placeholder="CS401"
                   value={formData.courseId}
-                  onChange={(e) => setFormData({ ...formData, courseId: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, courseId: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -107,7 +116,9 @@ export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalP
                   type="number"
                   placeholder="4"
                   value={formData.credits}
-                  onChange={(e) => setFormData({ ...formData, credits: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, credits: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -119,7 +130,9 @@ export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalP
                 id="courseName"
                 placeholder="Advanced Data Structures"
                 value={formData.courseName}
-                onChange={(e) => setFormData({ ...formData, courseName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, courseName: e.target.value })
+                }
                 required
               />
             </div>
@@ -130,7 +143,9 @@ export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalP
                 id="description"
                 placeholder="Course description and objectives..."
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 rows={3}
               />
             </div>
@@ -140,7 +155,9 @@ export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalP
                 <Label htmlFor="department">Department *</Label>
                 <Select
                   value={formData.department}
-                  onValueChange={(value) => setFormData({ ...formData, department: value })}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, department: value })
+                  }
                   required
                 >
                   <SelectTrigger id="department">
@@ -153,7 +170,9 @@ export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalP
                     <SelectItem value="arts">Arts</SelectItem>
                     <SelectItem value="medicine">Medicine</SelectItem>
                     <SelectItem value="mathematics">Mathematics</SelectItem>
-                    <SelectItem value="computer-science">Computer Science</SelectItem>
+                    <SelectItem value="computer-science">
+                      Computer Science
+                    </SelectItem>
                     <SelectItem value="physics">Physics</SelectItem>
                   </SelectContent>
                 </Select>
@@ -163,7 +182,9 @@ export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalP
                 <Label htmlFor="semester">Semester *</Label>
                 <Select
                   value={formData.semester}
-                  onValueChange={(value) => setFormData({ ...formData, semester: value })}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, semester: value })
+                  }
                   required
                 >
                   <SelectTrigger id="semester">
@@ -182,18 +203,30 @@ export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalP
               <Label htmlFor="instructor">Instructor *</Label>
               <Select
                 value={formData.instructor}
-                onValueChange={(value) => setFormData({ ...formData, instructor: value })}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, instructor: value })
+                }
                 required
               >
                 <SelectTrigger id="instructor">
                   <SelectValue placeholder="Select instructor" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="dr-sarah-johnson">Dr. Sarah Johnson</SelectItem>
-                  <SelectItem value="prof-michael-chen">Prof. Michael Chen</SelectItem>
-                  <SelectItem value="dr-emily-davis">Dr. Emily Davis</SelectItem>
-                  <SelectItem value="dr-james-wilson">Dr. James Wilson</SelectItem>
-                  <SelectItem value="prof-sofia-rodriguez">Prof. Sofia Rodriguez</SelectItem>
+                  <SelectItem value="dr-sarah-johnson">
+                    Dr. Sarah Johnson
+                  </SelectItem>
+                  <SelectItem value="prof-michael-chen">
+                    Prof. Michael Chen
+                  </SelectItem>
+                  <SelectItem value="dr-emily-davis">
+                    Dr. Emily Davis
+                  </SelectItem>
+                  <SelectItem value="dr-james-wilson">
+                    Dr. James Wilson
+                  </SelectItem>
+                  <SelectItem value="prof-sofia-rodriguez">
+                    Prof. Sofia Rodriguez
+                  </SelectItem>
                   <SelectItem value="dr-daniel-kim">Dr. Daniel Kim</SelectItem>
                 </SelectContent>
               </Select>
@@ -205,7 +238,9 @@ export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalP
                 id="schedule"
                 placeholder="Mon, Wed 10:00 AM - 11:30 AM"
                 value={formData.schedule}
-                onChange={(e) => setFormData({ ...formData, schedule: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, schedule: e.target.value })
+                }
                 required
               />
             </div>
@@ -217,7 +252,9 @@ export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalP
                   id="room"
                   placeholder="Engineering Building, Room 201"
                   value={formData.room}
-                  onChange={(e) => setFormData({ ...formData, room: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, room: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -228,7 +265,9 @@ export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalP
                   type="number"
                   placeholder="50"
                   value={formData.capacity}
-                  onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, capacity: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -236,7 +275,11 @@ export function EditCourseModal({ open, onOpenChange, course }: EditCourseModalP
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700">

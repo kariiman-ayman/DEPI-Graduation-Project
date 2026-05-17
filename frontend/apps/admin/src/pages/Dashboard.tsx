@@ -10,7 +10,7 @@ import {
   TrendingUp,
   AlertCircle,
 } from "lucide-react";
-import { useDashboard } from "../hooks/useDashboard";
+import { useDashboard } from "../hooks/useDashboard.js";
 
 function getInitials(name: string | null) {
   if (!name) return "?";
@@ -49,13 +49,19 @@ function StatCard({
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${iconBg}`}>
+        <div
+          className={`w-12 h-12 rounded-xl flex items-center justify-center ${iconBg}`}
+        >
           <Icon className="w-6 h-6 text-white" />
         </div>
       </div>
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{label}</p>
-      <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
-      {sub && <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{sub}</p>}
+      <p className="text-2xl font-bold text-gray-900 dark:text-white">
+        {value}
+      </p>
+      {sub && (
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{sub}</p>
+      )}
     </div>
   );
 }
@@ -77,9 +83,13 @@ export default function AdminDashboard() {
     return (
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-red-100 dark:border-red-900/30 p-8 text-center shadow-sm max-w-lg">
         <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-3" />
-        <p className="font-semibold text-gray-900 dark:text-white">Failed to load dashboard</p>
+        <p className="font-semibold text-gray-900 dark:text-white">
+          Failed to load dashboard
+        </p>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          {error instanceof Error ? error.message : "An unexpected error occurred."}
+          {error instanceof Error
+            ? error.message
+            : "An unexpected error occurred."}
         </p>
       </div>
     );
@@ -92,7 +102,8 @@ export default function AdminDashboard() {
   const totalPayments = stats
     ? stats.totalCollected + stats.totalOutstanding + stats.totalOverdue
     : 0;
-  const collectedPct = totalPayments > 0 ? (stats!.totalCollected / totalPayments) * 100 : 0;
+  const collectedPct =
+    totalPayments > 0 ? (stats!.totalCollected / totalPayments) * 100 : 0;
 
   const DEPT_COLORS = [
     "bg-indigo-500",
@@ -106,7 +117,9 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h3>
+        <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Dashboard
+        </h3>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
           Platform overview — real-time data
         </p>
@@ -153,7 +166,6 @@ export default function AdminDashboard() {
 
       {/* ── Middle row: payment overview + recent students ─────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
         {/* Payment Overview */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm space-y-5">
           <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
@@ -164,7 +176,10 @@ export default function AdminDashboard() {
           {isLoading ? (
             <div className="space-y-3">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="h-12 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse" />
+                <div
+                  key={i}
+                  className="h-12 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse"
+                />
               ))}
             </div>
           ) : (
@@ -172,21 +187,27 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-3 text-center">
                   <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 mx-auto mb-1" />
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Collected</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Collected
+                  </p>
                   <p className="text-base font-bold text-green-600 dark:text-green-400">
                     ${stats!.totalCollected.toLocaleString()}
                   </p>
                 </div>
                 <div className="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-3 text-center">
                   <Clock className="w-4 h-4 text-orange-600 dark:text-orange-400 mx-auto mb-1" />
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Outstanding</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Outstanding
+                  </p>
                   <p className="text-base font-bold text-orange-600 dark:text-orange-400">
                     ${stats!.totalOutstanding.toLocaleString()}
                   </p>
                 </div>
                 <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-3 text-center">
                   <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 mx-auto mb-1" />
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Overdue</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Overdue
+                  </p>
                   <p className="text-base font-bold text-red-600 dark:text-red-400">
                     ${stats!.totalOverdue.toLocaleString()}
                   </p>
@@ -235,7 +256,9 @@ export default function AdminDashboard() {
           ) : recentStudents.length === 0 ? (
             <div className="py-8 text-center">
               <Users className="w-8 h-8 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
-              <p className="text-sm text-gray-400 dark:text-gray-500">No students yet.</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500">
+                No students yet.
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -260,7 +283,9 @@ export default function AdminDashboard() {
                           <span className="text-gray-400 italic">No name</span>
                         )}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{student.email}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {student.email}
+                      </p>
                     </div>
                   </div>
                   <span className="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1 shrink-0">
@@ -284,13 +309,18 @@ export default function AdminDashboard() {
         {isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-20 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" />
+              <div
+                key={i}
+                className="h-20 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse"
+              />
             ))}
           </div>
         ) : coursesByDept.length === 0 ? (
           <div className="py-8 text-center">
             <BookOpen className="w-8 h-8 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
-            <p className="text-sm text-gray-400 dark:text-gray-500">No courses yet.</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500">
+              No courses yet.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -304,7 +334,9 @@ export default function AdminDashboard() {
                     DEPT_COLORS[i % DEPT_COLORS.length]
                   }`}
                 >
-                  <span className="text-white text-xs font-bold">{dept.departmentCode}</span>
+                  <span className="text-white text-xs font-bold">
+                    {dept.departmentCode}
+                  </span>
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-gray-900 dark:text-white truncate">

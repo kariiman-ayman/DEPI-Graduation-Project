@@ -1,6 +1,6 @@
-import { db } from "../config/firebase";
+import { db } from "../config/firebase.js";
 
-import type { CreateDepartmentDTO } from "../types/department.types";
+import type { CreateDepartmentDTO } from "../types/department.types.js";
 
 export const createDepartment = async (data: CreateDepartmentDTO) => {
   // check if code already exists

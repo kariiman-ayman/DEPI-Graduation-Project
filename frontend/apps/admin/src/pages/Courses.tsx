@@ -8,8 +8,8 @@ import {
 } from "_core/components/ui/card";
 import { BookOpen, Clock, Plus, Users, Layers } from "lucide-react";
 import { useState } from "react";
-import { AddCourseModal } from "../components/AddCourseModal";
-import { useCourses } from "../hooks/useCourses";
+import { AddCourseModal } from "../components/AddCourseModal.js";
+import { useCourses } from "../hooks/useCourses.js";
 
 export default function AdminCourses() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -69,13 +69,15 @@ export default function AdminCourses() {
                 <Users className="w-4 h-4" />
                 <span>
                   {course.enrolledCount}
-                  {course.capacity !== null ? `/${course.capacity}` : ""} enrolled
+                  {course.capacity !== null ? `/${course.capacity}` : ""}{" "}
+                  enrolled
                 </span>
-                {course.capacity !== null && course.enrolledCount >= course.capacity && (
-                  <Badge className="text-xs bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 ml-auto">
-                    Full
-                  </Badge>
-                )}
+                {course.capacity !== null &&
+                  course.enrolledCount >= course.capacity && (
+                    <Badge className="text-xs bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 ml-auto">
+                      Full
+                    </Badge>
+                  )}
               </div>
 
               <div className="flex items-center pt-2 border-t">

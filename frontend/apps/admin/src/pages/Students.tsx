@@ -13,8 +13,8 @@ import {
   TableRow,
 } from "_core/components/ui/table";
 import { StudentDetailsModal } from "_core/components/modals/StudentDetailsModal";
-import { InviteModal } from "../components/InviteModal";
-import { useStudents, useStudentDetails } from "../hooks/useStudents";
+import { InviteModal } from "../components/InviteModal.js";
+import { useStudents, useStudentDetails } from "../hooks/useStudents.js";
 
 function getInitials(name: string | null) {
   if (!name) return "?";
@@ -29,20 +29,28 @@ function getInitials(name: string | null) {
 }
 
 function GpaDisplay({ gpa }: { gpa: number | null }) {
-  if (gpa === null) return <span className="text-gray-400 dark:text-gray-500">—</span>;
+  if (gpa === null)
+    return <span className="text-gray-400 dark:text-gray-500">—</span>;
   const color =
-    gpa >= 3.7 ? "text-green-600" : gpa >= 3.0 ? "text-blue-600" : "text-orange-600";
+    gpa >= 3.7
+      ? "text-green-600"
+      : gpa >= 3.0
+        ? "text-blue-600"
+        : "text-orange-600";
   return <span className={color}>{gpa.toFixed(2)}</span>;
 }
 
 export default function AdminStudents() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isInviteOpen, setIsInviteOpen] = useState(false);
-  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(
+    null,
+  );
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   const { data: students, isLoading, isError, error } = useStudents();
-  const { data: studentDetail, isLoading: loadingDetail } = useStudentDetails(selectedStudentId);
+  const { data: studentDetail, isLoading: loadingDetail } =
+    useStudentDetails(selectedStudentId);
 
   const filtered = (students ?? []).filter((s) => {
     const q = searchTerm.toLowerCase();
@@ -100,7 +108,10 @@ export default function AdminStudents() {
           {isLoading && (
             <div className="space-y-3 py-2">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-10 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" />
+                <div
+                  key={i}
+                  className="h-10 bg-gray-100 dark:bg-gray-700 rounded animate-pulse"
+                />
               ))}
             </div>
           )}
@@ -109,7 +120,9 @@ export default function AdminStudents() {
             <div className="flex items-center gap-3 text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900 rounded-lg px-4 py-3">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <p className="text-sm">
-                {error instanceof Error ? error.message : "Failed to load students"}
+                {error instanceof Error
+                  ? error.message
+                  : "Failed to load students"}
               </p>
             </div>
           )}
@@ -131,13 +144,21 @@ export default function AdminStudents() {
               <TableBody>
                 {filtered.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-12 text-gray-400 dark:text-gray-500">
-                      {searchTerm ? "No students match your search." : "No students found."}
+                    <TableCell
+                      colSpan={8}
+                      className="text-center py-12 text-gray-400 dark:text-gray-500"
+                    >
+                      {searchTerm
+                        ? "No students match your search."
+                        : "No students found."}
                     </TableCell>
                   </TableRow>
                 ) : (
                   filtered.map((student) => (
-                    <TableRow key={student.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                    <TableRow
+                      key={student.id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-800"
+                    >
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center shrink-0">
@@ -146,7 +167,11 @@ export default function AdminStudents() {
                             </span>
                           </div>
                           <span className="font-medium text-gray-900 dark:text-white">
-                            {student.name ?? <span className="text-gray-400 italic">No name</span>}
+                            {student.name ?? (
+                              <span className="text-gray-400 italic">
+                                No name
+                              </span>
+                            )}
                           </span>
                         </div>
                       </TableCell>
@@ -159,7 +184,9 @@ export default function AdminStudents() {
                             Year {student.academicYear}
                           </span>
                         ) : (
-                          <span className="text-gray-400 dark:text-gray-500">—</span>
+                          <span className="text-gray-400 dark:text-gray-500">
+                            —
+                          </span>
                         )}
                       </TableCell>
                       <TableCell className="text-center text-gray-700 dark:text-gray-200">
@@ -201,7 +228,8 @@ export default function AdminStudents() {
 
           {!isLoading && !isError && students && (
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-4">
-              {filtered.length} of {students.length} student{students.length !== 1 ? "s" : ""}
+              {filtered.length} of {students.length} student
+              {students.length !== 1 ? "s" : ""}
             </p>
           )}
         </CardContent>

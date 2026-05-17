@@ -1,5 +1,5 @@
 import axios from "axios";
-import { db } from "../config/firebase";
+import { db } from "../config/firebase.js";
 
 export const loginUser = async (
   email: string,

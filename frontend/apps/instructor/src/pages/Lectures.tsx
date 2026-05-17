@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Upload, Video, Clock, Calendar, Eye } from "lucide-react";
 import { Button } from "_core/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "_core/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "_core/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -9,16 +14,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "_core/components/ui/select";
-import { UploadModal } from "../components/UploadModal";
-import { useCourses } from "../hooks/useCourses";
-import { useLectures } from "../hooks/useLectures";
+import { UploadModal } from "../components/UploadModal.js";
+import { useCourses } from "../hooks/useCourses.js";
+import { useLectures } from "../hooks/useLectures.js";
 
 function formatDuration(seconds: number | null): string {
   if (seconds === null) return "—";
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = Math.floor(seconds % 60);
-  if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  if (h > 0)
+    return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
@@ -50,9 +56,11 @@ export default function InstructorLectures() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const { data: courses = [] } = useCourses();
-  const { data: lectures = [], isLoading, isError } = useLectures(
-    selectedCourseId === "all" ? undefined : selectedCourseId,
-  );
+  const {
+    data: lectures = [],
+    isLoading,
+    isError,
+  } = useLectures(selectedCourseId === "all" ? undefined : selectedCourseId);
 
   const thisWeekCount = lectures.filter((l) => isThisWeek(l.createdAt)).length;
 
@@ -92,8 +100,12 @@ export default function InstructorLectures() {
                   <Video className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Videos</p>
-                  <p className="text-2xl font-semibold">{isLoading ? "—" : lectures.length}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Total Videos
+                  </p>
+                  <p className="text-2xl font-semibold">
+                    {isLoading ? "—" : lectures.length}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -106,8 +118,12 @@ export default function InstructorLectures() {
                   <Calendar className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Uploaded This Week</p>
-                  <p className="text-2xl font-semibold">{isLoading ? "—" : thisWeekCount}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Uploaded This Week
+                  </p>
+                  <p className="text-2xl font-semibold">
+                    {isLoading ? "—" : thisWeekCount}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -119,7 +135,10 @@ export default function InstructorLectures() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>My Lectures</CardTitle>
-              <Select value={selectedCourseId} onValueChange={setSelectedCourseId}>
+              <Select
+                value={selectedCourseId}
+                onValueChange={setSelectedCourseId}
+              >
                 <SelectTrigger className="w-64">
                   <SelectValue placeholder="All courses" />
                 </SelectTrigger>
@@ -143,7 +162,9 @@ export default function InstructorLectures() {
 
             {isLoading && (
               <div className="space-y-3">
-                {[1, 2, 3].map((i) => <LectureSkeleton key={i} />)}
+                {[1, 2, 3].map((i) => (
+                  <LectureSkeleton key={i} />
+                ))}
               </div>
             )}
 
@@ -185,7 +206,9 @@ export default function InstructorLectures() {
                           variant="outline"
                           size="sm"
                           className="shrink-0"
-                          onClick={() => window.open(lecture.videoUrl, "_blank")}
+                          onClick={() =>
+                            window.open(lecture.videoUrl, "_blank")
+                          }
                         >
                           <Eye className="w-3.5 h-3.5 mr-1.5" />
                           Preview
@@ -199,11 +222,14 @@ export default function InstructorLectures() {
                         {lecture.createdAt && (
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
-                            {new Date(lecture.createdAt).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
+                            {new Date(lecture.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )}
                           </span>
                         )}
                       </div>

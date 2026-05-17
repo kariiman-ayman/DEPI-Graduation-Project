@@ -1,10 +1,20 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "_core/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "_core/components/ui/card";
 import { Badge } from "_core/components/ui/badge";
 import { Progress } from "_core/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "_core/components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "_core/components/ui/tabs";
 import { Calendar, Check, X } from "lucide-react";
-import { useMyAttendance } from "../hooks/useAttendance";
+import { useMyAttendance } from "../hooks/useAttendance.js";
 
 function StatCard({
   icon,
@@ -21,7 +31,9 @@ function StatCard({
     <Card>
       <CardContent className="p-6">
         <div className="flex items-center gap-4">
-          <div className={`${color} w-12 h-12 rounded-lg flex items-center justify-center`}>
+          <div
+            className={`${color} w-12 h-12 rounded-lg flex items-center justify-center`}
+          >
             {icon}
           </div>
           <div>
@@ -63,13 +75,21 @@ export default function StudentAttendance() {
   // Build a set of date→status for quick calendar lookup
   const calendarMap = new Map(calendarRecords.map((r) => [r.date, r.status]));
 
-  const daysInMonth = new Date(calendarMonth.year, calendarMonth.month + 1, 0).getDate();
-  const firstDayOfWeek = new Date(calendarMonth.year, calendarMonth.month, 1).getDay();
+  const daysInMonth = new Date(
+    calendarMonth.year,
+    calendarMonth.month + 1,
+    0,
+  ).getDate();
+  const firstDayOfWeek = new Date(
+    calendarMonth.year,
+    calendarMonth.month,
+    1,
+  ).getDay();
 
-  const monthLabel = new Date(calendarMonth.year, calendarMonth.month).toLocaleDateString(
-    "en-US",
-    { month: "long", year: "numeric" }
-  );
+  const monthLabel = new Date(
+    calendarMonth.year,
+    calendarMonth.month,
+  ).toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   const prevMonth = () =>
     setCalendarMonth((m) => {
@@ -87,7 +107,9 @@ export default function StudentAttendance() {
     <div className="space-y-6">
       <div>
         <h3 className="text-2xl">Attendance Tracking</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Monitor your attendance across all courses</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Monitor your attendance across all courses
+        </p>
       </div>
 
       {/* Stat cards */}
@@ -122,7 +144,9 @@ export default function StudentAttendance() {
         <TabsContent value="courses" className="space-y-6">
           {isLoading ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {[...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
+              {[...Array(4)].map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
             </div>
           ) : courses.length === 0 ? (
             <Card>
@@ -136,7 +160,9 @@ export default function StudentAttendance() {
                 <Card key={course.courseId}>
                   <CardHeader>
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-lg">{course.courseName}</CardTitle>
+                      <CardTitle className="text-lg">
+                        {course.courseName}
+                      </CardTitle>
                       <Badge
                         className={
                           course.percentage >= 90
@@ -153,23 +179,31 @@ export default function StudentAttendance() {
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
                       <span>Classes Attended</span>
-                      <span>{course.present} / {course.total}</span>
+                      <span>
+                        {course.present} / {course.total}
+                      </span>
                     </div>
                     <Progress value={course.percentage} className="h-3" />
 
                     <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                       <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Present</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                          Present
+                        </p>
                         <div className="flex items-center gap-2">
                           <div className="w-3 h-3 bg-green-500 rounded-full" />
                           <span className="text-lg">{course.present}</span>
                         </div>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Absent</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                          Absent
+                        </p>
                         <div className="flex items-center gap-2">
                           <div className="w-3 h-3 bg-red-500 rounded-full" />
-                          <span className="text-lg">{course.total - course.present}</span>
+                          <span className="text-lg">
+                            {course.total - course.present}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -214,7 +248,10 @@ export default function StudentAttendance() {
               {/* Day labels */}
               <div className="grid grid-cols-7 gap-2 mb-2">
                 {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-                  <div key={d} className="text-center text-xs font-medium text-gray-500 dark:text-gray-400 py-1">
+                  <div
+                    key={d}
+                    className="text-center text-xs font-medium text-gray-500 dark:text-gray-400 py-1"
+                  >
                     {d}
                   </div>
                 ))}
@@ -230,7 +267,8 @@ export default function StudentAttendance() {
                   const day = i + 1;
                   const dateStr = `${calendarMonth.year}-${String(calendarMonth.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
                   const status = calendarMap.get(dateStr);
-                  const isToday = dateStr === new Date().toISOString().split("T")[0];
+                  const isToday =
+                    dateStr === new Date().toISOString().split("T")[0];
 
                   return (
                     <div
@@ -260,15 +298,21 @@ export default function StudentAttendance() {
               <div className="mt-6 flex items-center gap-6 justify-center">
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-green-100 dark:bg-green-900/20 border-2 border-green-300 rounded" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Present</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    Present
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-red-100 dark:bg-red-900/20 border-2 border-red-300 rounded" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Absent</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    Absent
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-gray-200 dark:border-gray-700 rounded" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">No Class</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    No Class
+                  </span>
                 </div>
               </div>
             </CardContent>

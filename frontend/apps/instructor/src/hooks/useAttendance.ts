@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCourseAttendance, saveAttendance } from "../api/attendance";
-import type { SaveAttendanceDTO } from "../types/attendance.types";
+import { getCourseAttendance, saveAttendance } from "../api/attendance.js";
+import type { SaveAttendanceDTO } from "../types/attendance.types.js";
 
 export const useCourseAttendance = (courseId: string, date: string) => {
   return useQuery({
@@ -15,7 +15,9 @@ export const useSaveAttendance = () => {
   return useMutation({
     mutationFn: (dto: SaveAttendanceDTO) => saveAttendance(dto),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["attendance", variables.courseId] });
+      queryClient.invalidateQueries({
+        queryKey: ["attendance", variables.courseId],
+      });
     },
   });
 };

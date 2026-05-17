@@ -15,8 +15,8 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useState, useRef, useCallback } from "react";
-import { useUploadLecture } from "../hooks/useLectures";
-import type { CoursesList } from "../types/course.types";
+import { useUploadLecture } from "../hooks/useLectures.js";
+import type { CoursesList } from "../types/course.types.js";
 
 interface UploadModalProps {
   open: boolean;

@@ -25,9 +25,9 @@ import {
 } from "_core/components/ui/table";
 import { Badge } from "_core/components/ui/badge";
 import { Save } from "lucide-react";
-import { useCourses } from "../hooks/useCourses";
-import { useCourseGrades, useUpsertGrade } from "../hooks/useGrades";
-import type { InstructorCourseGrade } from "../types/grade.types";
+import { useCourses } from "../hooks/useCourses.js";
+import { useCourseGrades, useUpsertGrade } from "../hooks/useGrades.js";
+import type { InstructorCourseGrade } from "../types/grade.types.js";
 
 // ── grade computation helpers ──────────────────────────────────────────────
 function computeTotal(m: number, a: number, p: number, f: number): number {
@@ -49,10 +49,14 @@ function toLetterGrade(total: number): string {
 }
 
 function getGradeColor(grade: string | null): string {
-  if (!grade) return "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
-  if (grade.startsWith("A")) return "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400";
-  if (grade.startsWith("B")) return "bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400";
-  if (grade.startsWith("C")) return "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400";
+  if (!grade)
+    return "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
+  if (grade.startsWith("A"))
+    return "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400";
+  if (grade.startsWith("B"))
+    return "bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400";
+  if (grade.startsWith("C"))
+    return "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400";
   return "bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400";
 }
 
@@ -77,8 +81,9 @@ function rowFromGrade(g: InstructorCourseGrade): EditRow {
 
 // ── stat helpers ───────────────────────────────────────────────────────────
 function computeStats(edits: EditsMap) {
-  const totals = Object.values(edits).map(({ midterm, assignments, project, final }) =>
-    computeTotal(midterm, assignments, project, final),
+  const totals = Object.values(edits).map(
+    ({ midterm, assignments, project, final }) =>
+      computeTotal(midterm, assignments, project, final),
   );
   if (totals.length === 0) return null;
   const avg = totals.reduce((a, b) => a + b, 0) / totals.length;
@@ -92,7 +97,12 @@ function computeStats(edits: EditsMap) {
 function buildDistribution(edits: EditsMap) {
   const counts: Record<string, number> = {};
   for (const row of Object.values(edits)) {
-    const total = computeTotal(row.midterm, row.assignments, row.project, row.final);
+    const total = computeTotal(
+      row.midterm,
+      row.assignments,
+      row.project,
+      row.final,
+    );
     const lg = toLetterGrade(total);
     counts[lg] = (counts[lg] ?? 0) + 1;
   }
@@ -152,16 +162,17 @@ export default function InstructorGrades() {
     setEdits({});
   }, [selectedCourseId]);
 
-  function handleChange(
-    studentId: string,
-    field: keyof EditRow,
-    raw: string,
-  ) {
+  function handleChange(studentId: string, field: keyof EditRow, raw: string) {
     const value = Math.min(100, Math.max(0, Number(raw) || 0));
     setEdits((prev) => ({
       ...prev,
       [studentId]: {
-        ...(prev[studentId] ?? { midterm: 0, assignments: 0, project: 0, final: 0 }),
+        ...(prev[studentId] ?? {
+          midterm: 0,
+          assignments: 0,
+          project: 0,
+          final: 0,
+        }),
         [field]: value,
       },
     }));
@@ -216,7 +227,9 @@ export default function InstructorGrades() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <Card>
           <CardContent className="p-6">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Class Average</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+              Class Average
+            </p>
             <p className="text-3xl mb-2">
               {stats ? stats.avg.toFixed(1) : "—"}
             </p>
@@ -229,7 +242,9 @@ export default function InstructorGrades() {
         </Card>
         <Card>
           <CardContent className="p-6">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Highest Grade</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+              Highest Grade
+            </p>
             <p className="text-3xl mb-2">
               {stats ? stats.highest.toFixed(1) : "—"}
             </p>
@@ -242,7 +257,9 @@ export default function InstructorGrades() {
         </Card>
         <Card>
           <CardContent className="p-6">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Lowest Grade</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+              Lowest Grade
+            </p>
             <p className="text-3xl mb-2">
               {stats ? stats.lowest.toFixed(1) : "—"}
             </p>
@@ -255,7 +272,9 @@ export default function InstructorGrades() {
         </Card>
         <Card>
           <CardContent className="p-6">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Pass Rate</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+              Pass Rate
+            </p>
             <p className="text-3xl mb-2">
               {stats ? `${stats.passRate}%` : "—"}
             </p>

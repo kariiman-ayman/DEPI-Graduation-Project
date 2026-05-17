@@ -1,6 +1,6 @@
-import { useInstructors } from "../hooks/useInstructor";
-import { useCreateCourse } from "../hooks/useCourses";
-import { useDepartments } from "../hooks/useDepartments";
+import { useInstructors } from "../hooks/useInstructor.js";
+import { useCreateCourse } from "../hooks/useCourses.js";
+import { useDepartments } from "../hooks/useDepartments.js";
 import { Button } from "_core/components/ui/button";
 import {
   Dialog,
@@ -221,7 +221,10 @@ export function AddCourseModal({ open, onOpenChange }: AddCourseModalProps) {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Min. Academic Year <span className="text-gray-400 font-normal">(optional)</span></Label>
+                <Label>
+                  Min. Academic Year{" "}
+                  <span className="text-gray-400 font-normal">(optional)</span>
+                </Label>
                 <div className="grid grid-cols-5 gap-1.5">
                   {[null, 1, 2, 3, 4].map((yr) => (
                     <button
@@ -241,7 +244,10 @@ export function AddCourseModal({ open, onOpenChange }: AddCourseModalProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="capacity">Max Students <span className="text-gray-400 font-normal">(optional)</span></Label>
+                <Label htmlFor="capacity">
+                  Max Students{" "}
+                  <span className="text-gray-400 font-normal">(optional)</span>
+                </Label>
                 <Input
                   id="capacity"
                   type="number"
@@ -251,7 +257,8 @@ export function AddCourseModal({ open, onOpenChange }: AddCourseModalProps) {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      capacity: e.target.value === "" ? "" : parseInt(e.target.value),
+                      capacity:
+                        e.target.value === "" ? "" : parseInt(e.target.value),
                     })
                   }
                 />

@@ -1,10 +1,10 @@
 import { Router } from "express";
-import authRoutes from "./auth.routes";
-import courseRoutes from "./course.routes";
-import lectureRoutes from "./lecture.routes";
-import gradeRoutes from "./grade.routes";
-import attendanceRoutes from "./attendance.routes";
-import profileRoutes from "./profile.routes";
+import authRoutes from "./auth.routes.js";
+import courseRoutes from "./course.routes.js";
+import lectureRoutes from "./lecture.routes.js";
+import gradeRoutes from "./grade.routes.js";
+import attendanceRoutes from "./attendance.routes.js";
+import profileRoutes from "./profile.routes.js";
 import { verifyUser } from "@/middlewares/auth.middleware";
 
 const router = Router();
