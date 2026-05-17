@@ -21,8 +21,8 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/admin", adminRoutes);
-// app.use("/student", studentRoutes);
+// app.use("/admin", adminRoutes);
+app.use("/student", studentRoutes);
 // app.use("/instructor", instructorRoutes);
 
 if (process.env.ENV === "dev") {
