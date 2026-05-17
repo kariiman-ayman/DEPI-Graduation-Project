@@ -1,7 +1,7 @@
 import type { Response } from "express";
-import type { AuthRequest } from "@/types/request.types";
-import { enrollStudent } from "@/services/enrollment.service";
-import { db } from "@/config/firebase";
+import type { AuthRequest } from "../../types/request.types";
+import { enrollStudent } from "../../services/enrollment.service";
+import { db } from "../../config/firebase";
 
 export const enroll = async (req: AuthRequest, res: Response) => {
   try {
@@ -33,7 +33,8 @@ export const getEnrolledCourses = async (req: AuthRequest, res: Response) => {
 
         const [courseDoc, gradeSnap] = await Promise.all([
           db.collection("courses").doc(courseId).get(),
-          db.collection("grades")
+          db
+            .collection("grades")
             .where("studentId", "==", uid)
             .where("courseId", "==", courseId)
             .limit(1)
@@ -44,8 +45,14 @@ export const getEnrolledCourses = async (req: AuthRequest, res: Response) => {
         const course = courseDoc.data()!;
 
         const [instructorDoc, departmentDoc] = await Promise.all([
-          db.collection("users").doc(course.instructorId as string).get(),
-          db.collection("departments").doc(course.departmentId as string).get(),
+          db
+            .collection("users")
+            .doc(course.instructorId as string)
+            .get(),
+          db
+            .collection("departments")
+            .doc(course.departmentId as string)
+            .get(),
         ]);
 
         const gradeData = gradeSnap.empty ? null : gradeSnap.docs[0].data();
@@ -57,21 +64,32 @@ export const getEnrolledCourses = async (req: AuthRequest, res: Response) => {
           credits: course.credits as number,
           lectureTime: course.lectureTime,
           instructor: instructorDoc.exists
-            ? { id: instructorDoc.id, name: instructorDoc.data()!.name, email: instructorDoc.data()!.email }
+            ? {
+                id: instructorDoc.id,
+                name: instructorDoc.data()!.name,
+                email: instructorDoc.data()!.email,
+              }
             : null,
           department: departmentDoc.exists
-            ? { id: departmentDoc.id, code: departmentDoc.data()!.code, name: departmentDoc.data()!.name }
+            ? {
+                id: departmentDoc.id,
+                code: departmentDoc.data()!.code,
+                name: departmentDoc.data()!.name,
+              }
             : null,
           grade: gradeData
             ? {
-                letterGrade: (gradeData.letterGrade as string | undefined) ?? null,
-                gradePoints: (gradeData.gradePoints as number | undefined) ?? null,
+                letterGrade:
+                  (gradeData.letterGrade as string | undefined) ?? null,
+                gradePoints:
+                  (gradeData.gradePoints as number | undefined) ?? null,
                 total: (gradeData.total as number | undefined) ?? null,
               }
             : null,
-          enrolledAt: enrollment.enrolledAt?.toDate?.()?.toISOString?.() ?? null,
+          enrolledAt:
+            enrollment.enrolledAt?.toDate?.()?.toISOString?.() ?? null,
         };
-      })
+      }),
     );
 
     return res.json(results.filter(Boolean));

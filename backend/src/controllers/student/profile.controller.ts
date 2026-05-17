@@ -1,7 +1,7 @@
 import type { Response } from "express";
 import axios from "axios";
-import { auth, db } from "@/config/firebase";
-import type { AuthRequest } from "@/types/request.types";
+import { auth, db } from "../../config/firebase";
+import type { AuthRequest } from "../../types/request.types";
 
 export const getProfile = async (req: AuthRequest, res: Response) => {
   try {
@@ -16,17 +16,20 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
         db.collection("payments").where("studentId", "==", uid).get(),
       ]);
 
-    if (!userDoc.exists) return res.status(404).json({ message: "User not found" });
+    if (!userDoc.exists)
+      return res.status(404).json({ message: "User not found" });
     const user = userDoc.data()!;
 
     const activeEnrollments = enrollmentsSnap.docs.filter(
-      (d) => !d.data().status || d.data().status === "active"
+      (d) => !d.data().status || d.data().status === "active",
     );
 
     const attRecords = attendanceSnap.docs.map((d) => d.data());
     const attPresent = attRecords.filter((r) => r.status === "present").length;
     const attendanceRate =
-      attRecords.length > 0 ? Math.round((attPresent / attRecords.length) * 100) : 0;
+      attRecords.length > 0
+        ? Math.round((attPresent / attRecords.length) * 100)
+        : 0;
 
     const gradeValues = gradesSnap.docs
       .map((d) => d.data().grade)
@@ -34,8 +37,10 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
       .map(Number);
     const averageGrade =
       gradeValues.length > 0
-        ? Math.round((gradeValues.reduce((s, g) => s + g, 0) / gradeValues.length) * 10) / 10
-        : (user.initialGpa as number | undefined) ?? null;
+        ? Math.round(
+            (gradeValues.reduce((s, g) => s + g, 0) / gradeValues.length) * 10,
+          ) / 10
+        : ((user.initialGpa as number | undefined) ?? null);
 
     const totalPaid = paymentsSnap.docs
       .filter((d) => d.data().status === "paid")
@@ -65,7 +70,8 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
     const uid = req.user!.uid;
     const { name } = req.body as { name?: string };
 
-    if (!name || !name.trim()) return res.status(400).json({ message: "Name is required" });
+    if (!name || !name.trim())
+      return res.status(400).json({ message: "Name is required" });
 
     const updates: Record<string, unknown> = { name: name.trim() };
 
@@ -85,16 +91,20 @@ export const changePassword = async (req: AuthRequest, res: Response) => {
     };
 
     if (!currentPassword || !newPassword)
-      return res.status(400).json({ message: "currentPassword and newPassword are required" });
+      return res
+        .status(400)
+        .json({ message: "currentPassword and newPassword are required" });
     if (newPassword.length < 6)
-      return res.status(400).json({ message: "New password must be at least 6 characters" });
+      return res
+        .status(400)
+        .json({ message: "New password must be at least 6 characters" });
 
     const userDoc = await db.collection("users").doc(uid).get();
     const email = userDoc.data()?.email as string;
 
     await axios.post(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`,
-      { email, password: currentPassword, returnSecureToken: false }
+      { email, password: currentPassword, returnSecureToken: false },
     );
 
     await auth.updateUser(uid, { password: newPassword });

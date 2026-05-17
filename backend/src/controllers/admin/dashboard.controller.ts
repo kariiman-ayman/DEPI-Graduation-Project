@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { db } from "@/config/firebase";
+import { db } from "../../config/firebase";
 
 export const getDashboardController = async (
   _req: Request,

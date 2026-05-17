@@ -4,9 +4,9 @@ import {
   createDepartmentController,
   getDepartmentsController,
   deleteDepartmentController,
-} from "@/controllers/admin/department.controller";
+} from "../../controllers/admin/department.controller";
 
-import { verifyUser } from "@/middlewares/auth.middleware";
+import { verifyUser } from "../../middlewares/auth.middleware";
 
 const router = Router();
 

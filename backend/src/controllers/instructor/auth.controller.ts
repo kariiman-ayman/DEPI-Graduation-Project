@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { signup, validateInvite } from "@/services/signup.service";
-import { loginUser } from "@/services/login.service";
+import { signup, validateInvite } from "../../services/signup.service";
+import { loginUser } from "../../services/login.service";
 
 export const loginController = async (req: Request, res: Response) => {
   try {
@@ -21,7 +21,10 @@ export const signupController = async (req: Request, res: Response) => {
       title?: string;
       specialization?: string;
     };
-    await signup(token, password, name, "instructor", { title, specialization });
+    await signup(token, password, name, "instructor", {
+      title,
+      specialization,
+    });
     res.json({ message: "Instructor account created successfully" });
   } catch (err: any) {
     res.status(400).json({ error: err.message });

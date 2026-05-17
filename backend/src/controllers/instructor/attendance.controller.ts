@@ -1,6 +1,6 @@
 import type { Response } from "express";
-import { db } from "@/config/firebase";
-import type { AuthRequest } from "@/types/request.types";
+import { db } from "../../config/firebase";
+import type { AuthRequest } from "../../types/request.types";
 
 // ---------------------------------------------------------------------------
 // GET /instructor/attendance?courseId=xxx&date=YYYY-MM-DD
@@ -9,17 +9,23 @@ import type { AuthRequest } from "@/types/request.types";
 export const getAttendance = async (req: AuthRequest, res: Response) => {
   try {
     const instructorId = req.user?.uid;
-    const { courseId, date } = req.query as { courseId?: string; date?: string };
+    const { courseId, date } = req.query as {
+      courseId?: string;
+      date?: string;
+    };
 
     if (!courseId) {
-      return res.status(400).json({ message: "courseId query param is required" });
+      return res
+        .status(400)
+        .json({ message: "courseId query param is required" });
     }
 
     const selectedDate = date ?? new Date().toISOString().split("T")[0];
 
     // Verify course belongs to this instructor
     const courseDoc = await db.collection("courses").doc(courseId).get();
-    if (!courseDoc.exists) return res.status(404).json({ message: "Course not found" });
+    if (!courseDoc.exists)
+      return res.status(404).json({ message: "Course not found" });
     if (courseDoc.data()?.instructorId !== instructorId) {
       return res.status(403).json({ message: "Access denied" });
     }
@@ -40,7 +46,7 @@ export const getAttendance = async (req: AuthRequest, res: Response) => {
 
     // Fetch student user docs
     const userDocs = await Promise.all(
-      studentIds.map((id) => db.collection("users").doc(id).get())
+      studentIds.map((id) => db.collection("users").doc(id).get()),
     );
     const userMap = new Map(userDocs.map((d) => [d.id, d.data()]));
 
@@ -68,7 +74,8 @@ export const getAttendance = async (req: AuthRequest, res: Response) => {
         name: user?.name ?? "Unknown",
         email: user?.email ?? "",
         todayStatus: todayRecord?.status ?? null,
-        attendanceRate: total > 0 ? +((presentCount / total) * 100).toFixed(1) : 0,
+        attendanceRate:
+          total > 0 ? +((presentCount / total) * 100).toFixed(1) : 0,
         present: presentCount,
         total,
         lastSessions: sessionDates.map((d) => ({
@@ -99,31 +106,48 @@ export const saveAttendance = async (req: AuthRequest, res: Response) => {
     };
 
     if (!courseId || !date || !Array.isArray(records) || records.length === 0) {
-      return res.status(400).json({ message: "courseId, date, and records are required" });
+      return res
+        .status(400)
+        .json({ message: "courseId, date, and records are required" });
     }
 
     // Verify course belongs to this instructor
     const courseDoc = await db.collection("courses").doc(courseId).get();
-    if (!courseDoc.exists) return res.status(404).json({ message: "Course not found" });
+    if (!courseDoc.exists)
+      return res.status(404).json({ message: "Course not found" });
     if (courseDoc.data()?.instructorId !== instructorId) {
       return res.status(403).json({ message: "Access denied" });
     }
 
     // Load all existing attendance for this course (single-field query), filter by date in memory
-    const existingSnap = await db.collection("attendance").where("courseId", "==", courseId).get();
-    const existingForDate = existingSnap.docs.filter((d) => d.data().date === date);
-    const existingMap = new Map(existingForDate.map((d) => [d.data().studentId as string, d.ref]));
+    const existingSnap = await db
+      .collection("attendance")
+      .where("courseId", "==", courseId)
+      .get();
+    const existingForDate = existingSnap.docs.filter(
+      (d) => d.data().date === date,
+    );
+    const existingMap = new Map(
+      existingForDate.map((d) => [d.data().studentId as string, d.ref]),
+    );
 
     const now = new Date();
 
     await Promise.all(
       records.map(({ studentId, status }) => {
-        const payload = { courseId, studentId, date, status, instructorId, updatedAt: now };
+        const payload = {
+          courseId,
+          studentId,
+          date,
+          status,
+          instructorId,
+          updatedAt: now,
+        };
         if (existingMap.has(studentId)) {
           return existingMap.get(studentId)!.update(payload);
         }
         return db.collection("attendance").add({ ...payload, createdAt: now });
-      })
+      }),
     );
 
     return res.json({ success: true, saved: records.length });

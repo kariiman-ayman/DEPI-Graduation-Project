@@ -1,4 +1,4 @@
-import { db } from "@/config/firebase";
+import { db } from "../config/firebase";
 
 export const enrollStudent = async (studentId: string, courseId: string) => {
   const courseDoc = await db.collection("courses").doc(courseId).get();
@@ -14,12 +14,14 @@ export const enrollStudent = async (studentId: string, courseId: string) => {
     .where("studentId", "==", studentId)
     .where("courseId", "==", courseId)
     .get();
-  if (!existingEnrollment.empty) throw new Error("Already enrolled in this course");
+  if (!existingEnrollment.empty)
+    throw new Error("Already enrolled in this course");
 
   // Check minimum academic year
   if (minYear) {
     const studentDoc = await db.collection("users").doc(studentId).get();
-    const studentYear = (studentDoc.data()?.academicYear as number | undefined) ?? 0;
+    const studentYear =
+      (studentDoc.data()?.academicYear as number | undefined) ?? 0;
     if (studentYear < minYear) {
       throw new Error(`This course requires Year ${minYear} or above`);
     }

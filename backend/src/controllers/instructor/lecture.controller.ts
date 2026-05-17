@@ -1,24 +1,34 @@
 import type { Response } from "express";
 
-import cloudinary from "@/config/cloudinary";
-import { db } from "@/config/firebase";
+import cloudinary from "../../config/cloudinary";
+import { db } from "../../config/firebase";
 
-import type { AuthRequest } from "@/types/request.types";
+import type { AuthRequest } from "../../types/request.types";
 
-export const getInstructorLectures = async (req: AuthRequest, res: Response) => {
+export const getInstructorLectures = async (
+  req: AuthRequest,
+  res: Response,
+) => {
   try {
     const instructorId = req.user!.uid;
     const { courseId } = req.query;
 
-    const snap = await db.collection("lectures").where("instructorId", "==", instructorId).get();
+    const snap = await db
+      .collection("lectures")
+      .where("instructorId", "==", instructorId)
+      .get();
     if (snap.empty) return res.json([]);
 
     const docs = courseId
       ? snap.docs.filter((d) => d.data().courseId === courseId)
       : snap.docs;
 
-    const courseIds = [...new Set(docs.map((d) => d.data().courseId as string))];
-    const courseDocs = await Promise.all(courseIds.map((id) => db.collection("courses").doc(id).get()));
+    const courseIds = [
+      ...new Set(docs.map((d) => d.data().courseId as string)),
+    ];
+    const courseDocs = await Promise.all(
+      courseIds.map((id) => db.collection("courses").doc(id).get()),
+    );
     const courseMap = new Map(courseDocs.map((d) => [d.id, d.data()]));
 
     const lectures = docs

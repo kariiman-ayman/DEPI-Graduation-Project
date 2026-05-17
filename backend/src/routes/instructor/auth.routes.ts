@@ -3,7 +3,7 @@ import {
   loginController,
   signupController,
   validateInviteController,
-} from "@/controllers/instructor/auth.controller";
+} from "../../controllers/instructor/auth.controller";
 
 const router = express.Router();
 

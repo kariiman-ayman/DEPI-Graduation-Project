@@ -1,6 +1,6 @@
 import type { Response } from "express";
-import { db } from "@/config/firebase";
-import type { AuthRequest } from "@/types/request.types";
+import { db } from "../../config/firebase";
+import type { AuthRequest } from "../../types/request.types";
 
 // ---------------------------------------------------------------------------
 // GET /student/attendance
@@ -11,7 +11,8 @@ export const getMyAttendance = async (req: AuthRequest, res: Response) => {
     const studentId = req.user?.uid;
 
     // Get active enrollments (single-field query, filter status in memory)
-    const enrollmentsSnap = await db.collection("enrollments")
+    const enrollmentsSnap = await db
+      .collection("enrollments")
       .where("studentId", "==", studentId)
       .get();
 
@@ -20,12 +21,18 @@ export const getMyAttendance = async (req: AuthRequest, res: Response) => {
       .map((d) => d.data().courseId as string);
 
     if (courseIds.length === 0) {
-      return res.json({ courses: [], calendar: [], overall: { present: 0, total: 0, percentage: 0 } });
+      return res.json({
+        courses: [],
+        calendar: [],
+        overall: { present: 0, total: 0, percentage: 0 },
+      });
     }
 
     // Fetch course docs and all attendance records for this student in parallel
     const [courseDocs, attendanceSnap] = await Promise.all([
-      Promise.all(courseIds.map((id) => db.collection("courses").doc(id).get())),
+      Promise.all(
+        courseIds.map((id) => db.collection("courses").doc(id).get()),
+      ),
       db.collection("attendance").where("studentId", "==", studentId).get(),
     ]);
 
@@ -71,7 +78,10 @@ export const getMyAttendance = async (req: AuthRequest, res: Response) => {
       overall: {
         present: totalPresent,
         total: totalClasses,
-        percentage: totalClasses > 0 ? +((totalPresent / totalClasses) * 100).toFixed(1) : 0,
+        percentage:
+          totalClasses > 0
+            ? +((totalPresent / totalClasses) * 100).toFixed(1)
+            : 0,
       },
     });
   } catch (err: any) {

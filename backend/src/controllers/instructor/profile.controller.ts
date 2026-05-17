@@ -1,7 +1,7 @@
 import type { Response } from "express";
 import axios from "axios";
-import { auth, db } from "@/config/firebase";
-import type { AuthRequest } from "@/types/request.types";
+import { auth, db } from "../../config/firebase";
+import type { AuthRequest } from "../../types/request.types";
 
 export const getProfile = async (req: AuthRequest, res: Response) => {
   try {
@@ -12,7 +12,8 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
       db.collection("courses").where("instructorId", "==", uid).get(),
     ]);
 
-    if (!userDoc.exists) return res.status(404).json({ message: "User not found" });
+    if (!userDoc.exists)
+      return res.status(404).json({ message: "User not found" });
     const user = userDoc.data()!;
 
     const courseIds = coursesSnap.docs.map((d) => d.id);
@@ -22,8 +23,8 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
     if (courseIds.length > 0) {
       const enrollmentSnaps = await Promise.all(
         courseIds.map((cId) =>
-          db.collection("enrollments").where("courseId", "==", cId).get()
-        )
+          db.collection("enrollments").where("courseId", "==", cId).get(),
+        ),
       );
       const seen = new Set<string>();
       for (const snap of enrollmentSnaps) {
@@ -62,7 +63,8 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
       specialization?: string;
     };
 
-    if (!name || !name.trim()) return res.status(400).json({ message: "Name is required" });
+    if (!name || !name.trim())
+      return res.status(400).json({ message: "Name is required" });
 
     const updates: Record<string, string> = { name: name.trim() };
     if (title !== undefined) updates.title = title;
@@ -84,16 +86,20 @@ export const changePassword = async (req: AuthRequest, res: Response) => {
     };
 
     if (!currentPassword || !newPassword)
-      return res.status(400).json({ message: "currentPassword and newPassword are required" });
+      return res
+        .status(400)
+        .json({ message: "currentPassword and newPassword are required" });
     if (newPassword.length < 6)
-      return res.status(400).json({ message: "New password must be at least 6 characters" });
+      return res
+        .status(400)
+        .json({ message: "New password must be at least 6 characters" });
 
     const userDoc = await db.collection("users").doc(uid).get();
     const email = userDoc.data()?.email as string;
 
     await axios.post(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`,
-      { email, password: currentPassword, returnSecureToken: false }
+      { email, password: currentPassword, returnSecureToken: false },
     );
 
     await auth.updateUser(uid, { password: newPassword });

@@ -1,12 +1,12 @@
 import type { Request, Response } from "express";
 
-import type { CreateDepartmentDTO } from "@/types/department.types";
+import type { CreateDepartmentDTO } from "../../types/department.types";
 
 import {
   createDepartment,
   getDepartments,
   deleteDepartment,
-} from "@/services/department.service";
+} from "../../services/department.service";
 
 export const createDepartmentController = async (
   req: Request<{}, {}, CreateDepartmentDTO>,

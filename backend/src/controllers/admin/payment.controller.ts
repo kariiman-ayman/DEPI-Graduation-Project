@@ -1,6 +1,6 @@
 import type { Response } from "express";
-import { db } from "@/config/firebase";
-import type { AuthRequest } from "@/types/request.types";
+import { db } from "../../config/firebase";
+import type { AuthRequest } from "../../types/request.types";
 
 // ---------------------------------------------------------------------------
 // GET /admin/payments
@@ -22,24 +22,33 @@ export const getAllPayments = async (_req: AuthRequest, res: Response) => {
     }
 
     const today = new Date().toISOString().split("T")[0];
-    const rawPayments = paymentsSnap.docs.map((d) => ({ id: d.id, ...d.data() })) as any[];
+    const rawPayments = paymentsSnap.docs.map((d) => ({
+      id: d.id,
+      ...d.data(),
+    })) as any[];
 
     // Collect unique student and course IDs
-    const studentIds = [...new Set(rawPayments.map((p) => p.studentId as string))];
-    const courseIds  = [...new Set(rawPayments.map((p) => p.courseId  as string))];
+    const studentIds = [
+      ...new Set(rawPayments.map((p) => p.studentId as string)),
+    ];
+    const courseIds = [
+      ...new Set(rawPayments.map((p) => p.courseId as string)),
+    ];
 
     // Fetch users and courses in parallel
     const [userDocs, courseDocs] = await Promise.all([
       Promise.all(studentIds.map((id) => db.collection("users").doc(id).get())),
-      Promise.all(courseIds.map((id)  => db.collection("courses").doc(id).get())),
+      Promise.all(
+        courseIds.map((id) => db.collection("courses").doc(id).get()),
+      ),
     ]);
 
-    const userMap   = new Map(userDocs.map((d)   => [d.id, d.data()]));
-    const courseMap = new Map(courseDocs.map((d)  => [d.id, d.data()]));
+    const userMap = new Map(userDocs.map((d) => [d.id, d.data()]));
+    const courseMap = new Map(courseDocs.map((d) => [d.id, d.data()]));
 
-    let totalCollected  = 0;
+    let totalCollected = 0;
     let totalOutstanding = 0;
-    let totalOverdue     = 0;
+    let totalOverdue = 0;
 
     const payments = rawPayments.map((p) => {
       const effectiveStatus: string =
@@ -50,23 +59,23 @@ export const getAllPayments = async (_req: AuthRequest, res: Response) => {
             : "pending";
 
       const amount = p.amount as number;
-      if (effectiveStatus === "paid")    totalCollected   += amount;
+      if (effectiveStatus === "paid") totalCollected += amount;
       else if (effectiveStatus === "overdue") totalOverdue += amount;
-      else                                    totalOutstanding += amount;
+      else totalOutstanding += amount;
 
       return {
-        id:            p.id,
-        studentId:     p.studentId,
-        studentName:   userMap.get(p.studentId)?.name  ?? "Unknown",
-        studentEmail:  userMap.get(p.studentId)?.email ?? "",
-        courseId:      p.courseId,
-        courseName:    courseMap.get(p.courseId)?.title ?? "Unknown",
+        id: p.id,
+        studentId: p.studentId,
+        studentName: userMap.get(p.studentId)?.name ?? "Unknown",
+        studentEmail: userMap.get(p.studentId)?.email ?? "",
+        courseId: p.courseId,
+        courseName: courseMap.get(p.courseId)?.title ?? "Unknown",
         amount,
-        description:   p.description,
-        status:        effectiveStatus,
-        dueDate:       p.dueDate,
-        method:        p.method ?? null,
-        paidAt:        p.paidAt?.toDate?.()?.toISOString?.() ?? null,
+        description: p.description,
+        status: effectiveStatus,
+        dueDate: p.dueDate,
+        method: p.method ?? null,
+        paidAt: p.paidAt?.toDate?.()?.toISOString?.() ?? null,
         transactionId: p.transactionId ?? null,
       };
     });

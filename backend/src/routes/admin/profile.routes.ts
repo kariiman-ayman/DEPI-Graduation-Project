@@ -1,6 +1,10 @@
 import { Router } from "express";
-import { verifyUser } from "@/middlewares/auth.middleware";
-import { getProfile, updateProfile, changePassword } from "@/controllers/admin/profile.controller";
+import { verifyUser } from "../../middlewares/auth.middleware";
+import {
+  getProfile,
+  updateProfile,
+  changePassword,
+} from "../../controllers/admin/profile.controller";
 
 const router = Router();
 

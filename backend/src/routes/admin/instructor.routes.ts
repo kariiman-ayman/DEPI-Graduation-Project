@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { getInstructorsController } from "@/controllers/admin/instructor.controller";
+import { getInstructorsController } from "../../controllers/admin/instructor.controller";
 
 const router = Router();
 

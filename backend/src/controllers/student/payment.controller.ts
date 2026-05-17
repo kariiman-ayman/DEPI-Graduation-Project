@@ -1,6 +1,6 @@
 import type { Response } from "express";
-import { db } from "@/config/firebase";
-import type { AuthRequest } from "@/types/request.types";
+import { db } from "../../config/firebase";
+import type { AuthRequest } from "../../types/request.types";
 
 const FEE_PER_CREDIT = 500; // $500 per credit hour
 
@@ -18,7 +18,8 @@ export const getMyPayments = async (req: AuthRequest, res: Response) => {
     const studentId = req.user?.uid;
 
     // Fetch enrollments (single-field query)
-    const enrollmentsSnap = await db.collection("enrollments")
+    const enrollmentsSnap = await db
+      .collection("enrollments")
       .where("studentId", "==", studentId)
       .get();
 
@@ -30,27 +31,39 @@ export const getMyPayments = async (req: AuthRequest, res: Response) => {
       }));
 
     if (enrollments.length === 0) {
-      return res.json({ payments: [], totalFee: 0, totalPaid: 0, totalOutstanding: 0 });
+      return res.json({
+        payments: [],
+        totalFee: 0,
+        totalPaid: 0,
+        totalOutstanding: 0,
+      });
     }
 
     const courseIds = enrollments.map((e) => e.courseId);
 
     // Fetch course docs and existing payment records in parallel
     const [courseDocs, paymentsSnap] = await Promise.all([
-      Promise.all(courseIds.map((id) => db.collection("courses").doc(id).get())),
+      Promise.all(
+        courseIds.map((id) => db.collection("courses").doc(id).get()),
+      ),
       db.collection("payments").where("studentId", "==", studentId).get(),
     ]);
 
     const courseMap = new Map(courseDocs.map((d) => [d.id, d.data()]));
     const existingPayments = new Map(
-      paymentsSnap.docs.map((d) => [d.data().courseId as string, { id: d.id, ...d.data() }])
+      paymentsSnap.docs.map((d) => [
+        d.data().courseId as string,
+        { id: d.id, ...d.data() },
+      ]),
     );
 
     const today = new Date().toISOString().split("T")[0];
     const now = new Date();
 
     // Auto-create missing payment records
-    const toCreate = enrollments.filter((e) => !existingPayments.has(e.courseId));
+    const toCreate = enrollments.filter(
+      (e) => !existingPayments.has(e.courseId),
+    );
 
     if (toCreate.length > 0) {
       await Promise.all(
@@ -74,13 +87,19 @@ export const getMyPayments = async (req: AuthRequest, res: Response) => {
             transactionId: null,
             createdAt: now,
           });
-        })
+        }),
       );
 
       // Re-fetch after creation
-      const refreshed = await db.collection("payments").where("studentId", "==", studentId).get();
+      const refreshed = await db
+        .collection("payments")
+        .where("studentId", "==", studentId)
+        .get();
       refreshed.docs.forEach((d) => {
-        existingPayments.set(d.data().courseId as string, { id: d.id, ...d.data() });
+        existingPayments.set(d.data().courseId as string, {
+          id: d.id,
+          ...d.data(),
+        });
       });
     }
 
@@ -117,7 +136,11 @@ export const getMyPayments = async (req: AuthRequest, res: Response) => {
 
     // Sort: overdue first, then pending, then paid
     const order = { overdue: 0, pending: 1, paid: 2 };
-    payments.sort((a, b) => order[a.status as keyof typeof order] - order[b.status as keyof typeof order]);
+    payments.sort(
+      (a, b) =>
+        order[a.status as keyof typeof order] -
+        order[b.status as keyof typeof order],
+    );
 
     return res.json({
       payments,
@@ -139,7 +162,9 @@ export const payInstallment = async (req: AuthRequest, res: Response) => {
   try {
     const studentId = req.user?.uid;
     const { paymentId } = req.params;
-    const { method } = req.body as { method: "bank_transfer" | "online" | "cash" };
+    const { method } = req.body as {
+      method: "bank_transfer" | "online" | "cash";
+    };
 
     const validMethods = ["bank_transfer", "online", "cash"];
     if (!validMethods.includes(method)) {
@@ -149,9 +174,12 @@ export const payInstallment = async (req: AuthRequest, res: Response) => {
     const docRef = db.collection("payments").doc(paymentId);
     const doc = await docRef.get();
 
-    if (!doc.exists) return res.status(404).json({ message: "Payment not found" });
-    if (doc.data()?.studentId !== studentId) return res.status(403).json({ message: "Access denied" });
-    if (doc.data()?.status === "paid") return res.status(400).json({ message: "Already paid" });
+    if (!doc.exists)
+      return res.status(404).json({ message: "Payment not found" });
+    if (doc.data()?.studentId !== studentId)
+      return res.status(403).json({ message: "Access denied" });
+    if (doc.data()?.status === "paid")
+      return res.status(400).json({ message: "Already paid" });
 
     const transactionId = generateTxId();
     const now = new Date();
@@ -164,7 +192,11 @@ export const payInstallment = async (req: AuthRequest, res: Response) => {
       updatedAt: now,
     });
 
-    return res.json({ success: true, transactionId, paidAt: now.toISOString() });
+    return res.json({
+      success: true,
+      transactionId,
+      paidAt: now.toISOString(),
+    });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }

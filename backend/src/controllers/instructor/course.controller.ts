@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 
-import { getInstructorCourses } from "@/services/course.service";
+import { getInstructorCourses } from "../../services/course.service";
 
 export const getCoursesController = async (req: Request, res: Response) => {
   try {

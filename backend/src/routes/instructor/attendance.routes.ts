@@ -1,6 +1,9 @@
 import { Router } from "express";
-import { verifyUser } from "@/middlewares/auth.middleware";
-import { getAttendance, saveAttendance } from "@/controllers/instructor/attendance.controller";
+import { verifyUser } from "../../middlewares/auth.middleware";
+import {
+  getAttendance,
+  saveAttendance,
+} from "../../controllers/instructor/attendance.controller";
 
 const router = Router();
 

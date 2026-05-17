@@ -1,6 +1,6 @@
-import { db } from "@/config/firebase";
+import { db } from "../config/firebase";
 
-import type { CreateCourseDTO } from "@/types/course.types";
+import type { CreateCourseDTO } from "../types/course.types";
 
 export const createCourse = async (data: CreateCourseDTO) => {
   // check instructor exists
@@ -79,10 +79,18 @@ export const getCourses = async () => {
         capacity: (course.capacity as number | undefined) ?? null,
         enrolledCount: enrolledCountMap.get(doc.id) ?? 0,
         instructor: instructorDoc.exists
-          ? { id: instructorDoc.id, name: instructorDoc.data()?.name, email: instructorDoc.data()?.email }
+          ? {
+              id: instructorDoc.id,
+              name: instructorDoc.data()?.name,
+              email: instructorDoc.data()?.email,
+            }
           : null,
         department: departmentDoc.exists
-          ? { id: departmentDoc.id, name: departmentDoc.data()?.name, code: departmentDoc.data()?.code }
+          ? {
+              id: departmentDoc.id,
+              name: departmentDoc.data()?.name,
+              code: departmentDoc.data()?.code,
+            }
           : null,
         createdAt: course.createdAt,
       };
@@ -94,7 +102,11 @@ export const getCourses = async () => {
 
 export const getInstructorCourses = async (instructorId: string) => {
   const [snapshot, enrollmentsSnap] = await Promise.all([
-    db.collection("courses").where("instructorId", "==", instructorId).orderBy("createdAt", "asc").get(),
+    db
+      .collection("courses")
+      .where("instructorId", "==", instructorId)
+      .orderBy("createdAt", "asc")
+      .get(),
     db.collection("enrollments").where("status", "==", "active").get(),
   ]);
 
@@ -108,7 +120,10 @@ export const getInstructorCourses = async (instructorId: string) => {
     snapshot.docs.map(async (doc) => {
       const course = doc.data();
 
-      const departmentDoc = await db.collection("departments").doc(course.departmentId).get();
+      const departmentDoc = await db
+        .collection("departments")
+        .doc(course.departmentId)
+        .get();
 
       return {
         id: doc.id,
@@ -119,7 +134,11 @@ export const getInstructorCourses = async (instructorId: string) => {
         capacity: (course.capacity as number | undefined) ?? null,
         enrolledCount: enrolledCountMap.get(doc.id) ?? 0,
         department: departmentDoc.exists
-          ? { id: departmentDoc.id, name: departmentDoc.data()?.name, code: departmentDoc.data()?.code }
+          ? {
+              id: departmentDoc.id,
+              name: departmentDoc.data()?.name,
+              code: departmentDoc.data()?.code,
+            }
           : null,
         createdAt: course.createdAt,
       };
