@@ -1,4 +1,4 @@
-// import "dotenv/config";
+import "dotenv/config";
 // import cors from "cors";
 import express from "express";
 import serverless from "serverless-http";
@@ -13,7 +13,7 @@ const app = express();
 // ];
 
 // app.use(cors({ origin: allowedOrigins, credentials: true }));
-// app.use(express.json());
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.json({
