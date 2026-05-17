@@ -1,4 +1,4 @@
-import { AddDepartmentModal } from "../components/AddDepartmentModal.js";
+import { AddDepartmentModal } from "../components/AddDepartmentModal";
 import { Button } from "_core/components/ui/button";
 import { Card, CardContent, CardHeader } from "_core/components/ui/card";
 import { Input } from "_core/components/ui/input";
@@ -12,10 +12,7 @@ import {
 } from "_core/components/ui/table";
 import { PlusCircle, Search } from "lucide-react";
 import { useState } from "react";
-import {
-  useDeleteDepartment,
-  useDepartments,
-} from "../hooks/useDepartments.js";
+import { useDeleteDepartment, useDepartments } from "../hooks/useDepartments";
 
 const Departments = () => {
   const [searchTerm, setSearchTerm] = useState("");

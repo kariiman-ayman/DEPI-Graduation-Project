@@ -1,17 +1,17 @@
-import LoginPage from "../pages/Login.js";
+import LoginPage from "../pages/Login";
 import { createBrowserRouter } from "react-router";
 
-import Layout from "../Layout.js";
+import Layout from "../Layout";
 
-import StudentAttendance from "../pages/Attendance.js";
-import StudentCourses from "../pages/Courses.js";
-import StudentDashboard from "../pages/Dashboard.js";
-import StudentGrades from "../pages/Grades.js";
-import StudentLectures from "../pages/Lectures.js";
-import StudentPayments from "../pages/Payments.js";
-import StudentProfile from "../pages/Profile.js";
+import StudentAttendance from "../pages/Attendance";
+import StudentCourses from "../pages/Courses";
+import StudentDashboard from "../pages/Dashboard";
+import StudentGrades from "../pages/Grades";
+import StudentLectures from "../pages/Lectures";
+import StudentPayments from "../pages/Payments";
+import StudentProfile from "../pages/Profile";
 
-import SignUpPage from "../pages/Signup.js";
+import SignUpPage from "../pages/Signup";
 
 import { ProtectedRoute, PublicRoute, NotFoundRedirect } from "_core/routes";
 

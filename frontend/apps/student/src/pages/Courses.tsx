@@ -17,9 +17,9 @@ import {
   TabsList,
   TabsTrigger,
 } from "_core/components/ui/tabs";
-import { useCourses, useEnrolledCourses } from "../hooks/useCourses.js";
-import { useEnrollCourse } from "../hooks/useEnrollments.js";
-import { useProfile } from "../hooks/useProfile.js";
+import { useCourses, useEnrolledCourses } from "../hooks/useCourses";
+import { useEnrollCourse } from "../hooks/useEnrollments";
+import { useProfile } from "../hooks/useProfile";
 
 function gradeColor(letter: string | null) {
   if (!letter)

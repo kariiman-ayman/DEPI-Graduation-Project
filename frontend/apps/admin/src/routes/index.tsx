@@ -1,19 +1,19 @@
-import LoginPage from "../pages/Login.js";
-import SignupPage from "../pages/Signup.js";
+import LoginPage from "../pages/Login";
+import SignupPage from "../pages/Signup";
 import { createBrowserRouter } from "react-router";
 
-import Layout from "../Layout.js";
+import Layout from "../Layout";
 
-import AdminCourses from "../pages/Courses.js";
-import AdminDashboard from "../pages/Dashboard.js";
-import AdminInstructors from "../pages/Instructors.js";
-import AdminProfile from "../pages/Profile.js";
-import AdminStudents from "../pages/Students.js";
+import AdminCourses from "../pages/Courses";
+import AdminDashboard from "../pages/Dashboard";
+import AdminInstructors from "../pages/Instructors";
+import AdminProfile from "../pages/Profile";
+import AdminStudents from "../pages/Students";
 
 import { ProtectedRoute, PublicRoute, NotFoundRedirect } from "_core/routes";
-import Invitations from "../pages/Invitations.js";
-import Departments from "../pages/Departments.js";
-import AdminPayments from "../pages/Payments.js";
+import Invitations from "../pages/Invitations";
+import Departments from "../pages/Departments";
+import AdminPayments from "../pages/Payments";
 
 export const router = createBrowserRouter([
   {

@@ -21,7 +21,7 @@ import {
   useProfile,
   useUpdateProfile,
   useChangePassword,
-} from "../hooks/useProfile.js";
+} from "../hooks/useProfile";
 
 function getInitials(name?: string | null) {
   if (!name) return "A";

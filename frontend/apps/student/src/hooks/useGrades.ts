@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMyGrades } from "../api/grades.js";
+import { getMyGrades } from "../api/grades";
 
 export const useMyGrades = () => {
   return useQuery({

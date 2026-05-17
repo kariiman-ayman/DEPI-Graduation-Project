@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProfile, updateProfile, changePassword } from "../api/profile.js";
+import { getProfile, updateProfile, changePassword } from "../api/profile";
 
 export const useProfile = () =>
   useQuery({ queryKey: ["admin-profile"], queryFn: getProfile });

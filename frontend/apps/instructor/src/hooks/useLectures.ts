@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getLectures, uploadLecture } from "../api/lecture.js";
+import { getLectures, uploadLecture } from "../api/lecture";
 
 export const useLectures = (courseId?: string) =>
   useQuery({

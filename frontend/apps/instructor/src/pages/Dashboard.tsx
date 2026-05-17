@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { useCourses } from "../hooks/useCourses.js";
+import { useCourses } from "../hooks/useCourses";
 import {
   Card,
   CardContent,

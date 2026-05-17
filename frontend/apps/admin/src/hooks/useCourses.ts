@@ -1,4 +1,4 @@
-import { createCourse, getCourses } from "../api/course.js";
+import { createCourse, getCourses } from "../api/course";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 
 export const useCourses = () => {

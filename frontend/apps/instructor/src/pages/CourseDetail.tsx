@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import {
-  useCourseAttendance,
-  useSaveAttendance,
-} from "../hooks/useAttendance.js";
-import { useCourses } from "../hooks/useCourses.js";
-import { useCourseGrades, useUpsertGrade } from "../hooks/useGrades.js";
-import type { InstructorCourseGrade } from "../types/grade.types.js";
+import { useCourseAttendance, useSaveAttendance } from "../hooks/useAttendance";
+import { useCourses } from "../hooks/useCourses";
+import { useCourseGrades, useUpsertGrade } from "../hooks/useGrades";
+import type { InstructorCourseGrade } from "../types/grade.types";
 import {
   Card,
   CardContent,

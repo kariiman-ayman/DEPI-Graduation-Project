@@ -23,9 +23,9 @@ import {
   TableHeader,
   TableRow,
 } from "_core/components/ui/table";
-import { useMyPayments } from "../hooks/usePayments.js";
-import CheckoutModal from "../components/CheckoutModal.js";
-import type { Payment } from "../types/payment.types.js";
+import { useMyPayments } from "../hooks/usePayments";
+import CheckoutModal from "../components/CheckoutModal";
+import type { Payment } from "../types/payment.types";
 
 function statusBadge(status: Payment["status"]) {
   if (status === "paid")

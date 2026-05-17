@@ -24,11 +24,8 @@ import {
   TableHeader,
   TableRow,
 } from "_core/components/ui/table";
-import { useCourses } from "../hooks/useCourses.js";
-import {
-  useCourseAttendance,
-  useSaveAttendance,
-} from "../hooks/useAttendance.js";
+import { useCourses } from "../hooks/useCourses";
+import { useCourseAttendance, useSaveAttendance } from "../hooks/useAttendance";
 
 export default function InstructorAttendance() {
   const today = new Date().toISOString().split("T")[0];

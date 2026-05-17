@@ -3,7 +3,7 @@ import type {
   PaymentsResponse,
   PayInstallmentDTO,
   PayInstallmentResult,
-} from "../types/payment.types.js";
+} from "../types/payment.types";
 
 export const getMyPayments = async (): Promise<PaymentsResponse> => {
   const res = await api.get("/student/payments");

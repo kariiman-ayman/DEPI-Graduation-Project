@@ -14,7 +14,7 @@ import {
   TabsTrigger,
 } from "_core/components/ui/tabs";
 import { Calendar, Check, X } from "lucide-react";
-import { useMyAttendance } from "../hooks/useAttendance.js";
+import { useMyAttendance } from "../hooks/useAttendance";
 
 function StatCard({
   icon,

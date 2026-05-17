@@ -20,7 +20,7 @@ import {
   User,
   BookOpen,
 } from "lucide-react";
-import { SignupInstructor, validateInvite } from "../api/auth.js";
+import { SignupInstructor, validateInvite } from "../api/auth";
 
 type Phase = "loading" | "invalid" | "form" | "success";
 

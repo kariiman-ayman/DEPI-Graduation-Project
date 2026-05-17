@@ -2,7 +2,7 @@ import api from "_core/api";
 import type {
   CourseAttendanceResponse,
   SaveAttendanceDTO,
-} from "../types/attendance.types.js";
+} from "../types/attendance.types";
 
 export const getCourseAttendance = async (
   courseId: string,

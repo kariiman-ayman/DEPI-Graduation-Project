@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllPayments } from "../api/payments.js";
+import { getAllPayments } from "../api/payments";
 
 export const useAllPayments = () => {
   return useQuery({

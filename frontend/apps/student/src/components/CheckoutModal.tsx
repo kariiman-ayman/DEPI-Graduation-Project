@@ -7,8 +7,8 @@ import {
   Banknote,
   Globe,
 } from "lucide-react";
-import type { Payment, PaymentMethod } from "../types/payment.types.js";
-import { usePayInstallment } from "../hooks/usePayments.js";
+import type { Payment, PaymentMethod } from "../types/payment.types";
+import { usePayInstallment } from "../hooks/usePayments";
 
 const METHODS: {
   id: PaymentMethod;

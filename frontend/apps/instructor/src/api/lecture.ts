@@ -2,7 +2,7 @@ import api from "_core/api";
 import type {
   InstructorLecture,
   UploadLectureDTO,
-} from "../types/lecture.types.js";
+} from "../types/lecture.types";
 
 const URL = "/instructor/lecture";
 

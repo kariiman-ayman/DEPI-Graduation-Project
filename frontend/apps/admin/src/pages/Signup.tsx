@@ -1,4 +1,4 @@
-import { Signup } from "../api/auth.js";
+import { Signup } from "../api/auth";
 import { Alert, AlertDescription } from "_core/components/ui/alert";
 import { Button } from "_core/components/ui/button";
 import {

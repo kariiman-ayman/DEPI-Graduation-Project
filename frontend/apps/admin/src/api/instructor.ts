@@ -1,4 +1,4 @@
-import type { instructorList } from "../types/instructor.types.js";
+import type { instructorList } from "../types/instructor.types";
 import api from "_core/api";
 
 const URL = "admin/instructor";

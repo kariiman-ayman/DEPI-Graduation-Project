@@ -14,9 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "_core/components/ui/select";
-import { UploadModal } from "../components/UploadModal.js";
-import { useCourses } from "../hooks/useCourses.js";
-import { useLectures } from "../hooks/useLectures.js";
+import { UploadModal } from "../components/UploadModal";
+import { useCourses } from "../hooks/useCourses";
+import { useLectures } from "../hooks/useLectures";
 
 function formatDuration(seconds: number | null): string {
   if (seconds === null) return "—";

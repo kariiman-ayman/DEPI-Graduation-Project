@@ -12,15 +12,10 @@ import {
   Users,
   XCircle,
 } from "lucide-react";
-import { Badge } from "../ui/badge.js";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog.js";
-import { Progress } from "../ui/progress.js";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs.js";
+import { Badge } from "../ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Progress } from "../ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 interface StudentCourse {
   courseId: string;
   enrollmentStatus: "active" | "inactive";

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { useCourses } from "../hooks/useCourses.js";
+import { useCourses } from "../hooks/useCourses";
 import { BookOpen, Calendar, Clock, Users, Layers } from "lucide-react";
 import { Badge } from "_core/components/ui/badge";
 import { Button } from "_core/components/ui/button";

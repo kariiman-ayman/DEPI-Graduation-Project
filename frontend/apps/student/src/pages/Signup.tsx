@@ -12,7 +12,7 @@ import {
   Lock,
   User,
 } from "lucide-react";
-import { Signup, validateInvite } from "../api/auth.js";
+import { Signup, validateInvite } from "../api/auth";
 
 type Phase = "loading" | "invalid" | "form" | "success";
 

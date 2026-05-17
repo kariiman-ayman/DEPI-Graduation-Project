@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 import { Button } from "_core/components/ui/button";
 import { Badge } from "_core/components/ui/badge";
-import { useProfile } from "../hooks/useProfile.js";
-import { useEnrolledCourses } from "../hooks/useCourses.js";
-import { useMyPayments } from "../hooks/usePayments.js";
+import { useProfile } from "../hooks/useProfile";
+import { useEnrolledCourses } from "../hooks/useCourses";
+import { useMyPayments } from "../hooks/usePayments";
 
 function gradeColor(letter: string | null) {
   if (!letter)

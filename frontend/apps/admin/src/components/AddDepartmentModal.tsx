@@ -1,4 +1,4 @@
-import { useCreateDepartment } from "../hooks/useDepartments.js";
+import { useCreateDepartment } from "../hooks/useDepartments";
 import { Button } from "_core/components/ui/button";
 import {
   Dialog,

@@ -1,5 +1,5 @@
 import api from "_core/api";
-import type { Lecture } from "../types/lecture.types.js";
+import type { Lecture } from "../types/lecture.types";
 
 const URL = "/student/lectures";
 

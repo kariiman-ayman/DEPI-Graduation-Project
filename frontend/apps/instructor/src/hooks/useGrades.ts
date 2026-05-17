@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCourseGrades, upsertGrade } from "../api/grades.js";
+import { getCourseGrades, upsertGrade } from "../api/grades";
 
 export const useCourseGrades = (courseId: string) => {
   return useQuery({

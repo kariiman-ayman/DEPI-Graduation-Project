@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getMyPayments, payInstallment } from "../api/payments.js";
-import type { PayInstallmentDTO } from "../types/payment.types.js";
+import { getMyPayments, payInstallment } from "../api/payments";
+import type { PayInstallmentDTO } from "../types/payment.types";
 
 export const useMyPayments = () => {
   return useQuery({

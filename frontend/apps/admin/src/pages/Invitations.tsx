@@ -35,13 +35,13 @@ import {
   Users,
   ShieldCheck,
 } from "lucide-react";
-import { InviteModal } from "../components/InviteModal.js";
+import { InviteModal } from "../components/InviteModal";
 import {
   useInvitations,
   useResendInvitation,
   useRevokeInvitation,
-} from "../hooks/useInvites.js";
-import type { InvitesList, InviteRole } from "../types/invites.types.js";
+} from "../hooks/useInvites";
+import type { InvitesList, InviteRole } from "../types/invites.types";
 
 function roleBadge(role: InviteRole) {
   const styles: Record<InviteRole, string> = {

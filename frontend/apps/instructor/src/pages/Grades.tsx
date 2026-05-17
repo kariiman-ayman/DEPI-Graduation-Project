@@ -25,9 +25,9 @@ import {
 } from "_core/components/ui/table";
 import { Badge } from "_core/components/ui/badge";
 import { Save } from "lucide-react";
-import { useCourses } from "../hooks/useCourses.js";
-import { useCourseGrades, useUpsertGrade } from "../hooks/useGrades.js";
-import type { InstructorCourseGrade } from "../types/grade.types.js";
+import { useCourses } from "../hooks/useCourses";
+import { useCourseGrades, useUpsertGrade } from "../hooks/useGrades";
+import type { InstructorCourseGrade } from "../types/grade.types";
 
 // ── grade computation helpers ──────────────────────────────────────────────
 function computeTotal(m: number, a: number, p: number, f: number): number {

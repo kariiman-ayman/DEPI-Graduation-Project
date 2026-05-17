@@ -4,8 +4,8 @@ import {
   invite,
   resendInvitation,
   revokeInvitation,
-} from "../api/invites.js";
-import type { InviteDTO } from "../types/invites.types.js";
+} from "../api/invites";
+import type { InviteDTO } from "../types/invites.types";
 
 const KEY = ["invitations"] as const;
 

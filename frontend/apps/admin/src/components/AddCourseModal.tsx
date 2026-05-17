@@ -1,6 +1,6 @@
-import { useInstructors } from "../hooks/useInstructor.js";
-import { useCreateCourse } from "../hooks/useCourses.js";
-import { useDepartments } from "../hooks/useDepartments.js";
+import { useInstructors } from "../hooks/useInstructor";
+import { useCreateCourse } from "../hooks/useCourses";
+import { useDepartments } from "../hooks/useDepartments";
 import { Button } from "_core/components/ui/button";
 import {
   Dialog,

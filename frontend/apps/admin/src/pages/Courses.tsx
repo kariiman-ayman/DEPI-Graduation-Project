@@ -8,8 +8,8 @@ import {
 } from "_core/components/ui/card";
 import { BookOpen, Clock, Plus, Users, Layers } from "lucide-react";
 import { useState } from "react";
-import { AddCourseModal } from "../components/AddCourseModal.js";
-import { useCourses } from "../hooks/useCourses.js";
+import { AddCourseModal } from "../components/AddCourseModal";
+import { useCourses } from "../hooks/useCourses";
 
 export default function AdminCourses() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);

@@ -13,8 +13,8 @@ import {
   TableRow,
 } from "_core/components/ui/table";
 import { StudentDetailsModal } from "_core/components/modals/StudentDetailsModal";
-import { InviteModal } from "../components/InviteModal.js";
-import { useStudents, useStudentDetails } from "../hooks/useStudents.js";
+import { InviteModal } from "../components/InviteModal";
+import { useStudents, useStudentDetails } from "../hooks/useStudents";
 
 function getInitials(name: string | null) {
   if (!name) return "?";

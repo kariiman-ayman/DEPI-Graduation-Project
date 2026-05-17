@@ -10,7 +10,7 @@ import {
   TrendingUp,
   AlertCircle,
 } from "lucide-react";
-import { useDashboard } from "../hooks/useDashboard.js";
+import { useDashboard } from "../hooks/useDashboard";
 
 function getInitials(name: string | null) {
   if (!name) return "?";

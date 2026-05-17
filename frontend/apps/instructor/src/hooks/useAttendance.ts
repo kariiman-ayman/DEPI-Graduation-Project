@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCourseAttendance, saveAttendance } from "../api/attendance.js";
-import type { SaveAttendanceDTO } from "../types/attendance.types.js";
+import { getCourseAttendance, saveAttendance } from "../api/attendance";
+import type { SaveAttendanceDTO } from "../types/attendance.types";
 
 export const useCourseAttendance = (courseId: string, date: string) => {
   return useQuery({

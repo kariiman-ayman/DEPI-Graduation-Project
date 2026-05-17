@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getLectures } from "../api/lectures.js";
+import { getLectures } from "../api/lectures";
 
 export const useLectures = () => {
   return useQuery({

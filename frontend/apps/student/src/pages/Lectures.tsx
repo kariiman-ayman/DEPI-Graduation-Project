@@ -28,9 +28,9 @@ import {
   SelectValue,
 } from "_core/components/ui/select";
 import { Video, Play, Clock, Eye, BookOpen } from "lucide-react";
-import { useLectures } from "../hooks/useLectures.js";
-import { saveProgress } from "../api/lectures.js";
-import type { Lecture } from "../types/lecture.types.js";
+import { useLectures } from "../hooks/useLectures";
+import { saveProgress } from "../api/lectures";
+import type { Lecture } from "../types/lecture.types";
 
 function formatDuration(seconds: number | null): string {
   if (seconds == null) return "";

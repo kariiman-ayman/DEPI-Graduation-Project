@@ -3,7 +3,7 @@ import {
   createDepartment,
   getDepartments,
   deleteDepartment,
-} from "../api/department.js";
+} from "../api/department";
 
 export const useDepartments = () => {
   return useQuery({

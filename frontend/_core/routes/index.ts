@@ -1,3 +1,3 @@
-export { default as PublicRoute } from "./PublicRoute.js";
-export { default as ProtectedRoute } from "./ProtectedRoute.js";
-export { default as NotFoundRedirect } from "./NotFoundRedirect.js";
+export { default as PublicRoute } from "./PublicRoute";
+export { default as ProtectedRoute } from "./ProtectedRoute";
+export { default as NotFoundRedirect } from "./NotFoundRedirect";

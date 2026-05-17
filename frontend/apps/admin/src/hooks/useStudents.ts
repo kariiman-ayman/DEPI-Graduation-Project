@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getStudents, getStudentDetails } from "../api/students.js";
+import { getStudents, getStudentDetails } from "../api/students";
 
 export const useStudents = () =>
   useQuery({ queryKey: ["admin-students"], queryFn: getStudents });

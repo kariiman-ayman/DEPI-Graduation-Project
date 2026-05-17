@@ -1,15 +1,15 @@
 import { createBrowserRouter } from "react-router";
-import InstructorAttendance from "../pages/Attendance.js";
-import InstructorCourseDetail from "../pages/CourseDetail.js";
-import InstructorCourses from "../pages/Courses.js";
-import InstructorDashboard from "../pages/Dashboard.js";
-import InstructorGrades from "../pages/Grades.js";
-import InstructorLectures from "../pages/Lectures.js";
-import InstructorProfile from "../pages/Profile.js";
-import LoginPage from "../pages/Login.js";
-import SignUpPage from "../pages/Signup.js";
+import InstructorAttendance from "../pages/Attendance";
+import InstructorCourseDetail from "../pages/CourseDetail";
+import InstructorCourses from "../pages/Courses";
+import InstructorDashboard from "../pages/Dashboard";
+import InstructorGrades from "../pages/Grades";
+import InstructorLectures from "../pages/Lectures";
+import InstructorProfile from "../pages/Profile";
+import LoginPage from "../pages/Login";
+import SignUpPage from "../pages/Signup";
 import { ProtectedRoute, PublicRoute, NotFoundRedirect } from "_core/routes";
-import Layout from "../Layout.js";
+import Layout from "../Layout";
 
 export const router = createBrowserRouter([
   {

@@ -1,5 +1,5 @@
 import api from "_core/api";
-import type { GradesResponse } from "../types/grade.types.js";
+import type { GradesResponse } from "../types/grade.types";
 
 export const getMyGrades = async (): Promise<GradesResponse> => {
   const res = await api.get("/student/grades");

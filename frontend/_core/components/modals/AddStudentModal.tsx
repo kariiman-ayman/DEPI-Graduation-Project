@@ -6,17 +6,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "../ui/dialog.js";
-import { Button } from "../ui/button.js";
-import { Input } from "../ui/input.js";
-import { Label } from "../ui/label.js";
+} from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select.js";
+} from "../ui/select";
 
 interface AddStudentModalProps {
   open: boolean;

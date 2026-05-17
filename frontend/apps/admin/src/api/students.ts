@@ -1,5 +1,5 @@
 import api from "_core/api";
-import type { StudentDetail, StudentListItem } from "../types/student.types.js";
+import type { StudentDetail, StudentListItem } from "../types/student.types";
 
 const URL = "admin/student";
 

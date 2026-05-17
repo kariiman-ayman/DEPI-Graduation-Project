@@ -15,8 +15,8 @@ import {
   TabsTrigger,
 } from "_core/components/ui/tabs";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-import { useMyGrades } from "../hooks/useGrades.js";
-import type { StudentGrade } from "../types/grade.types.js";
+import { useMyGrades } from "../hooks/useGrades";
+import type { StudentGrade } from "../types/grade.types";
 
 function getGradeColor(grade: string | null): string {
   if (!grade)

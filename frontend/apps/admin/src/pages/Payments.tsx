@@ -23,8 +23,8 @@ import {
 } from "_core/components/ui/table";
 import { AlertCircle, Clock, DollarSign, Search, Users } from "lucide-react";
 import { useState } from "react";
-import type { AdminPayment, PaymentStatus } from "../api/payments.js";
-import { useAllPayments } from "../hooks/usePayments.js";
+import type { AdminPayment, PaymentStatus } from "../api/payments";
+import { useAllPayments } from "../hooks/usePayments";
 
 function statusBadge(status: PaymentStatus) {
   if (status === "paid")
