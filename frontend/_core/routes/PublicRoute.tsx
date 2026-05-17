@@ -7,10 +7,11 @@ type Props = {
 
 export default function PublicRoute({ children }: Props) {
   const user = useAuthStore((state) => state.user);
+  const hasHydrated = useAuthStore((state) => state._hasHydrated);
 
-  if (user) {
-    return <Navigate to="/" replace />;
-  }
+  if (!hasHydrated) return null;
+
+  if (user) return <Navigate to="/" replace />;
 
   return children;
 }

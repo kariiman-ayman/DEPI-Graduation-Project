@@ -7,12 +7,11 @@ type Props = {
 
 export default function ProtectedRoute({ children }: Props) {
   const user = useAuthStore((state) => state.user);
+  const hasHydrated = useAuthStore((state) => state._hasHydrated);
 
-  console.log(user);
+  if (!hasHydrated) return null; // ← wait for localStorage to be read
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!user) return <Navigate to="/login" replace />;
 
   return children;
 }
