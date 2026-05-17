@@ -21,9 +21,9 @@ app.get("/", (req, res) => {
   });
 });
 
-// app.use("/admin", adminRoutes);
+app.use("/admin", adminRoutes);
 app.use("/student", studentRoutes);
-// app.use("/instructor", instructorRoutes);
+app.use("/instructor", instructorRoutes);
 
 if (process.env.ENV === "dev") {
   const PORT = 5200;
@@ -34,4 +34,4 @@ if (process.env.ENV === "dev") {
 }
 
 export default app;
-export const handler = serverless(app);
+// export const handler = serverless(app);
