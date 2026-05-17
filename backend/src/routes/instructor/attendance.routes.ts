@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { verifyUser } from "../../middlewares/auth.middleware";
+import { verifyUser } from "../../middlewares/auth.middleware.js";
 import {
   getAttendance,
   saveAttendance,
-} from "../../controllers/instructor/attendance.controller";
+} from "../../controllers/instructor/attendance.controller.js";
 
 const router = Router();
 

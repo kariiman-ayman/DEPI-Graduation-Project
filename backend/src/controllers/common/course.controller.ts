@@ -1,4 +1,4 @@
-import { getCourses } from "../../services/course.service";
+import { getCourses } from "../../services/course.service.js";
 import type { Request, Response } from "express";
 
 export const getCoursesController = async (req: Request, res: Response) => {

@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { db } from "../../config/firebase";
+import { db } from "../../config/firebase.js";
 
 export const getStudentsController = async (
   req: Request,

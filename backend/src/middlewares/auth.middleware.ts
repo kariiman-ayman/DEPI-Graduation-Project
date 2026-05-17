@@ -1,6 +1,6 @@
 import type { Response, NextFunction } from "express";
-import { auth, db } from "../config/firebase";
-import type { AuthRequest } from "../types/request.types";
+import { auth, db } from "../config/firebase.js";
+import type { AuthRequest } from "../types/request.types.js";
 
 export const verifyUser = async (
   req: AuthRequest,

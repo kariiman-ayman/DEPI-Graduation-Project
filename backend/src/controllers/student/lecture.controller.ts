@@ -1,6 +1,6 @@
 import type { Response } from "express";
-import { db } from "../../config/firebase";
-import type { AuthRequest } from "../../types/request.types";
+import { db } from "../../config/firebase.js";
+import type { AuthRequest } from "../../types/request.types.js";
 
 function chunkArray<T>(arr: T[], size: number): T[][] {
   const chunks: T[][] = [];

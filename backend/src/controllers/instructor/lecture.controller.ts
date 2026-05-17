@@ -1,9 +1,9 @@
 import type { Response } from "express";
 
-import cloudinary from "../../config/cloudinary";
-import { db } from "../../config/firebase";
+import cloudinary from "../../config/cloudinary.js";
+import { db } from "../../config/firebase.js";
 
-import type { AuthRequest } from "../../types/request.types";
+import type { AuthRequest } from "../../types/request.types.js";
 
 export const getInstructorLectures = async (
   req: AuthRequest,

@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
 
-import type { CreateCourseDTO } from "../../types/course.types";
+import type { CreateCourseDTO } from "../../types/course.types.js";
 
-import { createCourse } from "../../services/course.service";
+import { createCourse } from "../../services/course.service.js";
 
 export const createCourseController = async (
   req: Request<{}, {}, CreateCourseDTO>,

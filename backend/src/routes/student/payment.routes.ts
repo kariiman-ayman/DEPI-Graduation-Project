@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { verifyUser } from "../../middlewares/auth.middleware";
+import { verifyUser } from "../../middlewares/auth.middleware.js";
 import {
   getMyPayments,
   payInstallment,
-} from "../../controllers/student/payment.controller";
+} from "../../controllers/student/payment.controller.js";
 
 const router = Router();
 

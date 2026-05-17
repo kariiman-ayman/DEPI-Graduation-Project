@@ -5,7 +5,7 @@ import lectureRoutes from "./lecture.routes.js";
 import gradeRoutes from "./grade.routes.js";
 import attendanceRoutes from "./attendance.routes.js";
 import profileRoutes from "./profile.routes.js";
-import { verifyUser } from "../../middlewares/auth.middleware";
+import { verifyUser } from "../../middlewares/auth.middleware.js";
 
 const router = Router();
 

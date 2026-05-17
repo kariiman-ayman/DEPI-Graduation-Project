@@ -1,8 +1,8 @@
 import { Router } from "express";
 
-import { enroll } from "../../controllers/student/enrollment.controller";
+import { enroll } from "../../controllers/student/enrollment.controller.js";
 
-import { verifyUser } from "../../middlewares/auth.middleware";
+import { verifyUser } from "../../middlewares/auth.middleware.js";
 
 const router = Router();
 

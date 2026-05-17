@@ -1,4 +1,4 @@
-import { db } from "../config/firebase";
+import { db } from "../config/firebase.js";
 
 export const getInstructors = async () => {
   const snapshot = await db

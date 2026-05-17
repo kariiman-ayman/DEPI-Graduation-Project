@@ -3,11 +3,11 @@ import { Router } from "express";
 import {
   getInstructorLectures,
   uploadLecture,
-} from "../../controllers/instructor/lecture.controller";
+} from "../../controllers/instructor/lecture.controller.js";
 
-import { verifyUser } from "../../middlewares/auth.middleware";
+import { verifyUser } from "../../middlewares/auth.middleware.js";
 
-import { upload } from "../../middlewares/upload.middleware";
+import { upload } from "../../middlewares/upload.middleware.js";
 
 const router = Router();
 

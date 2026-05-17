@@ -1,7 +1,7 @@
 import type { Response } from "express";
 import axios from "axios";
-import { auth, db } from "../../config/firebase";
-import type { AuthRequest } from "../../types/request.types";
+import { auth, db } from "../../config/firebase.js";
+import type { AuthRequest } from "../../types/request.types.js";
 
 export const getProfile = async (req: AuthRequest, res: Response) => {
   try {

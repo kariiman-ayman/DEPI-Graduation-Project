@@ -1,4 +1,4 @@
-import { db } from "../config/firebase";
+import { db } from "../config/firebase.js";
 
 export const enrollStudent = async (studentId: string, courseId: string) => {
   const courseDoc = await db.collection("courses").doc(courseId).get();

@@ -1,6 +1,6 @@
-import { db } from "../config/firebase";
+import { db } from "../config/firebase.js";
 
-import type { CreateCourseDTO } from "../types/course.types";
+import type { CreateCourseDTO } from "../types/course.types.js";
 
 export const createCourse = async (data: CreateCourseDTO) => {
   // check instructor exists

@@ -1,6 +1,6 @@
 import type { Response } from "express";
-import { db } from "../../config/firebase";
-import type { AuthRequest } from "../../types/request.types";
+import { db } from "../../config/firebase.js";
+import type { AuthRequest } from "../../types/request.types.js";
 
 const FEE_PER_CREDIT = 500; // $500 per credit hour
 

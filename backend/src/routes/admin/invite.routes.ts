@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { verifyUser } from "../../middlewares/auth.middleware";
+import { verifyUser } from "../../middlewares/auth.middleware.js";
 import {
   getInvitations,
   inviteUser,
   resendInvite,
   revokeInvite,
-} from "../../controllers/admin/invite.controller";
+} from "../../controllers/admin/invite.controller.js";
 
 const router = Router();
 

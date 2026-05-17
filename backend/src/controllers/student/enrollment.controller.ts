@@ -1,7 +1,7 @@
 import type { Response } from "express";
-import type { AuthRequest } from "../../types/request.types";
-import { enrollStudent } from "../../services/enrollment.service";
-import { db } from "../../config/firebase";
+import type { AuthRequest } from "../../types/request.types.js";
+import { enrollStudent } from "../../services/enrollment.service.js";
+import { db } from "../../config/firebase.js";
 
 export const enroll = async (req: AuthRequest, res: Response) => {
   try {

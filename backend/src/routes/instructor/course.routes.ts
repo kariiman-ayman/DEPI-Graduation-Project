@@ -1,5 +1,5 @@
-import { getCoursesController } from "../../controllers/instructor/course.controller";
-import { verifyUser } from "../../middlewares/auth.middleware";
+import { getCoursesController } from "../../controllers/instructor/course.controller.js";
+import { verifyUser } from "../../middlewares/auth.middleware.js";
 import { Router } from "express";
 
 const router = Router();

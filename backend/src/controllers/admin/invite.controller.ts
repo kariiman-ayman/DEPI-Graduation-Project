@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
-import { db } from "../../config/firebase";
-import { generateInviteToken } from "../../utils/generateToken";
-import { sendInviteEmail } from "../../services/email.service";
+import { db } from "../../config/firebase.js";
+import { generateInviteToken } from "../../utils/generateToken.js";
+import { sendInviteEmail } from "../../services/email.service.js";
 
 const VALID_ROLES = ["student", "instructor", "admin"] as const;
 type Role = (typeof VALID_ROLES)[number];
@@ -52,11 +52,9 @@ export const inviteUser = async (req: Request, res: Response) => {
       role === "student" &&
       (!academicYear || ![1, 2, 3, 4].includes(academicYear))
     ) {
-      return res
-        .status(400)
-        .json({
-          message: "Academic year (1–4) is required for student invitations",
-        });
+      return res.status(400).json({
+        message: "Academic year (1–4) is required for student invitations",
+      });
     }
 
     if (

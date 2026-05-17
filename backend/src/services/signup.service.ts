@@ -1,4 +1,4 @@
-import { auth, db } from "../config/firebase";
+import { auth, db } from "../config/firebase.js";
 
 export const signup = async (
   token: string,

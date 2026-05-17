@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { verifyUser } from "../../middlewares/auth.middleware";
+import { verifyUser } from "../../middlewares/auth.middleware.js";
 import {
   getProfile,
   updateProfile,
   changePassword,
-} from "../../controllers/instructor/profile.controller";
+} from "../../controllers/instructor/profile.controller.js";
 
 const router = Router();
 
