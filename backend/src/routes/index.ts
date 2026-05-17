@@ -1,3 +1,3 @@
-export { default as adminRoutes } from "./admin";
-export { default as studentRoutes } from "./student";
-export { default as instructorRoutes } from "./instructor";
+export { default as adminRoutes } from "./admin/index";
+export { default as studentRoutes } from "./student/index";
+export { default as instructorRoutes } from "./instructor/index";
